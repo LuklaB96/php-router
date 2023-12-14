@@ -1,0 +1,61 @@
+<?php
+require __DIR__ . '/../vendor/autoload.php';
+
+use App\Main\App;
+use App\Lib\Routing\Router;
+use App\Lib\Routing\Response;
+use App\Lib\Routing\Request;
+use App\Lib\View\View;
+use App\Lib\Config;
+
+
+
+//check if our uri exists as an asset in asset_mapper, if yes, let it to be rendered.
+$isAsset = Router::isAsset();
+if ($isAsset) {
+    return false;
+}
+
+//helper function to inject assets into views
+function asset($asset)
+{
+    $assets = Config::get('assets');
+    echo $assets[$asset];
+}
+
+//every route is unique, if we make two identical endpoints, only first one will be executed.
+
+//basic route
+Router::get('/', function () {
+    echo 'Hello World';
+});
+
+//example route with data extracted to view
+//this view can send post request through form to /test
+Router::get('/blog', function () {
+    $data = [
+        'helloWorld' => 'Hello World!',
+    ];
+    View::render('ExampleView', $data);
+});
+
+//example route using Response class
+Router::get('/post/{id}', function (Request $req, Response $res) {
+    $res->toJSON([
+        'post' => [
+            'id' => $req->params->id,
+        ],
+        'status' => 'ok'
+    ]);
+});
+
+//post route, will only work when properly sent POST request.
+Router::post('/test', function (Request $req, Response $res) {
+    $result = $req->getData();
+    $json = json_encode($result);
+    echo $json;
+});
+
+App::run();
+
+?>
