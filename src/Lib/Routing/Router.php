@@ -144,7 +144,15 @@ class Router
         }
         return false;
     }
-
+    /**
+     * Reset router to default settings.
+     * @return void
+     */
+    public static function reset()
+    {
+        self::clear();
+        self::$checked = false;
+    }
     /**
      * Check if any valid route was used, if not, this should display errors for end user.
      * Never call it more than once.

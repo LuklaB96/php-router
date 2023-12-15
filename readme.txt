@@ -1,3 +1,11 @@
+## PROJECT CONFIGURATION ##
+
+Run command to install all required packages:
+composer install
+
+## END OF PROJECT CONFIGURATION ##
+
+
 ## PHP SERVER CONFIGURATION INFO ##
 if you are using php server, use this command, it will point to index.php as your router.
 
@@ -6,13 +14,13 @@ php -S localhost:8000 public/index.php
 ## END OF PHP SERVER CONFIGURATION INFO ##
 
 
-
 ## APACHE CONFIGURATION INFO ##
 
 You need to set /public folder as root directory
 If we are using apache, .htaccess file in /public folder has basic configuration, you can edit this file to meet your requirements.
 
 ## END OF APACHE CONFIGURATION INFO ##
+
 
 ## GENERATING ASSETS INFO ##
 
@@ -24,3 +32,4 @@ Later you can just use path in your views like /public/assets/styles/app.css or 
 Check /src/Views/ExampleView.php if you need more information.
 
 ## END OF GENERATING ASSETS INFO ##
+

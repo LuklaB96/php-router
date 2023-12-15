@@ -19,7 +19,7 @@ final class RouterBlogTest extends TestCase
             $this->validRoute = true;
         });
         Router::check();
-
+        Router::reset();
         //Assert
         $this->assertTrue($this->validRoute);
     }
@@ -35,7 +35,7 @@ final class RouterBlogTest extends TestCase
             $this->validRoute = true;
         });
         Router::check();
-
+        Router::reset();
         //Assert
         $this->assertFalse($this->validRoute);
     }
