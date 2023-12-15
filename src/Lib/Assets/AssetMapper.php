@@ -6,6 +6,25 @@ use App\Lib\Config;
 class AssetMapper
 {
     /**
+     * First check if route is trying to access public asset in /public/assets/
+     * Then check if file is set to public in /config/asset_mapper.php
+     * @return bool
+     */
+    public static function isAsset(): bool
+    {
+        $isAsset = self::isPublicAsset();
+        if ($isAsset)
+            return true;
+
+        $isAsset = self::isPublicFile();
+        if ($isAsset)
+            return true;
+
+
+        return false;
+
+    }
+    /**
      * Checks if route is trying to access specific file, public files are configured in /assets/asset_mapper.php
      * @return bool
      */

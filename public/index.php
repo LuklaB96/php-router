@@ -12,10 +12,7 @@ use App\Lib\Config;
 
 
 //check if uri exists as a public file in /config/asset_mapper_config.php
-//$isAsset = AssetMapper::isPublicFile();
-
-//check if uri exists as a public file in /public/assets/
-$isAsset = AssetMapper::isPublicAsset();
+$isAsset = AssetMapper::isAsset();
 if ($isAsset) {
     return false;
 }
