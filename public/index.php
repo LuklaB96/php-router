@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
+use App\Lib\Assets\AssetMapper;
 use App\Main\App;
 use App\Lib\Routing\Router;
 use App\Lib\Routing\Response;
@@ -10,8 +11,11 @@ use App\Lib\Config;
 
 
 
-//check if our uri exists as an asset in asset_mapper, if yes, let it to be rendered.
-$isAsset = Router::isAsset();
+//check if uri exists as a public file in /config/asset_mapper_config.php
+//$isAsset = AssetMapper::isPublicFile();
+
+//check if uri exists as a public file in /public/assets/
+$isAsset = AssetMapper::isPublicAsset();
 if ($isAsset) {
     return false;
 }
@@ -49,12 +53,15 @@ Router::get('/post/{id}', function (Request $req, Response $res) {
     ]);
 });
 
-//post route, will only work when properly sent POST request.
+//will only work when properly sent POST request.
 Router::post('/test', function (Request $req, Response $res) {
     $result = $req->getData();
     $json = json_encode($result);
     echo $json;
 });
+
+//check if any route has been set as valid, display error if not.
+Router::check();
 
 App::run();
 

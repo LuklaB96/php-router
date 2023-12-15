@@ -11,7 +11,7 @@ class View
         if (!empty($data)) {
             extract($data);
         }
-        include(Config::get('APP_PATH') . '/' . $viewName . '.php');
+        include Config::get('APP_PATH') . '/' . $viewName . '.php';
     }
 }
 

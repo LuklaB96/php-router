@@ -12,6 +12,7 @@ class Router
     private static $routeExecuted = false;
     private static $validRouteName = '';
     private static $lastRoute = '';
+    private static $checked = false;
     public static function get($route, $callback)
     {
         self::$lastRoute = $_SERVER['REQUEST_URI'];
@@ -151,27 +152,28 @@ class Router
      */
     public static function check()
     {
+        if (!self::$checked) {
+            self::$checked = true;
+        } else {
+            return throw new \Exception("Route::check() function was called twice on the same route.");
+        }
         if (!self::$routeExecuted) {
             //code for redirect / error display if page was not found
             echo 'Page not found';
 
             $logger = Logger::getInstance();
             $logger->message('Trying to access invalid route: ' . self::$lastRoute);
-        } else {
-            self::$routeExecuted = false;
         }
+        self::clear();
     }
-
-    public static function isAsset(): bool
+    /**
+     * Clears all information about current and previous routes
+     * @return void
+     */
+    public static function clear()
     {
-        $uri = $_SERVER["REQUEST_URI"];
-        $assets = Config::get('assets');
-        $url1 = Config::get('MAIN_DIR') . $uri;
-        $pathInfo = pathinfo($url1);
-        if (isset($pathInfo['extension'])) {
-            $url2 = Config::get('MAIN_DIR') . $assets[$pathInfo['basename']];
-            return strcasecmp($url1, $url2) === 0 ? true : false;
-        }
-        return false;
+        self::$routeExecuted = false;
+        self::$lastRoute = '';
+        self::$validRouteName = '';
     }
 }
