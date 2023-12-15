@@ -7,7 +7,7 @@ composer install
 
 
 ## PHP SERVER CONFIGURATION INFO ##
-if you are using php server, use this command, it will point to index.php as your router.
+if using php server, use this command, it will point to index.php as your router.
 
 php -S localhost:8000 public/index.php
 
@@ -17,7 +17,7 @@ php -S localhost:8000 public/index.php
 ## APACHE CONFIGURATION INFO ##
 
 You need to set /public folder as root directory
-If we are using apache, .htaccess file in /public folder has basic configuration, you can edit this file to meet your requirements.
+If using apache, .htaccess file in /public folder has basic configuration, you can edit this file to meet your requirements.
 
 ## END OF APACHE CONFIGURATION INFO ##
 
