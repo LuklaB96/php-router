@@ -9,6 +9,9 @@ use App\Lib\Routing\Request;
 use App\Lib\View\View;
 use App\Lib\Config;
 
+use App\Entity\Post;
+use App\Lib\Migrations\Migrations;
+
 
 
 //check if uri exists as a public file in /config/asset_mapper_config.php
@@ -28,7 +31,12 @@ function asset($asset)
 
 //basic route
 Router::get('/', function () {
-    echo 'Hello World';
+    $migration = new Migrations();
+    $entity = new Post();
+    $migration->create($entity);
+    $connected = $entity->em->isConnected() ? 'yes<br>' : 'no<br>';
+    echo 'Connected to db: ' . $connected;
+    echo 'Entity name connected to db: ' . $entity->name;
 });
 
 //example route with data extracted to view

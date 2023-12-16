@@ -1,24 +1,55 @@
 <?php
 namespace App\Lib\Entity;
 
-use App\Lib\Config;
+
 
 class Entity
 {
-    private $dbhost = Config::get('DB_HOST');
-    private $dbname = Config::get('DB_NAME');
-    private $dbuser = Config::get('DB_USER');
-    private $dbpassword = Config::get('DB_PASSWORD');
-    private $conn;
-    private $entity = '';
+    protected $properties = [];
+    public $name = '';
+    public EntityManager $em;
     function __construct()
     {
-        $this->entity = get_class($this);
-        $this->conn = new \PDO("mysql:host=$this->dbhost;dbname=$this->dbname", $this->dbuser, $this->dbpassword);
+        if ($this->name == '')
+            $this->name = $this->getEntityName();
+        $this->em = EntityManager::getInstance();
     }
     public function insert()
     {
 
+    }
+    public function update()
+    {
+
+    }
+    public function delete()
+    {
+
+    }
+    public function find($id)
+    {
+
+    }
+    public function findAll()
+    {
+
+    }
+    public function findBy(array $criteria, array $orderBy = null, int $limit = null)
+    {
+
+    }
+    public function findOneBy(array $criteria, array $orderBy = null)
+    {
+
+    }
+    private function getEntityName(): string
+    {
+        $params = explode('\\', get_class($this));
+        return end($params);
+    }
+    public function getTableProperties(): array
+    {
+        return $this->properties;
     }
 }
 
