@@ -1,7 +1,7 @@
 <?php
 namespace App\Lib\Routing\Uri;
 
-class UriParser
+class RouteParser
 {
     /**
      * Returns params array specified in Router if passed correctly to $_SERVER['REQUEST_URI'], check if route is valid before using.

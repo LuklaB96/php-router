@@ -5,7 +5,7 @@ namespace App\Lib\Routing;
 use App\Lib\Logger\Logger;
 use App\Lib\Config;
 use App\Lib\Logger\Types\FileLogger;
-use App\Lib\Routing\Uri\UriParser;
+use App\Lib\Routing\Uri\RouteParser;
 use App\Lib\Routing\Validator\RouteValidator;
 
 class Router
@@ -49,7 +49,7 @@ class Router
         if ($validRoute) {
             self::$routeExecuted = true;
             //create params object from valid route and uri
-            $params = UriParser::getRouteParams($route);
+            $params = RouteParser::getRouteParams($route);
 
             //check if any parameters have been created and send them back to route handler
             if (!empty($params)) {
