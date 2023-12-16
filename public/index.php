@@ -31,7 +31,7 @@ function asset($asset)
 
 //basic route
 Router::get('/', function () {
-
+    echo $_GET['test'];
 });
 
 //example route with data extracted to view

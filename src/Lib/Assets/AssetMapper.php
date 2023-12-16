@@ -12,6 +12,7 @@ class AssetMapper
      */
     public static function isAsset(): bool
     {
+        //first check if asset is public, so we dont need to check asset_mapper.php if true
         $isAsset = self::isPublicAsset();
         if ($isAsset)
             return true;

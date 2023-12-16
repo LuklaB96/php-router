@@ -1,5 +1,5 @@
 <?php
-namespace App\Lib\Migrations;
+namespace App\Lib\Database;
 
 use App\Lib\Entity\Entity;
 use App\Lib\Config;
