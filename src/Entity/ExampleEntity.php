@@ -11,7 +11,7 @@ class Post extends Entity
      * You can delete this variable if you dont need it because it is extended from Entity class anyway.
      * @var string
      */
-    public $name = '';
+    protected $name = '';
     /**
      * Your table properties, key as column name, value as column properties.
      * @var array
@@ -19,6 +19,6 @@ class Post extends Entity
     protected $properties = [
         'id' => 'INT UNSIGNED AUTO_INCREMENT PRIMARY KEY',
         'title' => 'VARCHAR(250) NOT NULL',
-        'body' => 'LONGTEXT NOT NULL',
+        'description' => 'LONGTEXT NOT NULL',
     ];
 }

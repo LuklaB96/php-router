@@ -3,54 +3,44 @@
 namespace App\Lib\Logger;
 
 use App\Lib\Config;
+use App\Lib\Logger\Interfaces\LoggerInterface;
+use App\Lib\Logger\Enums\LogLevel;
 
 /**
  * Logger will save all log files to 'logs/instanceName'
- * File format is 'instanceName_todayDate.log'
+ * File format is 'LogLevel_todayDate.log'
  * Log message format is '[HH:MM:SS] message'
  */
 class Logger
 {
     private static $instances = [];
-
-    private $logDir;
-    private $appName;
-    private LogLevel $logLevel;
-    public function __construct($appName = 'App', $config = null)
+    private LoggerInterface $logger;
+    private LoggerConfig $config;
+    /**
+     * 
+     * @param \App\Lib\Logger\Interfaces\LoggerInterface $logger
+     * @param mixed $config
+     */
+    private function __construct(LoggerInterface $logger, LoggerConfig $config)
     {
-        if (empty($config)) {
-            $LOG_PATH = Config::get('LOG_PATH', __DIR__ . '/../../logs');
-
-            //default config setup
-            $config = [
-                'logDir' => $LOG_PATH,
-                'appName' => $appName,
-                'logLevel' => LogLevel::DEBUG,
-            ];
-        }
-        $this->setup($config);
+        //check if $logger is valid instance for any of current Logger Types
+        $this->logger = LoggerFactory::createLogger($logger);
+        $this->config = $config;
     }
 
     /**
      * Create or get existing instance with given name, default appName = 'App'
-     * @param string $appName
-     * @param array $config
+     * @param \App\Lib\Logger\Interfaces\LoggerInterface $logger
+     * @param \App\Lib\Logger\LoggerConfig $config
      * @return \App\Lib\Logger\Logger
      */
-    public static function getInstance(string $appName = 'App', array $config = null): Logger
+    public static function getInstance(LoggerInterface $logger, LoggerConfig $config = new LoggerConfig()): Logger
     {
-        if (empty(self::$instances[$appName])) {
-            return self::$instances[$appName] = new Logger($appName, $config);
+        if (empty(self::$instances[$config->getName()])) {
+            return self::$instances[$config->getName()] = new Logger($logger, $config);
         }
 
-        return self::$instances[$appName];
-    }
-
-    private function setup($config): void
-    {
-        $this->logDir = $config['logDir'];
-        $this->appName = $config['appName'];
-        $this->logLevel = $config['logLevel'];
+        return self::$instances[$config->getName()];
     }
     /**
      * Save message to log file from instance
@@ -59,17 +49,7 @@ class Logger
      */
     public function message(string $message): string
     {
-        if (!file_exists($this->logDir . '/' . $this->appName)) {
-            // create directory if does not exists
-            mkdir($this->logDir . '/' . $this->appName, 0777, true);
-        }
-
-
-        $logFile = $this->appName . '_' . date('d-M-Y') . '.log';
-        $formattedMessage = '[' . date('H:i:s') . ']' . " $message";
-        //add message to log file
-        file_put_contents($this->logDir . '/' . $this->appName . '/' . $logFile, $formattedMessage . "\n", FILE_APPEND);
-
+        $this->logger->log($message, $this->config);
         return $message;
     }
 

@@ -4,6 +4,7 @@ namespace App\Lib\Routing;
 
 use App\Lib\Logger\Logger;
 use App\Lib\Config;
+use App\Lib\Logger\Types\FileLogger;
 
 class Router
 {
@@ -169,7 +170,7 @@ class Router
             //code for redirect / error display if page was not found
             echo 'Page not found';
 
-            $logger = Logger::getInstance();
+            $logger = Logger::getInstance(new FileLogger());
             $logger->message('Trying to access invalid route: ' . self::$lastRoute);
         }
         self::clear();
