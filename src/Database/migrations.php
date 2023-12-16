@@ -6,7 +6,7 @@ use App\Lib\Migrations\Migrations;
 
 $migrations = new Migrations();
 
-//create all entities
+//create all entities here
 $post = new Post();
 
 //create tables from entity properties

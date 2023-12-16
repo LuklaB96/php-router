@@ -6,12 +6,12 @@ namespace App\Lib\Entity;
 class Entity
 {
     protected $properties = [];
-    public $name = '';
+    protected $name = '';
     public EntityManager $em;
     function __construct()
     {
         if ($this->name == '')
-            $this->name = $this->getEntityName();
+            $this->setDefaultEntityName();
         $this->em = EntityManager::getInstance();
     }
     public function insert($data)
@@ -46,10 +46,14 @@ class Entity
     {
 
     }
-    private function getEntityName(): string
+    protected function setEntityName(string $name)
+    {
+        $this->name = $name;
+    }
+    private function setDefaultEntityName()
     {
         $params = explode('\\', get_class($this));
-        return end($params);
+        $this->name = end($params);
     }
     public function getTableProperties(): array
     {

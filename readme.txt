@@ -33,3 +33,26 @@ Check /src/Views/ExampleView.php if you need more information.
 
 ## END OF GENERATING ASSETS INFO ##
 
+
+## DATABASE INFO ##
+
+First go to config.php in main directory and set up your database.
+Run command:
+php src/Database/database_create.php
+
+Now you can create your first entity that will represent table in database.
+Create new file in src/Entity/ e.g. Person.php, create class that extends Entity class.
+Remember if you don't set a $name variable in your entity class, it will be set as class name, in this case 'person' will be our table name.
+
+If your entity class is properly configured, go to /src/Database/migrations.php and create all entity objects you want to be represented as tables:
+
+$person = new Person(); //your entity class
+$migrations->create($person); //creating table in database from entity properties and name information
+
+Run command:
+php src/Database/migrations.php
+
+Check database if all is ok.
+
+## END OF DATABASE INFO ##
+
