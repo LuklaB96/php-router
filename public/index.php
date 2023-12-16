@@ -31,12 +31,7 @@ function asset($asset)
 
 //basic route
 Router::get('/', function () {
-    $migration = new Migrations();
-    $entity = new Post();
-    $migration->create($entity);
-    $connected = $entity->em->isConnected() ? 'yes<br>' : 'no<br>';
-    echo 'Connected to db: ' . $connected;
-    echo 'Entity name connected to db: ' . $entity->name;
+
 });
 
 //example route with data extracted to view

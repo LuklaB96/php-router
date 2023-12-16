@@ -13,6 +13,9 @@ return [
     //database credentials
     'DB_USER' => 'root',
     'DB_PASSWORD' => 'testdbpass1',
-    'DB_NAME' => 'dbtest',
+    'DB_NAME' => 'main_db',
+    'TEST_DB_NAME' => 'test_db',
     'DB_HOST' => '127.0.0.1',
+    //if true, all migrations will also be created in testing database
+    'TEST_DB_ACTIVE' => true,
 ];

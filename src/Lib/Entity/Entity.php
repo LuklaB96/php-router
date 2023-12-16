@@ -14,9 +14,13 @@ class Entity
             $this->name = $this->getEntityName();
         $this->em = EntityManager::getInstance();
     }
-    public function insert()
+    public function insert($data)
     {
+        $columns = implode(', ', array_keys($data));
+        $values = ':' . implode(', :', array_keys($data));
+        $sql = "INSERT INTO $this->name ($columns) VALUES ($values)";
 
+        $this->em->execute($sql, $data);
     }
     public function update()
     {
