@@ -1,6 +1,7 @@
 <?php
 namespace App\Lib\Entity;
 
+use App\Lib\Config;
 
 
 class Entity
@@ -14,13 +15,14 @@ class Entity
             $this->setDefaultEntityName();
         $this->em = EntityManager::getInstance();
     }
-    public function insert($data)
+    public function insert($data, $testdb = false): string
     {
+        $dbname = $testdb ? Config::get('TEST_DB_NAME') : Config::get('DB_NAME');
         $columns = implode(', ', array_keys($data));
         $values = ':' . implode(', :', array_keys($data));
-        $sql = "INSERT INTO $this->name ($columns) VALUES ($values)";
+        $sql = "INSERT INTO $dbname.$this->name ($columns) VALUES ($values)";
 
-        $this->em->execute($sql, $data);
+        return $this->em->execute($sql, $data);
     }
     public function update()
     {
@@ -46,9 +48,9 @@ class Entity
     {
 
     }
-    protected function setEntityName(string $name)
+    public function getEntityName(): string
     {
-        $this->name = $name;
+        return $this->name;
     }
     private function setDefaultEntityName()
     {

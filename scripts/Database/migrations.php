@@ -1,15 +1,15 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use App\Entity\Post;
-use App\Lib\Migrations\Migrations;
+use App\Entity\ExampleEntity;
+use App\Lib\Database\Migrations;
 
 $migrations = new Migrations();
 
 //create all entities here
-$post = new Post();
+$exampleEntity = new ExampleEntity();
 
 //create tables from entity properties
-$migrations->create($post);
+$migrations->create($exampleEntity);
 
 ?>

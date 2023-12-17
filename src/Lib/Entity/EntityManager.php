@@ -10,18 +10,14 @@ class EntityManager
     private function __construct()
     {
         $dbhost = Config::get('DB_HOST');
-        $dbname = Config::get('DB_NAME');
         $dbuser = Config::get('DB_USER');
         $dbpassword = Config::get('DB_PASSWORD');
 
-        $this->setConnection($dbhost, $dbname, $dbuser, $dbpassword);
+        $this->setConnection($dbhost, $dbuser, $dbpassword);
     }
-    public function setConnection($dbhost, $dbname = '', $dbuser, $dbpassword = '')
+    public function setConnection($dbhost, $dbuser, $dbpassword = '')
     {
         $dsn = "mysql:host=$dbhost;";
-        if ($dbname != '') {
-            $dsn .= "dbname=$dbname;";
-        }
         try {
             $this->conn = new \PDO($dsn, $dbuser, $dbpassword);
         } catch (\PDOException $e) {
@@ -47,15 +43,23 @@ class EntityManager
      * @param array $data
      * @return void
      */
-    public function execute($sql, array $data = []): bool
+    public function execute($sql, array $data = []): string
     {
         $stmt = $this->conn->prepare($sql);
         if (empty($data)) {
-            $result = $stmt->execute();
-            return $result;
+            try {
+                $result = $stmt->execute();
+                return 'ok';
+            } catch (\PDOException $e) {
+                return $e->getMessage();
+            }
         }
-        $result = $stmt->execute($data);
-        return $result;
+        try {
+            $stmt->execute($data);
+            return 'ok';
+        } catch (\PDOException $e) {
+            return $e->getMessage();
+        }
     }
 
 }

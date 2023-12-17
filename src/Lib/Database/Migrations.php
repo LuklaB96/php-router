@@ -6,12 +6,34 @@ use App\Lib\Config;
 
 class Migrations
 {
-    private $created = false;
-    public function create(Entity $entity)
+    /**
+     * Creates table in default or specified database from entity class properties
+     * @param \App\Lib\Entity\Entity $entity
+     * @param string $dbname
+     * @return void
+     */
+    public function create(Entity $entity, string $dbname = '')
     {
-        if ($this->created)
-            return;
-        $sql = "CREATE TABLE IF NOT EXISTS $entity->name (";
+        //create main database (default)
+        $this->createTable($entity);
+
+        //create table in test db if set to true in config.php
+        $testDbRequired = Config::get('TEST_DB_ACTIVE');
+        if ($testDbRequired) {
+            $dbname = Config::get('TEST_DB_NAME');
+            $this->createTable($entity, $dbname);
+        }
+    }
+    private function createTable(Entity $entity, $dbname = '')
+    {
+        //if $dbname is not specified, get default db name from config
+        if ($dbname == '')
+            $dbname = Config::get('DB_NAME');
+
+        //we using entity name as table name, can be customized in every entity class.
+        $tableName = $entity->getEntityName();
+        $sql = "CREATE TABLE $dbname.$tableName (";
+        //get table properties from entity class
         foreach ($entity->getTableProperties() as $columnName => $columnProperties) {
             $columnDefinitions[] = "$columnName $columnProperties";
         }
@@ -19,31 +41,15 @@ class Migrations
         $sql .= implode(', ', $columnDefinitions);
         $sql .= ")";
 
-
-        if ($entity->em->isConnected())
-            $entity->em->execute($sql);
-
-        //check if test db is active true|false
-        $testDbActive = Config::get('TEST_DB_ACTIVE');
-
-        //block further recursion
-        $this->created = true;
-
-        //check if testing database is set to active in config
-        if ($testDbActive) {
-            $this->createInTestDb($entity);
+        //if connection is valid, execute sql query
+        if ($entity->em->isConnected()) {
+            $message = $entity->em->execute($sql);
+            if ($message == 'ok') {
+                echo "Table $tableName created in: $dbname \r\n";
+            } else {
+                echo $message . "\r\n";
+            }
         }
-    }
-
-    private function createInTestDb(Entity $entity)
-    {
-        $dbhost = Config::get('DB_HOST');
-        $dbname = Config::get('TEST_DB_NAME');
-        $dbuser = Config::get('DB_USER');
-        $dbpassword = Config::get('DB_PASSWORD');
-        $entity->em->setConnection($dbhost, $dbname, $dbuser, $dbpassword);
-        if ($entity->em->isConnected())
-            $this->create($entity);
     }
 }
 

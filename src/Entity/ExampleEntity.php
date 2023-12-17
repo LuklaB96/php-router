@@ -4,7 +4,7 @@ namespace App\Entity;
 use App\Lib\Entity\Entity;
 
 
-class Post extends Entity
+class ExampleEntity extends Entity
 {
     /**
      * Custom entity name, leave it as empty string if you want it to be automatically set to class name.

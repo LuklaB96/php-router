@@ -9,8 +9,7 @@ use App\Lib\Routing\Request;
 use App\Lib\View\View;
 use App\Lib\Config;
 
-use App\Entity\Post;
-use App\Lib\Migrations\Migrations;
+use App\Entity\ExampleEntity;
 
 
 
@@ -66,8 +65,11 @@ Router::get('/post/{id}', function (Request $req, Response $res) {
 //will only work when properly sent POST request.
 Router::post('/test', function (Request $req, Response $res) {
     $result = $req->getData();
-    $json = json_encode($result);
-    echo $json;
+    $postEntity = new ExampleEntity();
+    $message = $postEntity->insert($result);
+    $res->toJSON([
+        'message' => $message
+    ]);
 });
 
 //check if any route has been set as valid, display error if not.

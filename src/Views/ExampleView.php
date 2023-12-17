@@ -13,10 +13,8 @@
 <body>
     <?php get($helloWorld) ?>
     <form action="/test" method="post">
-        <input type="text" name="data1" value="mydata" />
-        <input type="text" name="data2" value="mydata" />
-        <input type="text" name="data3" value="mydata" />
-        <input type="text" name="data4" value="mydata" />
+        <input type="text" name="title" placeholder="title" />
+        <input type="text" name="description" placeholder="description" />
         <input type="submit" />
     </form>
 </body>
