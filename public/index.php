@@ -26,12 +26,22 @@ function asset($asset)
     $assets = Config::get('assets');
     echo $assets[$asset];
 }
+function get($var)
+{
+    echo isset($var) ? $var : null;
+}
 
 //every route is unique, if we make two identical endpoints, only first one will be executed.
 
 //basic route
 Router::get('/', function () {
-    echo $_GET['test'];
+    View::render('ExampleView', [
+        'helloWorld' => 'Hello World!',
+    ]);
+});
+
+Router::get('/{id}', function (Request $req) {
+    echo $req->params->id;
 });
 
 //example route with data extracted to view

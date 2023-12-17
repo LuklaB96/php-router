@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <?php echo $helloWorld ?>
+    <?php get($helloWorld) ?>
     <form action="/test" method="post">
         <input type="text" name="data1" value="mydata" />
         <input type="text" name="data2" value="mydata" />
