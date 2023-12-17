@@ -36,5 +36,4 @@ final class LoggerConfigTest extends TestCase
         $this->config->setLogLevel($logLevel);
         $this->assertEquals($logLevel, $this->config->getLogLevel());
     }
-
 }
