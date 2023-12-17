@@ -6,6 +6,7 @@ use App\Lib\Config;
 
 class View
 {
+    #[test]
     public static function render(string $viewName, $data = [])
     {
         if (!empty($data)) {

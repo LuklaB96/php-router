@@ -87,7 +87,7 @@ class Router
             echo 'Page not found';
 
             $logger = Logger::getInstance(new FileLogger());
-            $logger->message('Trying to access invalid route: ' . self::$lastRoute);
+            $logger->log('Trying to access invalid route: ' . self::$lastRoute);
         }
         self::clear();
     }

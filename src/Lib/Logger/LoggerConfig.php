@@ -12,25 +12,38 @@ use App\Lib\Config;
  */
 class LoggerConfig
 {
+    /**
+     * Mainly used to identify object instance
+     * Additionally all .log files are created in /LOG_PATH/YOUR_LOGGER_NAME/ directory.
+     * @var string
+     */
     private $name = '';
     private $absolutePath = '';
     private LogLevel $logLevel;
-
-    public function __construct()
+    /**
+     * Used to check whether the log directory is the default or not
+     * @var 
+     */
+    private $default = true;
+    public function __construct(string $name = null, string $absolutePath = null, LogLevel $logLevel = null)
     {
-        $this->name = 'App';
-        $this->logLevel = LogLevel::DEBUG;
-        $this->absolutePath = Config::get('LOG_PATH', __DIR__ . '/../../logs');
+        $this->name = $name ?? 'App';
+        $this->logLevel = $logLevel ?? LogLevel::DEBUG;
+        $this->absolutePath = $absolutePath ?? Config::get('LOG_PATH', __DIR__ . '/../../logs');
+        //check if any config properties are set as custom (not null)
+        if (isset($name) || isset($absolutePath) || isset($logLevel))
+            $this->default = false;
     }
     /**
-     * Mainly used to identify object instance
-     * Additionally all .log files are created in /log/YOUR_LOGGER_NAME_/file.log directory.
+     * Sets name of the instance.
      * @param string $name
      * @return void
      */
     public function setName(string $name)
     {
         $this->name = $name;
+        if ($this->default)
+            $this->default = false;
     }
     /**
      * Set absolute path to directory where all .log files are stored
@@ -40,6 +53,8 @@ class LoggerConfig
     public function setLogDir(string $path)
     {
         $this->absolutePath = $path;
+        if ($this->default)
+            $this->default = false;
     }
     /**
      * LogLevel will be used as prefix for your .log file e.g. LogLevel::DEBUG file will look like debug_date.log
@@ -49,6 +64,8 @@ class LoggerConfig
     public function setLogLevel(LogLevel $logLevel)
     {
         $this->logLevel = $logLevel;
+        if ($this->default)
+            $this->default = false;
     }
     /**
      * Gets current instance name
@@ -73,6 +90,10 @@ class LoggerConfig
     public function getLogLevel(): LogLevel
     {
         return $this->logLevel;
+    }
+    public function isDefault(): bool
+    {
+        return $this->default;
     }
 
 }

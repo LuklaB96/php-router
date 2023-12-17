@@ -43,14 +43,18 @@ class Logger
         return self::$instances[$config->getName()];
     }
     /**
-     * Save message to log file from instance
+     * Save the message to a predetermined environment like file,database etc.
      * @param string $message
      * @return void
      */
-    public function message(string $message): string
+    public function log(string $message): string
     {
-        $this->logger->log($message, $this->config);
-        return $message;
+        $formattedMessage = $this->logger->log($message, $this->config);
+        return $formattedMessage;
+    }
+    public function getConfig(): LoggerConfig
+    {
+        return $this->config;
     }
 
 }
