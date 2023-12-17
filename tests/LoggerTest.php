@@ -7,6 +7,14 @@ use App\Lib\Logger\Logger;
 
 final class LoggerTest extends TestCase
 {
+    private $loggerCfg;
+    private $logger;
+
+    protected function setUp(): void
+    {
+        $this->loggerCfg = new LoggerConfig();
+    }
+
     public function testMessage(): void
     {
         //Assign

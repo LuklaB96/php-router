@@ -8,7 +8,7 @@ class RouteParser
      * @param string $route
      * @return array
      */
-    public static function getRouteParams(string $route): array
+    public static function getRouteParams(string $route): ?array
     {
 
         $uriParams = $_SERVER['REQUEST_URI'];
@@ -52,6 +52,6 @@ class RouteParser
             }
             return $params;
         }
-        return [];
+        return null;
     }
 }
