@@ -4,7 +4,7 @@ namespace App\Lib\Routing\Validator;
 class RouteValidator
 {
     /**
-     * Validate route, checks if $_SERVER['REQUEST_URI'] is matching any avaible routes.
+     * Validate route, checks if $_SERVER['REQUEST_URI'] parameters are matching specified route parameters
      * @param string $route
      * @return bool
      */
@@ -13,17 +13,17 @@ class RouteValidator
         if ($route) {
             $params = $_SERVER['REQUEST_URI'];
             $routeParams = explode('/', $params);
-            $routeParamsBase = explode('/', $route);
+            $uriParams = explode('/', $route);
 
-            if (count($routeParamsBase) != count($routeParams)) {
+            if (count($uriParams) != count($routeParams)) {
                 return false;
             }
 
             $count = 0;
-            foreach ($routeParamsBase as $key => $value) {
+            foreach ($uriParams as $key => $value) {
                 $matching = preg_match("/{.*?}/", $value);
                 if ($matching == 0) {
-                    if ($routeParams[$count] != $routeParamsBase[$count]) {
+                    if ($routeParams[$count] != $uriParams[$count]) {
                         return false;
                     }
                 }
