@@ -11,19 +11,22 @@ class PropertyReader
 {
     /**
      * Get all properites (Name => Value) from valid Entity object instance.
+     * Optional parameter notNull for properties with assigned values only.
      * @param \App\Lib\Entity\Entity $object
      * @return array
      */
-    public static function getProperties(Entity $object): array
+    public static function getProperties(Entity $object, bool $notNull = false): array
     {
         $reflection = new \ReflectionClass($object);
         $properties = [];
 
         foreach ($reflection->getProperties() as $property) {
             if (self::hasAttribute($property)) {
-                $propertyName = $property->getName();
                 $propertyValue = $property->getValue($object);
-                $properties[$propertyName] = $propertyValue;
+                if (!empty($propertyValue) || !$notNull) {
+                    $propertyName = $property->getName();
+                    $properties[$propertyName] = $propertyValue;
+                }
             }
         }
 
@@ -35,5 +38,22 @@ class PropertyReader
         if (!empty($attributes))
             return true;
         return false;
+    }
+    /**
+     * Returns array with name and value keys
+     * @param \App\Lib\Entity\Entity $entity
+     * @throws \Exception
+     * @return array
+     */
+    public static function getPrimaryProperty(Entity $entity): array
+    {
+        $attrs = AttributeReader::getAttributes($entity);
+        foreach ($attrs as $attribute) {
+            if ($attribute['primaryKey'])
+                return ['name' => $attribute['name'],
+                    'value' => $attribute['value']
+                ];
+        }
+        throw new \Exception('Entity primary attribute not specified or null');
     }
 }

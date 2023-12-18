@@ -1,7 +1,7 @@
 <?php
 namespace App\Lib\Database;
 
-use App\Lib\Database\Helpers\SqlQueryCreator;
+use App\Lib\Database\Helpers\SQLQueryBuilder;
 use App\Lib\Database\Mapping\AttributeReader;
 use App\Lib\Entity\Entity;
 use App\Lib\Config;
@@ -42,7 +42,7 @@ class Migrations
             $columns[] = $column;
         }
 
-        $sql = SqlQueryCreator::createTableQuery($columns, $tableName, $dbname);
+        $sql = SQLQueryBuilder::createTableQuery($columns, $tableName, $dbname);
         //if connection is valid, execute sql query
         if ($entity->em->isConnected()) {
             $message = $entity->em->execute($sql);

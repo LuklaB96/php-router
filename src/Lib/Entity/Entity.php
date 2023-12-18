@@ -2,9 +2,9 @@
 namespace App\Lib\Entity;
 
 use App\Lib\Config;
+use App\Lib\Database\Helpers\SQLQueryBuilder;
 use App\Lib\Database\Mapping\AttributeReader;
-use App\Lib\Database\Mapping\Column;
-use App\Lib\Database\Enums\ColumnType;
+use App\Lib\Database\Mapping\PropertyReader;
 use App\Lib\Database\Mapping\PropertyWriter;
 
 
@@ -22,44 +22,43 @@ class Entity
             $this->setDefaultEntityName();
         $this->em = EntityManager::getInstance();
     }
-    public function insert($data, $testdb = false): string
+    public function insert(bool $testdb = false, string $dbname = null): mixed
     {
-        $dbname = $testdb ? Config::get('TEST_DB_NAME') : Config::get('DB_NAME');
-        $columns = implode(', ', array_keys($data));
-        $values = ':' . implode(', :', array_keys($data));
-        $sql = "INSERT INTO $dbname.$this->name ($columns) VALUES ($values)";
+        $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
+        $data = PropertyReader::getProperties($this);
+        $sql = SQLQueryBuilder::createInsertQuery($data, $this->name, $dbname);
         return $this->em->execute($sql, $data);
     }
-    public function update($id, $data, $testdb = false): string
+    public function update(bool $testdb = false, string $dbname = null): mixed
     {
-        $dbname = $testdb ? Config::get('TEST_DB_NAME') : Config::get('DB_NAME');
-        $setClause = '';
-        foreach ($data as $key => $value) {
-            $setClause .= "$key = :$key, ";
-        }
-        $setClause = rtrim($setClause, ', ');
-        $sql = "UPDATE $dbname.$this->name SET $setClause WHERE id = :id";
+        $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
-        $data['id'] = $id;
+        $data = PropertyReader::getProperties($this);
+        $primaryKey = PropertyReader::getPrimaryProperty($this);
 
-        return $this->em->execute($sql, $data);
+        $query = SQLQueryBuilder::createUpdateQuery($data, $this->name, $dbname);
+
+        return $this->em->execute($query, $data);
     }
-    public function delete($id, $testdb = false): string
+    public function delete($id, bool $testdb = false, string $dbname = null): string
     {
-        $dbname = $testdb ? Config::get('TEST_DB_NAME') : Config::get('DB_NAME');
+        $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
         $sql = "DELETE FROM $dbname.$this->name WHERE id = :id";
         $data = ['id' => $id];
 
         return $this->em->execute($sql, $data);
     }
-    public function find($id, $testdb = false)
+    public function find($key, $testdb = false, $dbname = null)
     {
-        $dbname = $testdb ? Config::get('TEST_DB_NAME') : Config::get('DB_NAME');
-        $sql = "SELECT * FROM $dbname.$this->name WHERE id = :id";
-        $data = ['id' => $id];
+        $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
+        $primaryKey = PropertyReader::getPrimaryProperty($this);
+        $query = SQLQueryBuilder::createSelectQuery($dbname, $this->getEntityName(), conditions: [$primaryKey['name'] => '']);
+        $data = [$primaryKey['name'] => $key];
+        $result = $this->em->execute($query, $data); // Assuming query method returns the result set
 
-        return $this->em->execute($sql, $data); // Assuming query method returns the result set
+        //set values to properties for this instance
+        PropertyWriter::setPropertiesFromArray($this, $result[0]);
     }
     public function findAll($testdb = false)
     {
@@ -117,6 +116,15 @@ class Entity
     public function setProperties(array $properties)
     {
         PropertyWriter::setPropertiesFromArray($this, $properties);
+    }
+    private function getDbName($testdb = false, $dbname = null): string
+    {
+        if ($testdb) {
+            $dbname = $testdb ? Config::get('TEST_DB_NAME') : $dbname;
+        } else {
+            $dbname = empty($dbname) ? Config::get('DB_NAME') : $dbname;
+        }
+        return $dbname;
     }
 }
 

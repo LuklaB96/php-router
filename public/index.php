@@ -30,21 +30,17 @@ function get($var)
 {
     echo isset($var) ? $var : null;
 }
-
-$entity = new ExampleEntity();
-
-$attrs = AttributeReader::getAttributes($entity);
-$obj = [];
-foreach ($attrs as $key) {
-    $obj[] = AttributeReader::createColumn($key);
-}
-foreach ($obj as $o)
-    echo json_encode($o) . '</br>';
 //echo json_encode($attrs['id'], JSON_PRETTY_PRINT);
 //every route is unique, if we make two identical endpoints, only first one will be executed.
 
 //basic route
 Router::get('/', function () {
+    $entity = new ExampleEntity();
+    $entity->find(13);
+    echo $entity->getDescription();
+    $entity->setDescription('set description and update');
+    $entity->update();
+
     View::render('ExampleView', [
         'helloWorld' => 'Hello World!',
     ]);
@@ -77,10 +73,10 @@ Router::get('/post/{id}', function (Request $req, Response $res) {
 Router::post('/test', function (Request $req, Response $res) {
     $result = $req->getData();
     $postEntity = new ExampleEntity();
-    $message = $postEntity->insert($result);
-    $res->toJSON([
-        'message' => $message
-    ]);
+    $postEntity->setTitle($result['title']);
+    $postEntity->setDescription($result['description']);
+    $message = $postEntity->insert();
+    $res->toJSON($message);
 });
 
 //check if any route has been set as valid, display error if not.
