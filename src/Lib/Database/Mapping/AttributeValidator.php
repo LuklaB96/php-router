@@ -7,6 +7,14 @@ use App\Lib\Database\Exception\EmptyAttributeArrayException;
 
 class AttributeValidator
 {
+    /**
+     * Validate all required parameters to create database column.
+     * @param array $attributes
+     * @throws \App\Lib\Database\Exception\EmptyAttributeArrayException
+     * @throws \App\Lib\Database\Exception\EmptyColumnNameException
+     * @throws \App\Lib\Database\Exception\EmptyColumnTypeException
+     * @return void
+     */
     public static function validate(array $attributes)
     {
         if (empty($attributes)) {

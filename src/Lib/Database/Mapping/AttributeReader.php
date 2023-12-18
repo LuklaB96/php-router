@@ -32,6 +32,24 @@ class AttributeReader
         return $attributes;
     }
     /**
+     * Get all properites (Name => Value) from valid Entity object instance.
+     * @param \App\Lib\Entity\Entity $object
+     * @return array
+     */
+    public static function getProperties(Entity $object): array
+    {
+        $reflection = new \ReflectionClass($object);
+        $properties = [];
+
+        foreach ($reflection->getProperties() as $property) {
+            $propertyName = $property->getName();
+            $propertyValue = $property->getValue($object);
+            $properties[$propertyName] = $propertyValue;
+        }
+
+        return $properties;
+    }
+    /**
      * Returns Column object created from valid attributes provided in array.
      * @param array $attributes
      * @return Column
