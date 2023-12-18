@@ -35,17 +35,6 @@ class AttributeReader
 
         return $attributes;
     }
-    public static function getPrimaryProperty(Entity $entity): array
-    {
-        $attrs = AttributeReader::getAttributes($entity);
-        foreach ($attrs as $attribute) {
-            if ($attribute['primaryKey'])
-                return ['name' => $attribute['name'],
-                    'value' => $attribute['value']
-                ];
-        }
-        throw new \Exception('Entity primary attribute not specified or null');
-    }
 
     /**
      * Returns Column object created from valid attributes provided in array.
