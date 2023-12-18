@@ -96,9 +96,11 @@ class EntityManager
 
     private function handleExecutionException($e)
     {
-        return $e->getMessage();
+        return [
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+        ];
     }
-
 }
 
 ?>

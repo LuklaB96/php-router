@@ -1,6 +1,8 @@
 <?php
 namespace App\Lib\Database;
 
+use App\Lib\Database\Helpers\SqlQueryCreator;
+use App\Lib\Database\Mapping\AttributeReader;
 use App\Lib\Entity\Entity;
 use App\Lib\Config;
 
@@ -32,22 +34,22 @@ class Migrations
 
         //we using entity name as table name, can be customized in every entity class.
         $tableName = $entity->getEntityName();
-        $sql = "CREATE TABLE $dbname.$tableName (";
-        //get table properties from entity class
-        foreach ($entity->getTableProperties() as $columnName => $columnProperties) {
-            $columnDefinitions[] = "$columnName $columnProperties";
+        $properties = $entity->getProperties();
+
+        $columns = [];
+        foreach ($properties as $property) {
+            $column = AttributeReader::createColumn($property);
+            $columns[] = $column;
         }
 
-        $sql .= implode(', ', $columnDefinitions);
-        $sql .= ")";
-
+        $sql = SqlQueryCreator::createTableQuery($columns, $tableName, $dbname);
         //if connection is valid, execute sql query
         if ($entity->em->isConnected()) {
             $message = $entity->em->execute($sql);
             if ($message == 'ok') {
                 echo "Table $tableName created in: $dbname \r\n";
             } else {
-                echo $message . "\r\n";
+                echo $message['message'] . "\r\n";
             }
         }
     }

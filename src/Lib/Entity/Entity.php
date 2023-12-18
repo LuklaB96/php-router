@@ -2,11 +2,18 @@
 namespace App\Lib\Entity;
 
 use App\Lib\Config;
+use App\Lib\Database\Mapping\AttributeReader;
+use App\Lib\Database\Mapping\Column;
+use App\Lib\Database\Enums\ColumnType;
+use App\Lib\Database\Mapping\PropertyWriter;
 
 
 class Entity
 {
-    protected $properties = [];
+    /**
+     * Table name
+     * @var string
+     */
     protected $name = '';
     public EntityManager $em;
     function __construct()
@@ -101,9 +108,15 @@ class Entity
         $params = explode('\\', get_class($this));
         $this->name = end($params);
     }
-    public function getTableProperties(): array
+    public function getProperties(): array
     {
-        return $this->properties;
+        //get only fields with Column attributes properly configured
+        $classAttributes = AttributeReader::getAttributes($this);
+        return $classAttributes;
+    }
+    public function setProperties(array $properties)
+    {
+        PropertyWriter::setPropertiesFromArray($this, $properties);
     }
 }
 
