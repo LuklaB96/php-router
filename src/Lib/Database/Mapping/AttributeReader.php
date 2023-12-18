@@ -32,7 +32,7 @@ class AttributeReader
         return $attributes;
     }
     /**
-     * Returns Column object created from valid attributes provided in array
+     * Returns Column object created from valid attributes provided in array.
      * @param array $attributes
      * @return Column
      */
