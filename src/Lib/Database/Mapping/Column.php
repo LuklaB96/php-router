@@ -13,7 +13,7 @@ class Column
     public bool $nullable;
     public function __construct(
         string $name,
-        ColumnType $type,
+        ColumnType $type = ColumnType::TEXT,
         ?int $length = null,
         bool $primaryKey = false,
         bool $autoIncrement = false,

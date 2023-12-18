@@ -31,6 +31,12 @@ class SqlQueryCreator
         $sql .= ")";
         return $sql;
     }
+    /**
+     * Creates a column definition from avaible data in Column object
+     * @param \App\Lib\Database\Mapping\Column $column
+     * @throws \Exception
+     * @return string
+     */
     private static function createColumnDefinition(Column $column): string
     {
         $definition = strtoupper($column->type->value);

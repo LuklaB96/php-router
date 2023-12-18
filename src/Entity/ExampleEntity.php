@@ -37,9 +37,9 @@ class ExampleEntity extends Entity
     {
         return $this->id;
     }
-    public function getEntityName()
+    public function setId($id)
     {
-        return $this->name;
+        $this->id = $id;
     }
     public function getTitle()
     {
