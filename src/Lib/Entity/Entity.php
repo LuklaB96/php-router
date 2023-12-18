@@ -34,38 +34,38 @@ class Entity
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
-        $data = PropertyReader::getProperties($this);
-        $primaryKey = PropertyReader::getPrimaryProperty($this);
+        $data = PropertyReader::getProperties($this, notNull: true);
 
         $query = SQLQueryBuilder::createUpdateQuery($data, $this->name, $dbname);
 
         return $this->em->execute($query, $data);
     }
-    public function delete($id, bool $testdb = false, string $dbname = null): string
+    public function delete(bool $testdb = false, string $dbname = null): string
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
-        $sql = "DELETE FROM $dbname.$this->name WHERE id = :id";
-        $data = ['id' => $id];
-
-        return $this->em->execute($sql, $data);
+        $primaryKey = PropertyReader::getPrimaryProperty($this);
+        $query = SQLQueryBuilder::createDeleteQuery($this->getEntityName(), $dbname, [$primaryKey['name'] => $primaryKey['value']]);
+        return $this->em->execute($query);
     }
     public function find($key, $testdb = false, $dbname = null)
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
         $primaryKey = PropertyReader::getPrimaryProperty($this);
-        $query = SQLQueryBuilder::createSelectQuery($dbname, $this->getEntityName(), conditions: [$primaryKey['name'] => '']);
+        $query = SQLQueryBuilder::createSelectQuery($this->getEntityName(), $dbname, conditions: [$primaryKey['name'] => '']);
         $data = [$primaryKey['name'] => $key];
-        $result = $this->em->execute($query, $data); // Assuming query method returns the result set
+        $result = $this->em->execute($query, $data);
 
         //set values to properties for this instance
-        PropertyWriter::setPropertiesFromArray($this, $result[0]);
+        if (is_array($result) && !empty($result)) {
+            PropertyWriter::setPropertiesFromArray($this, $result[0]);
+        }
     }
     public function findAll($testdb = false)
     {
         $dbname = $testdb ? Config::get('TEST_DB_NAME') : Config::get('DB_NAME');
         $sql = "SELECT * FROM $dbname.$this->name";
 
-        return $this->em->execute($sql); // Assuming query method returns the result set
+        return $this->em->execute($sql);
     }
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, $testdb = false)
     {
@@ -91,7 +91,7 @@ class Entity
 
         $sql = "SELECT * FROM $dbname.$this->name WHERE $whereClause$orderByClause$limitClause";
 
-        return $this->em->execute($sql, $data); // Assuming query method returns the result set
+        return $this->em->execute($sql, $data);
     }
     public function findOneBy(array $criteria, array $orderBy = null, $testdb = false)
     {

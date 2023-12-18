@@ -31,7 +31,7 @@ class SQLQueryBuilder
         }
 
         $query .= implode(', ', $columnDefinitions);
-        $query .= ")";
+        $query .= ");";
         return $query;
     }
     /**
@@ -91,7 +91,7 @@ class SQLQueryBuilder
 
         return $query;
     }
-    public static function createSelectQuery(string $dbName, string $tableName, ?array $columns = null, ?array $conditions = null): string
+    public static function createSelectQuery(string $tableName, string $dbName, ?array $columns = null, ?array $conditions = null): string
     {
         $columnsStr = '*';
         if ($columns !== null) {
@@ -101,8 +101,16 @@ class SQLQueryBuilder
 
         if ($conditions !== null && !empty($conditions)) {
             $conditionsStr = self::selectFilter($conditions);
-            $query .= " WHERE $conditionsStr";
+            $query .= " WHERE $conditionsStr;";
         }
+
+        return $query;
+    }
+    public static function createDeleteQuery(string $tableName, string $dbName, array $conditions): string
+    {
+        $conditionsStr = self::selectFilter($conditions);
+
+        $query = "DELETE FROM `$dbName`.`$tableName` WHERE $conditionsStr;";
 
         return $query;
     }
