@@ -3,6 +3,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Lib\Assets\AssetMapper;
 use App\Entity\ExampleEntity;
+use App\Lib\Assets\RenderAsset;
 use App\Lib\Database\Mapping\AttributeReader;
 use App\Lib\PropAccessor\PropertyAccessor;
 use App\Main\App;
@@ -13,6 +14,9 @@ use App\Lib\View\View;
 use App\Lib\Config;
 
 //check if uri exists as a public file in /config/asset_mapper_config.php
+//header('Content-Type: text/css; charset=UTF-8');
+//readfile(__DIR__ . '/assets/styles/app.css');
+
 $isAsset = AssetMapper::isAsset();
 if ($isAsset) {
     return false;
@@ -30,7 +34,6 @@ function get($var)
 {
     echo isset($var) ? $var : null;
 }
-//echo json_encode($attrs['id'], JSON_PRETTY_PRINT);
 //every route is unique, if we make two identical endpoints, only first one will be executed.
 
 //basic route
@@ -46,8 +49,8 @@ Router::get('/', function () {
     ]);
 });
 
-Router::get('/{id}', function (Request $req) {
-    echo $req->params->id;
+Router::get('/phpinfo', function (Request $req) {
+    echo apache_get_version();
 });
 
 //example route with data extracted to view
