@@ -1,8 +1,9 @@
 <?php
 namespace App\Entity;
 
+use App\Lib\Database\Enums\ColumnType;
 use App\Lib\Entity\Entity;
-
+use App\Lib\Database\Mapping\Column;
 
 class ExampleEntity extends Entity
 {
@@ -21,4 +22,9 @@ class ExampleEntity extends Entity
         'title' => 'VARCHAR(250) NOT NULL',
         'description' => 'LONGTEXT NOT NULL',
     ];
+
+    #[Column(type: ColumnType::INT, primaryKey: true, autoIncrement: true)]
+    private $id;
+    #[Column(type: ColumnType::TEXT, nullable: true, length: 100)]
+    private $title = 'test';
 }

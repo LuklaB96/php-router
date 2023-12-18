@@ -1,17 +1,16 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Lib\Assets\AssetMapper;
+use App\Entity\ExampleEntity;
+use App\Lib\Database\Mapping\AttributeReader;
+use App\Lib\PropAccessor\PropertyAccessor;
 use App\Main\App;
 use App\Lib\Routing\Router;
 use App\Lib\Routing\Response;
 use App\Lib\Routing\Request;
 use App\Lib\View\View;
 use App\Lib\Config;
-
-use App\Entity\ExampleEntity;
-
-
 
 //check if uri exists as a public file in /config/asset_mapper_config.php
 $isAsset = AssetMapper::isAsset();
@@ -25,11 +24,23 @@ function asset($asset)
     $assets = Config::get('assets');
     echo $assets[$asset];
 }
+//can be used in views if we are sure that specific variable will be extracted. 
+//it will simply insert targeted variable value into html document
 function get($var)
 {
     echo isset($var) ? $var : null;
 }
 
+$entity = new ExampleEntity();
+
+$attrs = AttributeReader::getAttributes($entity);
+$obj = [];
+foreach ($attrs as $key) {
+    $obj[] = AttributeReader::createColumn($key);
+}
+foreach ($obj as $o)
+    echo json_encode($o) . '</br>';
+//echo json_encode($attrs['id'], JSON_PRETTY_PRINT);
 //every route is unique, if we make two identical endpoints, only first one will be executed.
 
 //basic route

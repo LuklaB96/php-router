@@ -1,6 +1,6 @@
 {
-    "name": "vendor/mikroblog",
-    "description": "Basic multi-user blog application",
+    "name": "vendor/php-router",
+    "description": "Basic router",
     "type": "project",
     "license": "MIT",
     "autoload": {
