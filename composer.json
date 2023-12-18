@@ -3,6 +3,7 @@
     "description": "Basic router",
     "type": "project",
     "license": "MIT",
+    "test": "vendor/bin/phpunit /tests",
     "autoload": {
         "psr-4": {
             "App\\": "src/"

@@ -14,13 +14,17 @@ class AttributeReader
     public static function getAttributes(Entity $object): array
     {
         $reflection = new \ReflectionClass($object);
-        $attributes = [];
 
+        //storing all attributes from Entity class object that can be managed easly.
+        $attributes = [];
+        //loop to get all properties from reflection
         foreach ($reflection->getProperties() as $property) {
+            //get property name, value and attributes
             $propertyName = $property->getName();
             $propertyValue = $property->getValue($object);
             $propertyAttributes = $property->getAttributes();
 
+            //loop through attributes, get all attribute arugments passed, additionally store name and value of the property, so it will be easier to access it (name is unique)
             foreach ($propertyAttributes as $attribute) {
                 $arguments = $attribute->getArguments();
                 $arguments['value'] = $propertyValue;
