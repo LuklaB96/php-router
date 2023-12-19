@@ -34,7 +34,7 @@ class Migrations
 
         //we using entity name as table name, can be customized in every entity class.
         $tableName = $entity->getEntityName();
-        $properties = $entity->getProperties();
+        $properties = $entity->getAttributes();
 
         $columns = [];
         foreach ($properties as $property) {
@@ -42,7 +42,7 @@ class Migrations
             $columns[] = $column;
         }
 
-        $sql = SQLQueryBuilder::createTableQuery($columns, $tableName, $dbname);
+        $sql = SQLQueryBuilder::createTable($columns, $tableName, $dbname);
         //if connection is valid, execute sql query
         if ($entity->em->isConnected()) {
             $message = $entity->em->execute($sql);

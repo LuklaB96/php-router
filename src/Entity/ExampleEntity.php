@@ -19,6 +19,7 @@ class ExampleEntity extends Entity
      * Default primary key for our table
      * @var 
      */
+    public $costam;
     #[Column(type: ColumnType::INT, primaryKey: true, autoIncrement: true, length: 6)]
     protected $id;
     /**

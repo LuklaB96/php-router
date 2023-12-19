@@ -16,7 +16,7 @@ class SQLQueryBuilder
      * @param bool $checkExists
      * @return string
      */
-    public static function createTableQuery(array $columns, string $tableName, string $dbname, bool $checkExists = false): string
+    public static function createTable(array $columns, string $tableName, string $dbname, bool $checkExists = false): string
     {
 
         $query = "CREATE TABLE `$dbname`.`$tableName` (";
@@ -71,14 +71,14 @@ class SQLQueryBuilder
      * @param string $dbname
      * @return string
      */
-    public static function createInsertQuery(array $data, string $tableName, string $dbname): string
+    public static function insert(array $data, string $tableName, string $dbname): string
     {
         $columns = implode(', ', array_keys($data));
         $placeholders = ':' . implode(', :', array_keys($data));
         $query = "INSERT INTO `$dbname`.`$tableName` ($columns) VALUES ($placeholders);";
         return $query;
     }
-    public static function createUpdateQuery(array $data, string $tableName, string $dbName): string
+    public static function update(array $data, string $tableName, string $dbName): string
     {
         $setClause = [];
         foreach ($data as $key => $value) {
@@ -91,7 +91,7 @@ class SQLQueryBuilder
 
         return $query;
     }
-    public static function createSelectQuery(string $tableName, string $dbName, ?array $columns = null, ?array $conditions = null): string
+    public static function select(string $tableName, string $dbName, ?array $columns = null, ?array $conditions = null): string
     {
         $columnsStr = '*';
         if ($columns !== null) {
@@ -106,7 +106,7 @@ class SQLQueryBuilder
 
         return $query;
     }
-    public static function createDeleteQuery(string $tableName, string $dbName, array $conditions): string
+    public static function delete(string $tableName, string $dbName, array $conditions): string
     {
         $conditionsStr = self::selectFilter($conditions);
 

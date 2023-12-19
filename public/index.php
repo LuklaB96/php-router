@@ -1,11 +1,9 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use App\Entity\Person;
 use App\Lib\Assets\AssetMapper;
 use App\Entity\ExampleEntity;
-use App\Lib\Assets\RenderAsset;
-use App\Lib\Database\Mapping\AttributeReader;
-use App\Lib\PropAccessor\PropertyAccessor;
 use App\Main\App;
 use App\Lib\Routing\Router;
 use App\Lib\Routing\Response;
@@ -38,11 +36,9 @@ function get($var)
 
 //basic route
 Router::get('/', function () {
-    $entity = new ExampleEntity();
-    $entity->find(13);
-    echo $entity->getDescription();
-    $entity->setDescription('set description and update');
-    $entity->update();
+    $person = new Person();
+    $person->find(1);
+    echo $person->getImie();
 
     View::render('ExampleView', [
         'helloWorld' => 'Hello World!',
@@ -71,14 +67,44 @@ Router::get('/post/{id}', function (Request $req, Response $res) {
         'status' => 'ok'
     ]);
 });
+Router::get('/person/{id}/{imie}/{nazwisko}', function (Request $req, Response $res) {
+    $res->toJSON([
+        'post' => [
+            'id' => $req->params->id,
+            'imie' => $req->params->imie,
+            'nazwisko' => $req->params->nazwisko,
+        ],
+        'status' => 'ok'
+    ]);
+});
+
+Router::get('/person/{id}', function (Request $req, Response $res) {
+    $person = new Person();
+    $person->find($req->params->id);
+    if ($person->getId() == null) {
+        $res->toJSON([
+            'status' => 'not found'
+        ]);
+    } else {
+        $res->toJSON([
+            'person' => [
+                'id' => $person->getId(),
+                'imie' => $person->getImie(),
+                'nazwisko' => $person->getNazwisko()
+            ],
+            'status' => 'ok'
+        ]);
+    }
+});
 
 //will only work when properly sent POST request.
 Router::post('/test', function (Request $req, Response $res) {
     $result = $req->getData();
-    $postEntity = new ExampleEntity();
-    $postEntity->setTitle($result['title']);
-    $postEntity->setDescription($result['description']);
-    $message = $postEntity->insert();
+    $person = new Person();
+
+    $person->setImie($result['imie']);
+    $person->setNazwisko($result['nazwisko']);
+    $message = $person->insert();
     $res->toJSON($message);
 });
 

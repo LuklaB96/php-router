@@ -10,12 +10,12 @@ use App\Lib\Entity\Entity;
 class PropertyReader
 {
     /**
-     * Get all properites (Name => Value) from valid Entity object instance.
+     * Get all properites with attributes (Name => Value) from valid Entity object instance.
      * Optional parameter notNull for properties with assigned values only.
      * @param \App\Lib\Entity\Entity $object
      * @return array
      */
-    public static function getProperties(Entity $object, bool $notNull = false): array
+    public static function getProperties(Entity $object, bool $null = true): array
     {
         $reflection = new \ReflectionClass($object);
         $properties = [];
@@ -23,7 +23,7 @@ class PropertyReader
         foreach ($reflection->getProperties() as $property) {
             if (self::hasAttribute($property)) {
                 $propertyValue = $property->getValue($object);
-                if (!empty($propertyValue) || !$notNull) {
+                if (!empty($propertyValue) || $null) {
                     $propertyName = $property->getName();
                     $properties[$propertyName] = $propertyValue;
                 }
