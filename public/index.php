@@ -3,7 +3,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Entity\Person;
 use App\Lib\Assets\AssetMapper;
-use App\Entity\ExampleEntity;
 use App\Main\App;
 use App\Lib\Routing\Router;
 use App\Lib\Routing\Response;
@@ -32,6 +31,9 @@ function get($var)
 {
     echo isset($var) ? $var : null;
 }
+
+//router instance
+$router = Router::getInstance('default');
 //every route is unique, if we make two identical endpoints, only first one will be executed.
 
 //example routes
@@ -107,8 +109,10 @@ Router::post('/test', function (Request $req, Response $res) {
     $res->toJSON($message);
 });
 
-//check if any route has been set as valid, display error like 'page not found' if not.
-Router::check();
+//check if any route has been set as valid, display error like 'page not found' or render specific view for this type of event.
+$executed = Router::check();
+if ($executed === false)
+    View::render('Error404');
 
 App::run();
 

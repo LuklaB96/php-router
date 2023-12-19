@@ -2,54 +2,61 @@
 
 namespace App\Lib\Routing;
 
-use App\Entity\ExampleEntity;
-use App\Lib\Entity\PropertyAccessor2;
 use App\Lib\Logger\Logger;
-use App\Lib\Config;
 use App\Lib\Logger\Types\FileLogger;
+use App\Lib\Routing\Exception\RouterCheckException;
 use App\Lib\Routing\Uri\RouteParser;
 use App\Lib\Routing\Validator\RouteValidator;
 
 class Router
 {
 
+    private static $instances = [];
     //this will hold information if exactly one valid route was successfully used.
-    private static $routeExecuted = false;
-    private static $validRouteName = '';
-    private static $lastRoute = '';
-    private static $checked = false;
-    public static function get($route, $callback)
+    private $routeExecuted = false;
+    private $validRouteName = '';
+    private $lastRoute = '';
+    private $checked = false;
+    public function get($route, $callback)
     {
-        self::$lastRoute = $_SERVER['REQUEST_URI'];
+        $this->lastRoute = $_SERVER['REQUEST_URI'];
         if (strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') !== 0) {
             return;
         }
         //if route with same name has been executed already, do nothing.
-        if (self::$validRouteName == $route) {
+        if ($this->validRouteName == $route) {
             return throw new \Exception('Duplicated route: ' . $route);
         }
 
-        self::on($route, $callback);
+        $this->on($route, $callback);
     }
 
-    public static function post($route, $callback)
+    public static function getInstance(string $router): Router
     {
-        self::$lastRoute = $_SERVER['REQUEST_URI'];
+        if (empty(self::$instances[$router])) {
+            return self::$instances[$router] = new Router();
+        }
+
+        return self::$instances[$router];
+    }
+    public function post($route, $callback)
+    {
+        $this->lastRoute = $_SERVER['REQUEST_URI'];
         if (strcasecmp($_SERVER['REQUEST_METHOD'], 'POST') !== 0) {
             return;
         }
         //if route with same name has been executed already, do nothing.
-        if (self::$validRouteName == $route) {
+        if ($this->validRouteName == $route) {
             return throw new \Exception('Duplicated route: ' . $route);
         }
-        self::on($route, $callback);
+        $this->on($route, $callback);
     }
 
-    public static function on($route, $callback)
+    public function on($route, $callback)
     {
         $validRoute = RouteValidator::validate($route);
         if ($validRoute) {
-            self::$routeExecuted = true;
+            $this->routeExecuted = true;
             //create params object from valid route and uri
             $params = RouteParser::getRouteParams($route);
 
@@ -60,47 +67,45 @@ class Router
             } else {
                 $callback(new Request(), new Response());
             }
-            self::$validRouteName = $route;
+            $this->validRouteName = $route;
         }
     }
     /**
-     * Reset router to default settings.
+     * Reset router properties to default values, check function can be called again.
      * @return void
      */
-    public static function reset()
+    public function reset()
     {
-        self::clear();
-        self::$checked = false;
+        $this->clear();
+        $this->checked = false;
     }
     /**
-     * Check if any valid route was used, if not, this should display errors for end user.
-     * Never call it more than once.
-     * @return void
+     * @return bool true if route was executed correctly, otherwise false
      */
-    public static function check()
+    public function check(): bool
     {
-        if (!self::$checked) {
-            self::$checked = true;
+        if (!$this->checked) {
+            $this->checked = true;
         } else {
-            return throw new \Exception("Route::check() function was called twice on the same route.");
+            return throw new RouterCheckException(message: "Route::check() function was called twice on the same route.");
         }
-        if (!self::$routeExecuted) {
-            //code for redirect / error display if page was not found
-            echo 'Page not found';
-
+        if (!$this->routeExecuted) {
             $logger = Logger::getInstance(new FileLogger());
-            $logger->log('Trying to access invalid route: ' . self::$lastRoute);
+            $logger->log('Trying to access invalid route: ' . $this->lastRoute);
+            $this->clear();
+            return false;
         }
-        self::clear();
+        $this->clear();
+        return true;
     }
     /**
      * Clears all information about current and previous routes
      * @return void
      */
-    public static function clear()
+    public function clear()
     {
-        self::$routeExecuted = false;
-        self::$lastRoute = '';
-        self::$validRouteName = '';
+        $this->routeExecuted = false;
+        $this->lastRoute = '';
+        $this->validRouteName = '';
     }
 }
