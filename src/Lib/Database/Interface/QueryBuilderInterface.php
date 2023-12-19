@@ -1,6 +1,10 @@
 <?php
 namespace App\Lib\Database\Interface;
 
+use App\Lib\Database\Mapping\Column;
+
+
+
 /**
  * 
  */
@@ -23,7 +27,7 @@ interface QueryBuilderInterface
      * @throws \Exception when @param \App\Lib\Database\Mapping\Column attributes are invalid e.g. 'primary key auto_increment null'
      * @return string string ready to be concatenated with other parts of the SQL query
      */
-    private static function createColumnDefinition(Column $column): string;
+    public static function createColumnDefinition(Column $column): string;
     /**
      * @param  array  $data      syntax: ['column_name' => 'value']
      * @param  string $tableName

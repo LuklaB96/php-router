@@ -27,7 +27,7 @@ class QueryBuilder implements QueryBuilderInterface
         $query .= ");";
         return $query;
     }
-    private static function createColumnDefinition(Column $column): string
+    public static function createColumnDefinition(Column $column): string
     {
         $definition = strtoupper($column->type->value);
         if ($column->length) {
