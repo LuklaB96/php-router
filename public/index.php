@@ -11,10 +11,10 @@ use App\Lib\Routing\Request;
 use App\Lib\View\View;
 use App\Lib\Config;
 
-//check if uri exists as a public file in /config/asset_mapper_config.php
+
 //header('Content-Type: text/css; charset=UTF-8');
 //readfile(__DIR__ . '/assets/styles/app.css');
-
+//check if uri exists as a public file in or is in /config/asset_mapper.php
 $isAsset = AssetMapper::isAsset();
 if ($isAsset) {
     return false;
@@ -37,8 +37,10 @@ function get($var)
 //basic route
 Router::get('/', function () {
     $person = new Person();
-    $person->find(1);
-    echo $person->getImie();
+    $personRepository = $person->findAll();
+    foreach ($personRepository as $p) {
+        echo $p->getImie() . '</br>';
+    }
 
     View::render('ExampleView', [
         'helloWorld' => 'Hello World!',

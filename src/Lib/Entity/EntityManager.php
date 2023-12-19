@@ -5,8 +5,21 @@ use App\Lib\Config;
 
 class EntityManager
 {
+    /**
+     * Singleton object instance
+     * @var 
+     */
     private static ?EntityManager $instance = null;
+    /**
+     * Main PDO connection
+     * @var 
+     */
     private $conn;
+    /**
+     * Can be used as a container for last error thrown by database
+     * @var string
+     */
+    private $dbError = '';
     private function __construct()
     {
         $dbhost = Config::get('DB_HOST');
@@ -22,7 +35,7 @@ class EntityManager
      * @param string $dbpassword
      * @return bool
      */
-    public function setConnection(#[\SensitiveParameter] string $dbhost, #[\SensitiveParameter] string $dbuser, #[\SensitiveParameter] string $dbpassword = ''): bool
+    public function setConnection(#[\SensitiveParameter] string $dbhost, #[\SensitiveParameter] string $dbuser, #[\SensitiveParameter] string $dbpassword = null): bool
     {
         $dsn = "mysql:host=$dbhost;";
         try {
@@ -30,6 +43,7 @@ class EntityManager
             return true;
         } catch (\PDOException $e) {
             $this->conn = null;
+            $this->dbError = $e->getMessage();
             return false;
         }
     }
@@ -62,6 +76,8 @@ class EntityManager
      */
     public function execute($sql, array $data = []): string|array
     {
+        if ($this->isConnected() == false)
+            throw new \Exception("You are not connected to database: $this->dbError");
         $stmt = $this->conn->prepare($sql);
         if (empty($data)) {
             try {

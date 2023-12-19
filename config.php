@@ -1,6 +1,10 @@
 <?php
 include 'config/asset_mapper.php';
 
+/**
+ * This is main config file, it should be properly configured, otherwise exceptions can be thrown.
+ */
+
 return [
     //absolute dir paths
     'LOG_PATH' => __DIR__ . '/logs',
@@ -12,7 +16,7 @@ return [
     'PUBLIC_ASSET_DIR' => '/public/assets',
     //database credentials
     'DB_USER' => 'root',
-    'DB_PASSWORD' => 'testdbpass1',
+    'DB_PASSWORD' => '',
     'DB_NAME' => 'main_db',
     'TEST_DB_NAME' => 'test_db',
     'DB_HOST' => '127.0.0.1',

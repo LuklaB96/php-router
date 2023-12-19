@@ -10,11 +10,11 @@ class SQLQueryBuilder
 {
     /**
      * Returns a create table query string
-     * @param array $columns
+     * @param array $columns array with valid \App\Lib\Database\Mapping\Column objects
      * @param string $tableName
      * @param string $dbname
-     * @param bool $checkExists
-     * @return string
+     * @param bool $checkExists if true, query will have 'CREATE TABLE IF NOT EXISTS' clause, otherwise 'CREATE TABLE dbname.tablename...'
+     * @return string full query ready to be executed
      */
     public static function createTable(array $columns, string $tableName, string $dbname, bool $checkExists = false): string
     {
@@ -36,9 +36,9 @@ class SQLQueryBuilder
     }
     /**
      * Creates a column definition from avaible data in Column object
-     * @param \App\Lib\Database\Mapping\Column $column
-     * @throws \Exception
-     * @return string
+     * @param \App\Lib\Database\Mapping\Column $column object with valid attributes
+     * @throws \Exception when @param \App\Lib\Database\Mapping\Column attributes are invalid e.g. 'primary key auto_increment null'
+     * @return string string ready to be concatenated with other parts of the SQL query
      */
     private static function createColumnDefinition(Column $column): string
     {
@@ -64,12 +64,10 @@ class SQLQueryBuilder
     }
 
     /**
-     * Creates full insert query and returns it as a string.
-     * array with data needs to have ['key' => 'value'] structure where key is column name, and value is valid value to be inserted into this collumn.
-     * @param array $data
+     * @param array $data syntax: ['column_name' => 'value']
      * @param string $tableName
      * @param string $dbname
-     * @return string
+     * @return string full query ready to be executed
      */
     public static function insert(array $data, string $tableName, string $dbname): string
     {
@@ -78,6 +76,12 @@ class SQLQueryBuilder
         $query = "INSERT INTO `$dbname`.`$tableName` ($columns) VALUES ($placeholders);";
         return $query;
     }
+    /**
+     * @param array $data syntax: ['column_name' => 'value']
+     * @param string $tableName
+     * @param string $dbName
+     * @return string full query ready to be executed
+     */
     public static function update(array $data, string $tableName, string $dbName): string
     {
         $setClause = [];
@@ -91,7 +95,17 @@ class SQLQueryBuilder
 
         return $query;
     }
-    public static function select(string $tableName, string $dbName, ?array $columns = null, ?array $conditions = null): string
+    /**
+     * 
+     * @param string $tableName
+     * @param string $dbName 
+     * @param string $orderBy syntax: column_name ASC|DESC
+     * @param array $columns if empty, return all (*) records.
+     * @param array $conditions syntax: ['column_name' => 'value']
+     * @param int $limit no limit if null
+     * @return string full query ready to be executed
+     */
+    public static function select(string $tableName, string $dbName, string $orderBy = null, array $columns = null, array $conditions = null, int $limit = null): string
     {
         $columnsStr = '*';
         if ($columns !== null) {
@@ -101,11 +115,27 @@ class SQLQueryBuilder
 
         if ($conditions !== null && !empty($conditions)) {
             $conditionsStr = self::selectFilter($conditions);
-            $query .= " WHERE $conditionsStr;";
+            $query .= " WHERE $conditionsStr";
         }
+
+        if ($orderBy !== null) {
+            $query .= " ORDER BY $orderBy";
+        }
+
+        if ($limit !== null) {
+            $query .= " LIMIT $limit";
+        }
+
+        $query .= ";";
 
         return $query;
     }
+    /**
+     * @param string $tableName
+     * @param string $dbName
+     * @param array $conditions syntax: ['column_name' => 'value']
+     * @return string full query ready to be executed
+     */
     public static function delete(string $tableName, string $dbName, array $conditions): string
     {
         $conditionsStr = self::selectFilter($conditions);
@@ -114,6 +144,11 @@ class SQLQueryBuilder
 
         return $query;
     }
+    /**
+     * Creates a parametrized SQL filter e.g. column_name = :column_name for sql injection security 
+     * @param array $conditions syntax: ['column_name' => 'value'], only column_name will be used
+     * @return string string ready to be concatenated with other parts of the SQL query
+     */
     private static function selectFilter(array $conditions): string
     {
         $conditionStr = [];

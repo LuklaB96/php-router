@@ -25,9 +25,9 @@ class Entity
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
-        $data = PropertyReader::getProperties($this);
-        $sql = SQLQueryBuilder::insert($data, $this->getEntityName(), $dbname);
-        return $this->em->execute($sql, $data);
+        $data = PropertyReader::getProperties($this); //get all entity properties, key(column name) => value array
+        $query = SQLQueryBuilder::insert($data, $this->getEntityName(), $dbname); //build full query from data provided
+        return $this->em->execute($query, $data); //execute query using EntityManager
     }
     /**
      * Update entity in database
@@ -39,11 +39,9 @@ class Entity
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
-        $data = PropertyReader::getProperties($this, notNull: true);
-
-        $query = SQLQueryBuilder::update($data, $this->getEntityName(), $dbname);
-
-        return $this->em->execute($query, $data);
+        $data = PropertyReader::getProperties($this, notNull: true); //get all entity properties, key(column name) => value array
+        $query = SQLQueryBuilder::update($data, $this->getEntityName(), $dbname); //build full query from data provided
+        return $this->em->execute($query, $data); //execute query using EntityManager
     }
     /**
      * Delete entity from database
@@ -54,9 +52,10 @@ class Entity
     public function delete(bool $testdb = false, string $dbname = null): string
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
-        $primaryKey = PropertyReader::getPrimaryProperty($this);
-        $query = SQLQueryBuilder::delete($this->getEntityName(), $dbname, [$primaryKey['name'] => $primaryKey['value']]);
-        return $this->em->execute($query);
+
+        $primaryKey = PropertyReader::getPrimaryProperty($this); //Get primary key if exists
+        $query = SQLQueryBuilder::delete($this->getEntityName(), $dbname, [$primaryKey['name'] => $primaryKey['value']]); //build full query from data provided
+        return $this->em->execute($query); //execute query using EntityManager
     }
     /**
      * Find entity by primary key in database and update instance properties
@@ -65,7 +64,7 @@ class Entity
      * @param mixed $dbname
      * @return void
      */
-    public function find($key, $testdb = false, $dbname = null)
+    public function find($key, $testdb = false, string $dbname = null)
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
         $primaryKey = PropertyReader::getPrimaryProperty($this);
@@ -79,75 +78,61 @@ class Entity
         }
     }
     /**
-     * Find all data fron this entity in database
-     * @param mixed $testdb
-     * @return array|string
+     * Find all data for this entity in database
+     * @param bool $testdb
+     * @return Entity[]
      */
-    public function findAll($testdb = false)
+    public function findAll(bool $testdb = false, string $dbname = null): array
     {
-        $dbname = $testdb ? Config::get('TEST_DB_NAME') : Config::get('DB_NAME');
-        $sql = "SELECT * FROM $dbname.$this->name";
+        $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
+        $query = SQLQueryBuilder::select($this->getEntityName(), $dbname);
 
-        return $this->em->execute($sql);
+        $result = $this->em->execute($query);
+        $repository = $this->createRepository($result);
+        return $repository;
     }
     /**
      * Find entities in database that meets criteria passed in array
      * @param array $criteria
-     * @param array $orderBy
+     * @param string $orderBy syntax: column_name ASC|DESC
      * @param int $limit
      * @param mixed $testdb
-     * @return array|string
+     * @return array|null
      */
-    public function findBy(array $criteria, array $orderBy = null, int $limit = null, $testdb = false)
+    public function findBy(array $criteria, string $orderBy = null, int $limit = null, $testdb = false, string $dbname = null): array
     {
-        $dbname = $testdb ? Config::get('TEST_DB_NAME') : Config::get('DB_NAME');
-        $whereClause = '';
-        $data = [];
-        foreach ($criteria as $key => $value) {
-            $whereClause .= "$key = :$key AND ";
-            $data[$key] = $value;
-        }
-        $whereClause = rtrim($whereClause, 'AND ');
-
-        $orderByClause = '';
-        if ($orderBy !== null) {
-            $orderByClause = ' ORDER BY ';
-            foreach ($orderBy as $key => $value) {
-                $orderByClause .= "$key $value, ";
-            }
-            $orderByClause = rtrim($orderByClause, ', ');
-        }
-
-        $limitClause = ($limit !== null) ? " LIMIT $limit" : '';
-
-        $sql = "SELECT * FROM $dbname.$this->name WHERE $whereClause$orderByClause$limitClause";
-
-        return $this->em->execute($sql, $data);
+        $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
+        $query = SQLQueryBuilder::select($this->getEntityName(), $dbname, conditions: $criteria, limit: $limit);
+        $result = $this->em->execute($query, $criteria);
+        $repository = $this->createRepository($result);
+        return $repository;
     }
     /**
      * Find one entity that meets the criteria and order if specified
-     * @param array $criteria
-     * @param array $orderBy
-     * @param mixed $testdb
-     * @return mixed
+     * @param array $criteria syntax: array['column_name' => 'value']
+     * @param string $orderBy syntax: column_name ASC|DESC
+     * @param bool $testdb
      */
-    public function findOneBy(array $criteria, array $orderBy = null, $testdb = false)
+    public function findOneBy(array $criteria, string $orderBy = null, bool $testdb = false, string $dbname = null)
     {
-        $results = $this->findBy($criteria, $orderBy, 1, $testdb);
-        return !empty($results) ? $results[0] : null;
+        $result = $this->findBy($criteria, orderBy: $orderBy, limit: 1, testdb: $testdb, dbname: $dbname);
+        if (is_array($result) && !empty($result)) {
+            PropertyWriter::setPropertiesFromArray($this, $result[0]);
+        }
     }
     /**
-     * Get entity class name
-     * @return string
+     * @param bool $withNamespace if true, will return \\App\\Namespace\\Example\\ClassName, if false will return only ClassName
+     * @return string entity class name with or without namespace
      */
-    public function getEntityName(): string
+    public function getEntityName(bool $withNamespace = false): string
     {
+        if ($withNamespace)
+            return get_class($this);
         $params = explode('\\', get_class($this));
         return end($params);
     }
     /**
-     * Get all entity properties with attributes 
-     * @return array
+     * @return array array with all entity properties that have attributes 
      */
     public function getAttributes(): array
     {
@@ -160,24 +145,48 @@ class Entity
         PropertyWriter::setPropertiesFromArray($this, $properties);
     }
     /**
-     * Get entity properties array(name => value)
-     * Optional null if those are only needed.
-     * @param bool $null Optional if only with properties with values needed
-     * @return array
+     * @param bool $null if needs all or only with not empty value
+     * @return array entity properties array(property_name => value)
      */
     public function getProperties(bool $null = true): array
     {
         $classProperties = PropertyReader::getProperties($this, $null);
         return $classProperties;
     }
-    private function getDbName($testdb = false, $dbname = null): string
+    /**
+     * @param mixed $testdb
+     * @param mixed $dbname
+     * @return string test db name if $testdb = true, custom dbname if $dbname parameter is not null/empty or base name from config file in this particular order
+     */
+    private function getDbName($testdb = false, string $dbname = null): string
     {
         if ($testdb) {
-            $dbname = $testdb ? Config::get('TEST_DB_NAME') : $dbname;
+            $dbname = Config::get('TEST_DB_NAME');
         } else {
             $dbname = empty($dbname) ? Config::get('DB_NAME') : $dbname;
         }
         return $dbname;
+    }
+    /**
+     * creating entity repository array if more than one entity is expected to be returned
+     * @param array $data
+     * @return Entity[]
+     */
+    private function createRepository(array $data): array
+    {
+        if (!is_array($data) || empty($data))
+            return [];
+
+        $entityRepository = [];
+        foreach ($data as $entityProperties) {
+            if (is_array($entityProperties) && !empty($entityProperties)) {
+                $className = $this->getEntityName(withNamespace: true);
+                $entity = new $className;
+                PropertyWriter::setPropertiesFromArray($entity, $entityProperties);
+                $entityRepository[] = $entity;
+            }
+        }
+        return $entityRepository;
     }
 }
 
