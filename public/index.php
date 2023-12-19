@@ -34,7 +34,7 @@ function get($var)
 }
 //every route is unique, if we make two identical endpoints, only first one will be executed.
 
-//basic route
+//example routes
 Router::get('/', function () {
     $person = new Person();
     $personRepository = $person->findAll();
@@ -51,8 +51,6 @@ Router::get('/phpinfo', function (Request $req) {
     echo apache_get_version();
 });
 
-//example route with data extracted to view
-//this view can send post request through form to /test
 Router::get('/blog', function () {
     $data = [
         'helloWorld' => 'Hello World!',
@@ -60,7 +58,6 @@ Router::get('/blog', function () {
     View::render('ExampleView', $data);
 });
 
-//example route using Response class
 Router::get('/post/{id}', function (Request $req, Response $res) {
     $res->toJSON([
         'post' => [
@@ -110,7 +107,7 @@ Router::post('/test', function (Request $req, Response $res) {
     $res->toJSON($message);
 });
 
-//check if any route has been set as valid, display error if not.
+//check if any route has been set as valid, display error like 'page not found' if not.
 Router::check();
 
 App::run();

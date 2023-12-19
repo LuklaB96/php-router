@@ -39,7 +39,7 @@ class Entity
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
-        $data = PropertyReader::getProperties($this, notNull: true); //get all entity properties, key(column name) => value array
+        $data = PropertyReader::getProperties($this, null: false); //get all entity properties, key(column name) => value array
         $query = SQLQueryBuilder::update($data, $this->getEntityName(), $dbname); //build full query from data provided
         return $this->em->execute($query, $data); //execute query using EntityManager
     }
