@@ -5,7 +5,8 @@ class RouteValidator
 {
     /**
      * Validate route, checks if $_SERVER['REQUEST_URI'] parameters are matching specified route parameters
-     * @param string $route
+     *
+     * @param  string $route
      * @return bool
      */
     public static function validate(string $route): bool

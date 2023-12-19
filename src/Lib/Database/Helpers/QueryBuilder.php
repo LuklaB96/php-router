@@ -104,7 +104,8 @@ class QueryBuilder implements QueryBuilderInterface
     }
     /**
      * Creates a parametrized SQL filter e.g. column_name = :column_name for sql injection security 
-     * @param array $conditions syntax: ['column_name' => 'value'], only column_name will be used
+     *
+     * @param  array $conditions syntax: ['column_name' => 'value'], only column_name will be used
      * @return string string ready to be concatenated with other parts of the SQL query
      */
     private static function selectFilter(array $conditions): string

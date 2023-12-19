@@ -9,8 +9,9 @@ class FileLogger implements LoggerInterface
 {
     /**
      * Returns final message that is inserted to .log file in specified directory
-     * @param string $message
-     * @param \App\Lib\Logger\LoggerConfig $config
+     *
+     * @param  string                       $message
+     * @param  \App\Lib\Logger\LoggerConfig $config
      * @return string
      */
     public function log(string $message, LoggerConfig $config): string
@@ -27,7 +28,8 @@ class FileLogger implements LoggerInterface
     }
     /**
      * Get formatted message
-     * @param string $message
+     *
+     * @param  string $message
      * @return string
      */
     public static function formatMessage(string $message): string

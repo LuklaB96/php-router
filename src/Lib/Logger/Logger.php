@@ -2,9 +2,7 @@
 
 namespace App\Lib\Logger;
 
-use App\Lib\Config;
 use App\Lib\Logger\Interfaces\LoggerInterface;
-use App\Lib\Logger\Enums\LogLevel;
 
 /**
  * Logger will save all log files to 'logs/instanceName'
@@ -19,7 +17,7 @@ class Logger
     /**
      * 
      * @param \App\Lib\Logger\Interfaces\LoggerInterface $logger
-     * @param mixed $config
+     * @param LoggerConfig                               $config
      */
     private function __construct(LoggerInterface $logger, LoggerConfig $config)
     {
@@ -30,8 +28,9 @@ class Logger
 
     /**
      * Create or get existing instance with given name, default appName = 'App'
-     * @param \App\Lib\Logger\Interfaces\LoggerInterface $logger
-     * @param \App\Lib\Logger\LoggerConfig $config
+     *
+     * @param  \App\Lib\Logger\Interfaces\LoggerInterface $logger
+     * @param  \App\Lib\Logger\LoggerConfig               $config
      * @return \App\Lib\Logger\Logger
      */
     public static function getInstance(LoggerInterface $logger, LoggerConfig $config = new LoggerConfig()): Logger
@@ -44,7 +43,8 @@ class Logger
     }
     /**
      * Save the message to a predetermined environment like file,database etc.
-     * @param string $message
+     *
+     * @param  string $message
      * @return void
      */
     public function log(string $message): string

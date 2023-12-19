@@ -14,21 +14,25 @@ class Router implements RouterInterface
     private static $instances = [];
     /**
      * this will hold information if exactly one valid route was successfully executed
+     *
      * @var 
      */
     private $routeExecuted = false;
     /**
      * Route name that is valid and is executed properly
+     *
      * @var string
      */
     private $validRouteName = '';
     /**
      * Last route that router tried to execute, can be valid/invalid
+     *
      * @var string
      */
     private $lastRoute = '';
     /**
      * true if check() function has been used, otherwise false
+     *
      * @var 
      */
     private $checked = false;
@@ -86,6 +90,7 @@ class Router implements RouterInterface
     }
     /**
      * Reset router properties to default values, check function can be called again.
+     *
      * @return void
      */
     public function reset()
@@ -114,6 +119,7 @@ class Router implements RouterInterface
     }
     /**
      * Clears all information about current and previous routes
+     *
      * @return void
      */
     public function clear()

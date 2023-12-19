@@ -17,6 +17,7 @@ class Request
 
     /**
      * Filters all data in $_POST array and gets only data sent by POST method.
+     *
      * @return array|string
      */
     public function getData()
@@ -36,6 +37,7 @@ class Request
     }
     /**
      * Returns data sent with contentType header set as 'application/json', decode data into array and return.
+     *
      * @return mixed
      */
     public function getJSON()

@@ -17,6 +17,7 @@ class Person extends Entity
 
     /**
      * Default primary key for our table
+     *
      * @var 
      */
     #[Column(type: ColumnType::INT, primaryKey: true, autoIncrement: true)]

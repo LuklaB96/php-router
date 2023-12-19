@@ -8,7 +8,8 @@ class AttributeReader
 {
     /**
      * Get all column attributes from entity
-     * @param \App\Lib\Database\Mapping\Column $object
+     *
+     * @param  \App\Lib\Database\Mapping\Column $object
      * @return array
      */
     public static function getAttributes(Entity $object): array
@@ -38,7 +39,8 @@ class AttributeReader
 
     /**
      * Returns Column object created from valid attributes provided in array.
-     * @param array $attributes
+     *
+     * @param  array $attributes
      * @return Column
      */
     public static function createColumn(array $attributes): Column

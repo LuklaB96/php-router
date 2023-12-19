@@ -8,16 +8,19 @@ class Database implements DatabaseInterface
 {
     /**
      * Singleton object instance
+     *
      * @var 
      */
     private static ?DatabaseInterface $instance = null;
     /**
      * Main PDO connection
+     *
      * @var 
      */
     private $conn;
     /**
      * Can be used as a container for last error thrown by database
+     *
      * @var string
      */
     private $dbError = '';
@@ -54,8 +57,9 @@ class Database implements DatabaseInterface
     }
     public function execute($query, array $data = []): string|array
     {
-        if ($this->isConnected() == false)
+        if ($this->isConnected() == false) {
             throw new \Exception("You are not connected to database: $this->dbError");
+        }
         $stmt = $this->conn->prepare($query);
         if (empty($data)) {
             try {
@@ -75,8 +79,9 @@ class Database implements DatabaseInterface
     }
     /**
      * This method checks the type of query executed and handles the result accordingly.
-     * @param \PDOStatement $stmt 
-     * @param string $query The executed SQL query
+     *
+     * @param  \PDOStatement $stmt 
+     * @param  string        $query The executed SQL query
      * @return array|string 
      */
     private function handleExecutionResult(\PDOStatement $stmt, string $query)
@@ -95,7 +100,8 @@ class Database implements DatabaseInterface
 
     /**
      * Handles exception if thrown by execute
-     * @param mixed $e
+     *
+     * @param  mixed $e
      * @return \PDOException
      */
     private function handleExecutionException($e)

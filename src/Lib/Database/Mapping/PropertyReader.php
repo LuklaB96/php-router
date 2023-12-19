@@ -12,7 +12,8 @@ class PropertyReader
     /**
      * Get all properites with attributes (Name => Value) from valid Entity object instance.
      * Optional parameter notNull for properties with assigned values only.
-     * @param \App\Lib\Entity\Entity $object
+     *
+     * @param  \App\Lib\Entity\Entity $object
      * @return array
      */
     public static function getProperties(Entity $object, bool $null = true): array
@@ -35,13 +36,15 @@ class PropertyReader
     private static function hasAttribute($property): bool
     {
         $attributes = $property->getAttributes();
-        if (!empty($attributes))
+        if (!empty($attributes)) {
             return true;
+        }
         return false;
     }
     /**
      * Returns array with name and value keys
-     * @param \App\Lib\Entity\Entity $entity
+     *
+     * @param  \App\Lib\Entity\Entity $entity
      * @throws \Exception
      * @return array
      */
@@ -49,10 +52,11 @@ class PropertyReader
     {
         $attrs = AttributeReader::getAttributes($entity);
         foreach ($attrs as $attribute) {
-            if ($attribute['primaryKey'])
+            if ($attribute['primaryKey']) {
                 return ['name' => $attribute['name'],
                     'value' => $attribute['value']
                 ];
+            }
         }
         throw new \Exception('Entity primary attribute not specified or null');
     }

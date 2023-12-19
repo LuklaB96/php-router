@@ -17,6 +17,7 @@ class ExampleEntity extends Entity
 
     /**
      * Default primary key for our table
+     *
      * @var 
      */
     public $costam;
@@ -25,6 +26,7 @@ class ExampleEntity extends Entity
     /**
      * Custom entity name, leave it as empty string if you want it to be automatically set to class name.
      * You can delete this variable if you dont need it because it is extended from Entity class anyway.
+     *
      * @var string
      */
     protected $name;

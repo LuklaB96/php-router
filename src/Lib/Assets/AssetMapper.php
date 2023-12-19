@@ -8,18 +8,21 @@ class AssetMapper
     /**
      * First check if route is trying to access public asset in /public/assets/
      * Then check if file is set to public in /config/asset_mapper.php
+     *
      * @return bool
      */
     public static function isAsset(): bool
     {
         //first check if asset is public, so we dont need to check asset_mapper.php if true
         $isAsset = self::isPublicAsset();
-        if ($isAsset)
+        if ($isAsset) {
             return true;
+        }
 
         $isAsset = self::isPublicFile();
-        if ($isAsset)
+        if ($isAsset) {
             return true;
+        }
 
 
         return false;
@@ -27,6 +30,7 @@ class AssetMapper
     }
     /**
      * Checks if route is trying to access specific file, public files are configured in /assets/asset_mapper.php
+     *
      * @return bool
      */
     public static function isPublicFile(): bool
@@ -50,6 +54,7 @@ class AssetMapper
     }
     /**
      * Checks if route is trying to access /public/assets/ folder
+     *
      * @return bool
      */
     public static function isPublicAsset(): bool

@@ -11,8 +11,9 @@ class Migrations implements MigrationsInterface
 {
     /**
      * Creates table in default or specified database from entity class properties
-     * @param \App\Lib\Entity\Entity $entity
-     * @param string $dbname
+     *
+     * @param  \App\Lib\Entity\Entity $entity
+     * @param  string                 $dbname
      * @return void
      */
     public function create(Entity $entity, string $dbname = '')
@@ -30,8 +31,9 @@ class Migrations implements MigrationsInterface
     private function createTable(Entity $entity, $dbname = '')
     {
         //if $dbname is not specified, get default db name from config
-        if ($dbname == '')
+        if ($dbname == '') {
             $dbname = Config::get('DB_NAME');
+        }
 
         //we using entity name as table name, can be customized in every entity class.
         $tableName = $entity->getEntityName();

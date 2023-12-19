@@ -24,8 +24,9 @@ class PropertyWriter
 
     /**
      * Set multiple properties values in object
-     * @param mixed $object
-     * @param array $properties
+     *
+     * @param  mixed $object
+     * @param  array $properties
      * @return void
      */
     public static function setPropertiesFromArray($object, array $properties)

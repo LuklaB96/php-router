@@ -13,7 +13,8 @@ class Response
     }
     /**
      * Simple json response with default header and response code.
-     * @param mixed $data
+     *
+     * @param  mixed $data
      * @return void
      */
     public function toJSON($data = [])

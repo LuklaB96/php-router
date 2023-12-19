@@ -10,7 +10,8 @@ class LoggerDirectory
 {
     /**
      * Create logs directory (default or custom) if does not exist
-     * @param \App\Lib\Logger\LoggerConfig $config
+     *
+     * @param  \App\Lib\Logger\LoggerConfig $config
      * @return bool
      */
     public static function create(LoggerConfig $config): bool
@@ -24,7 +25,8 @@ class LoggerDirectory
     }
     /**
      * Trying to delete directory, not working on default directory.
-     * @param \App\Lib\Logger\LoggerConfig $config
+     *
+     * @param  \App\Lib\Logger\LoggerConfig $config
      * @return bool
      */
     public static function delete(LoggerConfig $config): bool
@@ -32,8 +34,10 @@ class LoggerDirectory
         if (file_exists($config->getLogDir() . '/' . $config->getName()) && !$config->isDefault()) {
             $dir = $config->getLogDir();
             $it = new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS);
-            $files = new \RecursiveIteratorIterator($it,
-                \RecursiveIteratorIterator::CHILD_FIRST);
+            $files = new \RecursiveIteratorIterator(
+                $it,
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
             foreach ($files as $file) {
                 if ($file->isDir()) {
                     rmdir($file->getPathname());

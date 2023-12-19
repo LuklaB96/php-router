@@ -18,8 +18,9 @@ class Entity
     }
     /**
      * Insert entity data into database
-     * @param bool $testdb
-     * @param string $dbname
+     *
+     * @param  bool   $testdb
+     * @param  string $dbname
      * @return string
      */
     public function insert(bool $testdb = false, string $dbname = null): string
@@ -32,8 +33,9 @@ class Entity
     }
     /**
      * Update entity in database
-     * @param bool $testdb
-     * @param string $dbname
+     *
+     * @param  bool   $testdb
+     * @param  string $dbname
      * @return mixed
      */
     public function update(bool $testdb = false, string $dbname = null): mixed
@@ -46,8 +48,9 @@ class Entity
     }
     /**
      * Delete entity from database
-     * @param bool $testdb
-     * @param string $dbname
+     *
+     * @param  bool   $testdb
+     * @param  string $dbname
      * @return string
      */
     public function delete(bool $testdb = false, string $dbname = null): string
@@ -60,9 +63,10 @@ class Entity
     }
     /**
      * Find entity by primary key in database and update instance properties
-     * @param mixed $key
-     * @param mixed $testdb
-     * @param mixed $dbname
+     *
+     * @param  mixed $key
+     * @param  mixed $testdb
+     * @param  mixed $dbname
      * @return void
      */
     public function find($key, $testdb = false, string $dbname = null)
@@ -80,7 +84,8 @@ class Entity
     }
     /**
      * Find all data for this entity in database
-     * @param bool $testdb
+     *
+     * @param  bool $testdb
      * @return Entity[]
      */
     public function findAll(bool $testdb = false, string $dbname = null): array
@@ -94,10 +99,11 @@ class Entity
     }
     /**
      * Find entities in database that meets criteria passed in array
-     * @param array $criteria
-     * @param string $orderBy syntax: column_name ASC|DESC
-     * @param int $limit
-     * @param mixed $testdb
+     *
+     * @param  array  $criteria
+     * @param  string $orderBy  syntax: column_name ASC|DESC
+     * @param  int    $limit
+     * @param  mixed  $testdb
      * @return array|null
      */
     public function findBy(array $criteria, string $orderBy = null, int $limit = null, $testdb = false, string $dbname = null): array
@@ -110,9 +116,10 @@ class Entity
     }
     /**
      * Find one entity that meets the criteria and order if specified
-     * @param array $criteria syntax: array['column_name' => 'value']
-     * @param string $orderBy syntax: column_name ASC|DESC
-     * @param bool $testdb
+     *
+     * @param array  $criteria syntax: array['column_name' => 'value']
+     * @param string $orderBy  syntax: column_name ASC|DESC
+     * @param bool   $testdb
      */
     public function findOneBy(array $criteria, string $orderBy = null, bool $testdb = false, string $dbname = null)
     {
@@ -122,13 +129,14 @@ class Entity
         }
     }
     /**
-     * @param bool $withNamespace if true, will return \\App\\Namespace\\Example\\ClassName, if false will return only ClassName
+     * @param  bool $withNamespace if true, will return \\App\\Namespace\\Example\\ClassName, if false will return only ClassName
      * @return string entity class name with or without namespace
      */
     public function getEntityName(bool $withNamespace = false): string
     {
-        if ($withNamespace)
+        if ($withNamespace) {
             return get_class($this);
+        }
         $params = explode('\\', get_class($this));
         return end($params);
     }
@@ -146,7 +154,7 @@ class Entity
         PropertyWriter::setPropertiesFromArray($this, $properties);
     }
     /**
-     * @param bool $null if needs all or only with not empty value
+     * @param  bool $null if needs all or only with not empty value
      * @return array entity properties array(property_name => value)
      */
     public function getProperties(bool $null = true): array
@@ -155,8 +163,8 @@ class Entity
         return $classProperties;
     }
     /**
-     * @param mixed $testdb
-     * @param mixed $dbname
+     * @param  mixed $testdb
+     * @param  mixed $dbname
      * @return string test db name if $testdb = true, custom dbname if $dbname parameter is not null/empty or base name from config file in this particular order
      */
     private function getDbName($testdb = false, string $dbname = null): string
@@ -170,13 +178,15 @@ class Entity
     }
     /**
      * creating entity repository array if more than one entity is expected to be returned
-     * @param array $data
+     *
+     * @param  array $data
      * @return Entity[] 
      */
     private function createRepository(array $data): array|object
     {
-        if (!is_array($data) || empty($data))
+        if (!is_array($data) || empty($data)) {
             return [];
+        }
 
         $entityRepository = [];
         foreach ($data as $entityProperties) {

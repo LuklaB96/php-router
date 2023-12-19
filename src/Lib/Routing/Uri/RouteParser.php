@@ -5,7 +5,8 @@ class RouteParser
 {
     /**
      * Returns params array specified in Router if passed correctly to $_SERVER['REQUEST_URI'], check if route is valid before using.
-     * @param string $route
+     *
+     * @param  string $route
      * @return array
      */
     public static function getRouteParams(string $route): ?array
@@ -21,7 +22,6 @@ class RouteParser
         //check if route has specified parameters
         preg_match_all('/{(.*?)}/', $route, $matches, PREG_PATTERN_ORDER);
 
-
         //get all keys from regex matches
         $paramKeys = [];
         foreach ($matches as $match) {
@@ -31,8 +31,6 @@ class RouteParser
                 $count++;
             }
         }
-
-
         //get position of all true parameters passed by user in array
         $paramPositions = [];
         $count = 0;
