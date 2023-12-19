@@ -32,12 +32,12 @@ function get($var)
     echo isset($var) ? $var : null;
 }
 
-//router instance
+//router instance, multiple instances are possible.
 $router = Router::getInstance('default');
 //every route is unique, if we make two identical endpoints, only first one will be executed.
 
 //example routes
-Router::get('/', function () {
+$router->get('/', function () {
     $person = new Person();
     $personRepository = $person->findAll();
     foreach ($personRepository as $p) {
@@ -49,18 +49,18 @@ Router::get('/', function () {
     ]);
 });
 
-Router::get('/phpinfo', function (Request $req) {
+$router->get('/phpinfo', function (Request $req) {
     echo apache_get_version();
 });
 
-Router::get('/blog', function () {
+$router->get('/blog', function () {
     $data = [
         'helloWorld' => 'Hello World!',
     ];
     View::render('ExampleView', $data);
 });
 
-Router::get('/post/{id}', function (Request $req, Response $res) {
+$router->get('/post/{id}', function (Request $req, Response $res) {
     $res->toJSON([
         'post' => [
             'id' => $req->params->id,
@@ -68,7 +68,7 @@ Router::get('/post/{id}', function (Request $req, Response $res) {
         'status' => 'ok'
     ]);
 });
-Router::get('/person/{id}/{imie}/{nazwisko}', function (Request $req, Response $res) {
+$router->get('/person/{id}/{imie}/{nazwisko}', function (Request $req, Response $res) {
     $res->toJSON([
         'post' => [
             'id' => $req->params->id,
@@ -79,7 +79,7 @@ Router::get('/person/{id}/{imie}/{nazwisko}', function (Request $req, Response $
     ]);
 });
 
-Router::get('/person/{id}', function (Request $req, Response $res) {
+$router->get('/person/{id}', function (Request $req, Response $res) {
     $person = new Person();
     $person->find($req->params->id);
     if ($person->getId() == null) {
@@ -99,7 +99,7 @@ Router::get('/person/{id}', function (Request $req, Response $res) {
 });
 
 //will only work when properly sent POST request.
-Router::post('/test', function (Request $req, Response $res) {
+$router->post('/test', function (Request $req, Response $res) {
     $result = $req->getData();
     $person = new Person();
 
@@ -110,7 +110,7 @@ Router::post('/test', function (Request $req, Response $res) {
 });
 
 //check if any route has been set as valid, display error like 'page not found' or render specific view for this type of event.
-$executed = Router::check();
+$executed = $router->check();
 if ($executed === false)
     View::render('Error404');
 

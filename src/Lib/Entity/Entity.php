@@ -2,7 +2,8 @@
 namespace App\Lib\Entity;
 
 use App\Lib\Config;
-use App\Lib\Database\Helpers\SQLQueryBuilder;
+use App\Lib\Database\Database;
+use App\Lib\Database\Helpers\QueryBuilder;
 use App\Lib\Database\Mapping\AttributeReader;
 use App\Lib\Database\Mapping\PropertyReader;
 use App\Lib\Database\Mapping\PropertyWriter;
@@ -10,24 +11,24 @@ use App\Lib\Database\Mapping\PropertyWriter;
 
 class Entity
 {
-    public EntityManager $em;
+    public Database $db;
     function __construct()
     {
-        $this->em = EntityManager::getInstance();
+        $this->db = Database::getInstance();
     }
     /**
      * Insert entity data into database
      * @param bool $testdb
      * @param string $dbname
-     * @return mixed
+     * @return string
      */
-    public function insert(bool $testdb = false, string $dbname = null): mixed
+    public function insert(bool $testdb = false, string $dbname = null): string
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
         $data = PropertyReader::getProperties($this); //get all entity properties, key(column name) => value array
-        $query = SQLQueryBuilder::insert($data, $this->getEntityName(), $dbname); //build full query from data provided
-        return $this->em->execute($query, $data); //execute query using EntityManager
+        $query = QueryBuilder::insert($data, $this->getEntityName(), $dbname); //build full query from data provided
+        return $this->db->execute($query, $data); //execute query using EntityManager
     }
     /**
      * Update entity in database
@@ -40,8 +41,8 @@ class Entity
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
         $data = PropertyReader::getProperties($this, null: false); //get all entity properties, key(column name) => value array
-        $query = SQLQueryBuilder::update($data, $this->getEntityName(), $dbname); //build full query from data provided
-        return $this->em->execute($query, $data); //execute query using EntityManager
+        $query = QueryBuilder::update($data, $this->getEntityName(), $dbname); //build full query from data provided
+        return $this->db->execute($query, $data); //execute query using EntityManager
     }
     /**
      * Delete entity from database
@@ -54,8 +55,8 @@ class Entity
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
         $primaryKey = PropertyReader::getPrimaryProperty($this); //Get primary key if exists
-        $query = SQLQueryBuilder::delete($this->getEntityName(), $dbname, [$primaryKey['name'] => $primaryKey['value']]); //build full query from data provided
-        return $this->em->execute($query); //execute query using EntityManager
+        $query = QueryBuilder::delete($this->getEntityName(), $dbname, [$primaryKey['name'] => $primaryKey['value']]); //build full query from data provided
+        return $this->db->execute($query); //execute query using EntityManager
     }
     /**
      * Find entity by primary key in database and update instance properties
@@ -68,9 +69,9 @@ class Entity
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
         $primaryKey = PropertyReader::getPrimaryProperty($this);
-        $query = SQLQueryBuilder::select($this->getEntityName(), $dbname, conditions: [$primaryKey['name'] => '']);
+        $query = QueryBuilder::select($this->getEntityName(), $dbname, conditions: [$primaryKey['name'] => '']);
         $data = [$primaryKey['name'] => $key];
-        $result = $this->em->execute($query, $data);
+        $result = $this->db->execute($query, $data);
 
         //set values to properties for this instance
         if (is_array($result) && !empty($result)) {
@@ -85,9 +86,9 @@ class Entity
     public function findAll(bool $testdb = false, string $dbname = null): array
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
-        $query = SQLQueryBuilder::select($this->getEntityName(), $dbname);
+        $query = QueryBuilder::select($this->getEntityName(), $dbname);
 
-        $result = $this->em->execute($query);
+        $result = $this->db->execute($query);
         $repository = $this->createRepository($result);
         return $repository;
     }
@@ -102,8 +103,8 @@ class Entity
     public function findBy(array $criteria, string $orderBy = null, int $limit = null, $testdb = false, string $dbname = null): array
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
-        $query = SQLQueryBuilder::select($this->getEntityName(), $dbname, conditions: $criteria, limit: $limit);
-        $result = $this->em->execute($query, $criteria);
+        $query = QueryBuilder::select($this->getEntityName(), $dbname, conditions: $criteria, limit: $limit);
+        $result = $this->db->execute($query, $criteria);
         $repository = $this->createRepository($result);
         return $repository;
     }
@@ -170,9 +171,9 @@ class Entity
     /**
      * creating entity repository array if more than one entity is expected to be returned
      * @param array $data
-     * @return Entity[]
+     * @return Entity[] 
      */
-    private function createRepository(array $data): array
+    private function createRepository(array $data): array|object
     {
         if (!is_array($data) || empty($data))
             return [];

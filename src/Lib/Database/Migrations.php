@@ -1,12 +1,13 @@
 <?php
 namespace App\Lib\Database;
 
-use App\Lib\Database\Helpers\SQLQueryBuilder;
+use App\Lib\Database\Helpers\QueryBuilder;
+use App\Lib\Database\Interface\MigrationsInterface;
 use App\Lib\Database\Mapping\AttributeReader;
 use App\Lib\Entity\Entity;
 use App\Lib\Config;
 
-class Migrations
+class Migrations implements MigrationsInterface
 {
     /**
      * Creates table in default or specified database from entity class properties
@@ -42,10 +43,10 @@ class Migrations
             $columns[] = $column;
         }
 
-        $sql = SQLQueryBuilder::createTable($columns, $tableName, $dbname);
+        $query = QueryBuilder::createTable($columns, $tableName, $dbname);
         //if connection is valid, execute sql query
-        if ($entity->em->isConnected()) {
-            $message = $entity->em->execute($sql);
+        if ($entity->db->isConnected()) {
+            $message = $entity->db->execute($query);
             if ($message == 'ok') {
                 echo "Table $tableName created in: $dbname \r\n";
             } else {

@@ -1,15 +1,16 @@
 <?php
-namespace App\Lib\Entity;
+namespace App\Lib\Database;
 
+use App\Lib\Database\Interface\DatabaseInterface;
 use App\Lib\Config;
 
-class EntityManager
+class Database implements DatabaseInterface
 {
     /**
      * Singleton object instance
      * @var 
      */
-    private static ?EntityManager $instance = null;
+    private static ?DatabaseInterface $instance = null;
     /**
      * Main PDO connection
      * @var 
@@ -28,13 +29,6 @@ class EntityManager
 
         $this->setConnection($dbhost, $dbuser, $dbpassword);
     }
-    /**
-     * Sets connection to database, currently only mysql is supported
-     * @param string $dbhost
-     * @param string $dbuser
-     * @param string $dbpassword
-     * @return bool
-     */
     public function setConnection(#[\SensitiveParameter] string $dbhost, #[\SensitiveParameter] string $dbuser, #[\SensitiveParameter] string $dbpassword = null): bool
     {
         $dsn = "mysql:host=$dbhost;";
@@ -47,42 +41,26 @@ class EntityManager
             return false;
         }
     }
-    /**
-     * Get existing instance if exists, return new otherwise
-     * @return \App\Lib\Entity\EntityManager
-     */
-    public static function getInstance(): EntityManager
+    public static function getInstance(): DatabaseInterface
     {
         if (self::$instance == null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
-
-    /**
-     * Check if PDO instance has estabilished connection
-     * @return bool
-     */
     public function isConnected(): bool
     {
         return $this->conn !== null;
     }
-
-    /**
-     * Execute single sql query
-     * @param mixed $sql
-     * @param array $data
-     * @return void
-     */
-    public function execute($sql, array $data = []): string|array
+    public function execute($query, array $data = []): string|array
     {
         if ($this->isConnected() == false)
             throw new \Exception("You are not connected to database: $this->dbError");
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conn->prepare($query);
         if (empty($data)) {
             try {
                 $stmt->execute();
-                return $this->handleExecutionResult($stmt, $sql);
+                return $this->handleExecutionResult($stmt, $query);
             } catch (\PDOException $e) {
                 return $this->handleExecutionException($e);
             }
@@ -90,16 +68,21 @@ class EntityManager
 
         try {
             $stmt->execute($data);
-            return $this->handleExecutionResult($stmt, $sql);
+            return $this->handleExecutionResult($stmt, $query);
         } catch (\PDOException $e) {
             return $this->handleExecutionException($e);
         }
     }
-
-    private function handleExecutionResult($stmt, $sql)
+    /**
+     * This method checks the type of query executed and handles the result accordingly.
+     * @param \PDOStatement $stmt 
+     * @param string $query The executed SQL query
+     * @return array|string 
+     */
+    private function handleExecutionResult(\PDOStatement $stmt, string $query)
     {
         // Check if the query is a SELECT statement
-        $isSelectQuery = strtoupper(substr(trim($sql), 0, 6)) === 'SELECT';
+        $isSelectQuery = strtoupper(substr(trim($query), 0, 6)) === 'SELECT';
 
         if ($isSelectQuery) {
             // If it's a SELECT query, return all rows data
@@ -110,12 +93,14 @@ class EntityManager
         }
     }
 
+    /**
+     * Handles exception if thrown by execute
+     * @param mixed $e
+     * @return \PDOException
+     */
     private function handleExecutionException($e)
     {
-        return [
-            'message' => $e->getMessage(),
-            'code' => $e->getCode(),
-        ];
+        return $e;
     }
 }
 

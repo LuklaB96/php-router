@@ -1,22 +1,45 @@
 <?php
-
 namespace App\Lib\Routing;
 
 use App\Lib\Logger\Logger;
 use App\Lib\Logger\Types\FileLogger;
 use App\Lib\Routing\Exception\RouterCheckException;
+use App\Lib\Routing\Interface\RouterInterface;
 use App\Lib\Routing\Uri\RouteParser;
 use App\Lib\Routing\Validator\RouteValidator;
 
-class Router
+class Router implements RouterInterface
 {
 
     private static $instances = [];
-    //this will hold information if exactly one valid route was successfully used.
+    /**
+     * this will hold information if exactly one valid route was successfully executed
+     * @var 
+     */
     private $routeExecuted = false;
+    /**
+     * Route name that is valid and is executed properly
+     * @var string
+     */
     private $validRouteName = '';
+    /**
+     * Last route that router tried to execute, can be valid/invalid
+     * @var string
+     */
     private $lastRoute = '';
+    /**
+     * true if check() function has been used, otherwise false
+     * @var 
+     */
     private $checked = false;
+    public static function getInstance(string $router): RouterInterface
+    {
+        if (empty(self::$instances[$router])) {
+            return self::$instances[$router] = new Router();
+        }
+
+        return self::$instances[$router];
+    }
     public function get($route, $callback)
     {
         $this->lastRoute = $_SERVER['REQUEST_URI'];
@@ -29,15 +52,6 @@ class Router
         }
 
         $this->on($route, $callback);
-    }
-
-    public static function getInstance(string $router): Router
-    {
-        if (empty(self::$instances[$router])) {
-            return self::$instances[$router] = new Router();
-        }
-
-        return self::$instances[$router];
     }
     public function post($route, $callback)
     {
@@ -52,7 +66,7 @@ class Router
         $this->on($route, $callback);
     }
 
-    public function on($route, $callback)
+    private function on($route, $callback)
     {
         $validRoute = RouteValidator::validate($route);
         if ($validRoute) {
