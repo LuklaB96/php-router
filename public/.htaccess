@@ -1,6 +1,4 @@
 RewriteEngine On
 RewriteBase /
-#allow only files to be accessed in /public folder, exclude directories.
 RewriteCond %{REQUEST_FILENAME} !-f
-##if anyone will try to access route, it will be redirected to index.php that is our main route management file.
 RewriteRule ^(.+)$ index.php [QSA,L]

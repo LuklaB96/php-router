@@ -68,6 +68,8 @@ class Entity
      * @param  mixed $testdb
      * @param  mixed $dbname
      * @return void
+     * @throws \Exception
+     * @throws \App\Lib\Database\Exception\DatabaseNotConnectedException
      */
     public function find($key, $testdb = false, string $dbname = null)
     {
@@ -93,7 +95,11 @@ class Entity
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
         $query = QueryBuilder::select($this->getEntityName(), $dbname);
 
-        $result = $this->db->execute($query);
+        try {
+            $result = $this->db->execute($query);
+        } catch (\Exception $e) {
+            $result = [];
+        }
         $repository = $this->createRepository($result);
         return $repository;
     }

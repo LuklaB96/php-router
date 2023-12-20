@@ -1,5 +1,5 @@
 <?php
-namespace App\Lib\Database\Mapping;
+namespace App\Lib\Database\Mapping\Attributes;
 
 use App\Lib\Database\Enums\ColumnType;
 
@@ -11,6 +11,18 @@ class Column
     public bool $primaryKey;
     public bool $autoIncrement;
     public bool $nullable;
+    /**
+     * Be sure to read and follow rules for SQL column creation.
+     * 
+     * Functions associated with this attribute can throw Exceptions.
+     * 
+     * @param string                             $name
+     * @param \App\Lib\Database\Enums\ColumnType $type 
+     * @param mixed                              $length
+     * @param bool                               $primaryKey
+     * @param bool                               $autoIncrement
+     * @param bool                               $nullable
+     */
     public function __construct(
         string $name,
         ColumnType $type = ColumnType::TEXT,

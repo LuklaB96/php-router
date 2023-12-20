@@ -2,6 +2,7 @@
 namespace App\Lib\Database\Mapping;
 
 
+use App\Lib\Database\Mapping\Attributes\Column;
 use App\Lib\Entity\Entity;
 
 class AttributeReader
@@ -9,7 +10,7 @@ class AttributeReader
     /**
      * Get all column attributes from entity
      *
-     * @param  \App\Lib\Database\Mapping\Column $object
+     * @param  \App\Lib\Database\Mapping\Attributes\Column $object
      * @return array
      */
     public static function getAttributes(Entity $object): array
@@ -41,7 +42,7 @@ class AttributeReader
      * Returns Column object created from valid attributes provided in array.
      *
      * @param  array $attributes
-     * @return Column
+     * @return \App\Lib\Database\Mapping\Attributes\Column
      */
     public static function createColumn(array $attributes): Column
     {

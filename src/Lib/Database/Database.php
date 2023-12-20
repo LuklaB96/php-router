@@ -1,6 +1,7 @@
 <?php
 namespace App\Lib\Database;
 
+use App\Lib\Database\Exception\DatabaseNotConnectedException;
 use App\Lib\Database\Interface\DatabaseInterface;
 use App\Lib\Config;
 
@@ -55,10 +56,10 @@ class Database implements DatabaseInterface
     {
         return $this->conn !== null;
     }
-    public function execute($query, array $data = []): string|array
+    public function execute(#[\SensitiveParameter] $query, array $data = []): string|array
     {
         if ($this->isConnected() == false) {
-            throw new \Exception("You are not connected to database: $this->dbError");
+            throw new DatabaseNotConnectedException();
         }
         $stmt = $this->conn->prepare($query);
         if (empty($data)) {
@@ -84,7 +85,7 @@ class Database implements DatabaseInterface
      * @param  string        $query The executed SQL query
      * @return array|string 
      */
-    private function handleExecutionResult(\PDOStatement $stmt, string $query)
+    private function handleExecutionResult(\PDOStatement $stmt, #[\SensitiveParameter] string $query)
     {
         // Check if the query is a SELECT statement
         $isSelectQuery = strtoupper(substr(trim($query), 0, 6)) === 'SELECT';

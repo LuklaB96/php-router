@@ -1,7 +1,7 @@
 <?php
 namespace App\Lib\Database\Interface;
 
-use App\Lib\Database\Mapping\Column;
+use App\Lib\Database\Mapping\Attributes\Column;
 
 
 
@@ -23,7 +23,7 @@ interface QueryBuilderInterface
     /**
      * Creates a column definition from avaible data in Column object
      *
-     * @param  \App\Lib\Database\Mapping\Column $column object with valid attributes
+     * @param  \App\Lib\Database\Mapping\Attributes\Column $column object with valid attributes
      * @throws \Exception when @param \App\Lib\Database\Mapping\Column attributes are invalid e.g. 'primary key auto_increment null'
      * @return string string ready to be concatenated with other parts of the SQL query
      */

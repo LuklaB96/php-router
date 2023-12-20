@@ -3,7 +3,7 @@ namespace App\Entity;
 
 use App\Lib\Database\Enums\ColumnType;
 use App\Lib\Entity\Entity;
-use App\Lib\Database\Mapping\Column;
+use App\Lib\Database\Mapping\Attributes\Column;
 
 class ExampleEntity extends Entity
 {
@@ -20,7 +20,6 @@ class ExampleEntity extends Entity
      *
      * @var 
      */
-    public $costam;
     #[Column(type: ColumnType::INT, primaryKey: true, autoIncrement: true, length: 6)]
     protected $id;
     /**

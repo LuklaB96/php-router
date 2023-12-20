@@ -2,14 +2,14 @@
 namespace App\Lib\Database\Helpers;
 
 use App\Lib\Database\Interface\QueryBuilderInterface;
-use App\Lib\Database\Mapping\Column;
+use App\Lib\Database\Mapping\Attributes\Column;
 
 /**
  * This class helps creating queries like INSERT|UPDATE|SELECT|DELETE|CREATE etc. from variable attributes and class properties
  */
 class QueryBuilder implements QueryBuilderInterface
 {
-    public static function createTable(array $columns, string $tableName, string $dbname, bool $checkExists = false): string
+    public static function createTable(array $columns, string $tableName, #[\SensitiveParameter] string $dbname, bool $checkExists = false): string
     {
 
         $query = "CREATE TABLE `$dbname`.`$tableName` (";
@@ -49,14 +49,14 @@ class QueryBuilder implements QueryBuilderInterface
         }
         return $definition;
     }
-    public static function insert(array $data, string $tableName, string $dbname): string
+    public static function insert(array $data, string $tableName, #[\SensitiveParameter] string $dbname): string
     {
         $columns = implode(', ', array_keys($data));
         $placeholders = ':' . implode(', :', array_keys($data));
         $query = "INSERT INTO `$dbname`.`$tableName` ($columns) VALUES ($placeholders);";
         return $query;
     }
-    public static function update(array $data, string $tableName, string $dbName): string
+    public static function update(array $data, string $tableName, #[\SensitiveParameter] string $dbName): string
     {
         $setClause = [];
         foreach ($data as $key => $value) {
@@ -69,7 +69,7 @@ class QueryBuilder implements QueryBuilderInterface
 
         return $query;
     }
-    public static function select(string $tableName, string $dbName, string $orderBy = null, array $columns = null, array $conditions = null, int $limit = null): string
+    public static function select(string $tableName, #[\SensitiveParameter] string $dbName, string $orderBy = null, array $columns = null, array $conditions = null, int $limit = null): string
     {
         $columnsStr = '*';
         if ($columns !== null) {
@@ -94,7 +94,7 @@ class QueryBuilder implements QueryBuilderInterface
 
         return $query;
     }
-    public static function delete(string $tableName, string $dbName, array $conditions): string
+    public static function delete(string $tableName, #[\SensitiveParameter] string $dbName, array $conditions): string
     {
         $conditionsStr = self::selectFilter($conditions);
 

@@ -3,7 +3,7 @@ namespace App\Entity;
 
 use App\Lib\Database\Enums\ColumnType;
 use App\Lib\Entity\Entity;
-use App\Lib\Database\Mapping\Column;
+use App\Lib\Database\Mapping\Attributes\Column;
 
 class Person extends Entity
 {
@@ -22,6 +22,7 @@ class Person extends Entity
      */
     #[Column(type: ColumnType::INT, primaryKey: true, autoIncrement: true)]
     protected $id;
+    public $drugieImie;
 
     #[Column(type: ColumnType::VARCHAR, nullable: true, length: 32)]
     protected $imie;
