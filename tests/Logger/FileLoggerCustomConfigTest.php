@@ -4,7 +4,6 @@ use App\Lib\Logger\Enums\LogLevel;
 use App\Lib\Logger\LoggerConfig;
 use App\Lib\Logger\Types\FileLogger;
 use App\Lib\Logger\Utility\LoggerDirectory;
-use phpDocumentor\Reflection\Types\Void_;
 use PHPUnit\Framework\TestCase;
 use App\Lib\Logger\Logger;
 
@@ -28,6 +27,7 @@ final class FileLoggerCustomConfigTest extends TestCase
     {
         $this->loggerWithDefaultConfig = null;
         $this->loggerWithCustomConfig = null;
+
         //delete custom directory if created during tests.
         LoggerDirectory::delete($this->config);
         $this->config = null;

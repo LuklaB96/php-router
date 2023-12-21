@@ -17,20 +17,21 @@ class App
         //every route is unique, if we make two identical endpoints, only first one will be executed.
 
         //example routes
-        $router->get('/', function () {
-            $person1 = new Person();
-            $person2 = new Person();
-            $personRepository = $person1->findAll();
-            foreach ($personRepository as $p) {
-                echo $p->getImie() . '</br>';
-            }
+        $router->get(
+            '/', function () {
+                $person1 = new Person();
+                $person2 = new Person();
+                $personRepository = $person1->findAll();
+                foreach ($personRepository as $p) {
+                    echo $p->getImie() . '</br>';
+                }
 
-            View::render(
-                'ExampleView', [
+                View::render(
+                    'ExampleView', [
                     'helloWorld' => 'Hello World!',
-                ]
-            );
-        }
+                    ]
+                );
+            }
         );
 
         $router->get(

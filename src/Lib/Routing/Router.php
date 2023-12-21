@@ -1,4 +1,7 @@
 <?php
+/**
+ * Create redirect function like redirect('routeName');
+ */
 namespace App\Lib\Routing;
 
 use App\Lib\Logger\Logger;

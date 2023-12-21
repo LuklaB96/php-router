@@ -1,4 +1,13 @@
 <?php
+/**
+ * TODO:
+ *  - Currently, Asset Mapper is really weak and is not checking the correct path for all server types.
+ *    For example, the PHP built-in dev server is accessing /public/asssets/styles/app.cs route just fine, but on Apache with /public dir as the main dir, it will need to be changed to /assets/styles/app.css.
+ *    It can done through creating references to files that can be accessed e.g. ID 477328 = /public/assets/js/app.js, we can sanitize $_GET['image_id'] and return proper response.
+ *    Routing is also another way to do that (good/bad?): host-name.com/images/{id}, if access is authenticated, we can render file or send information '404 not found' so attackers will never know if they got a correct file id/path or not
+ *    .htaccess have aliases for directories outside root -- not tested yet so idea is still around
+ *    
+ */
 namespace App\Lib\Assets;
 
 use App\Lib\Config;
@@ -6,8 +15,8 @@ use App\Lib\Config;
 class AssetMapper
 {
     /**
-     * First check if route is trying to access public asset in /public/assets/
-     * Then check if file is set to public in /config/asset_mapper.php
+     * First checks if route is trying to access public asset in /public/assets/
+     * Then checks if file is set to public in /config/asset_mapper.php
      *
      * @return bool
      */

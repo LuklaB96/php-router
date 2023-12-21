@@ -23,7 +23,7 @@ interface DatabaseInterface
      */
     public static function getInstance(): DatabaseInterface;
     /**
-     * Check if connection is established
+     * Check if the connection instance was successfully created.
      *
      * @return bool
      */

@@ -8,7 +8,7 @@ use App\Lib\Entity\Entity;
 class AttributeReader
 {
     /**
-     * Get all column attributes from entity
+     * Get all column attributes from the entity.
      *
      * @param  \App\Lib\Database\Mapping\Attributes\Column $object
      * @return array
@@ -17,7 +17,7 @@ class AttributeReader
     {
         $reflection = new \ReflectionClass($object);
 
-        //storing all attributes from Entity class object that can be managed easly.
+        //storing all attributes from the Entity class object that can be managed easily.
         $attributes = [];
         //loop to get all properties from reflection
         foreach ($reflection->getProperties() as $property) {
@@ -26,7 +26,7 @@ class AttributeReader
             $propertyValue = $property->getValue($object);
             $propertyAttributes = $property->getAttributes();
 
-            //loop through attributes, get all attribute arugments passed, additionally store name and value of the property, so it will be easier to access it (name is unique)
+            //loop through attributes, get all attributes passed, and additionally store the name and value of the property so it will be easier to access it later.
             foreach ($propertyAttributes as $attribute) {
                 $arguments = $attribute->getArguments();
                 $arguments['value'] = $propertyValue;

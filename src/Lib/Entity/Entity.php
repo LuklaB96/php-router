@@ -1,4 +1,9 @@
 <?php
+/**
+ * TODO:
+ *  - Add support for Database transactions, currently every query is executed separately
+ *  - Add EntityInterface implementation 
+ */
 namespace App\Lib\Entity;
 
 use App\Lib\Config;
@@ -8,7 +13,9 @@ use App\Lib\Database\Mapping\AttributeReader;
 use App\Lib\Database\Mapping\PropertyReader;
 use App\Lib\Database\Mapping\PropertyWriter;
 
-
+/**
+ * Main class used for communication with controllers and data layer.
+ */
 class Entity
 {
     public Database $db;

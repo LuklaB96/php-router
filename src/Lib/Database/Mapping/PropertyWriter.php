@@ -7,7 +7,16 @@ namespace App\Lib\Database\Mapping;
  */
 class PropertyWriter
 {
-    public static function setPropertyValue($object, $propertyName, $value)
+    /**
+     * Set the property value of a given object if a correlation between propertyName and object property has been found.
+     *
+     * @param  object $object
+     * @param  string $propertyName
+     * @param  mixed  $value
+     * @throws \Exception
+     * @return void
+     */
+    public static function setPropertyValue(object $object, string $propertyName, mixed $value)
     {
         $reflectionClass = new \ReflectionClass($object);
 
@@ -23,13 +32,13 @@ class PropertyWriter
     }
 
     /**
-     * Set multiple properties values in object
+     * Set multiple property values if correlation has been found in the properties array for the given object.
      *
-     * @param  mixed $object
-     * @param  array $properties
+     * @param  object              $object     Class instance
+     * @param  array<string,mixed> $properties Array structure needs to look like ['property_name' => 'property_value'].
      * @return void
      */
-    public static function setPropertiesFromArray($object, array $properties)
+    public static function setPropertiesFromArray(object $object, array $properties)
     {
         foreach ($properties as $propertyName => $value) {
             self::setPropertyValue($object, $propertyName, $value);
