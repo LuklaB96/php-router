@@ -13,7 +13,7 @@ class PropertyWriter
      * @param  object $object
      * @param  string $propertyName
      * @param  mixed  $value
-     * @throws \Exception
+     * @throws \Exception If a property with the given name is not found.
      * @return void
      */
     public static function setPropertyValue(object $object, string $propertyName, mixed $value)

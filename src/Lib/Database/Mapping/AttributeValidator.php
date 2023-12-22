@@ -8,7 +8,7 @@ use App\Lib\Database\Exception\EmptyAttributeArrayException;
 class AttributeValidator
 {
     /**
-     * Validate all required parameters to create database column.
+     * Validate all required parameters to create a database column.
      *
      * @param  array $attributes
      * @throws \App\Lib\Database\Exception\EmptyAttributeArrayException

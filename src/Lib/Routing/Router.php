@@ -1,6 +1,14 @@
 <?php
 /**
  * Create redirect function like redirect('routeName');
+ * 
+ * Problem: we have two routes, one is using id as var /person/{id}, other one is to return all: /person/all
+ * Our validator cant find the difference between /person/1 and /person/all, so it will execute first that has been found instead of matching one.
+ * 
+ * Solution: Static routes should be separated from parametrized ones.
+ * We have two groups: group 1 should contain all routes that are not parametrized e.g. /person/all, second group should have remaining ones with parameters /person/{id}
+ * But how to tell which one was called?
+ * 
  */
 namespace App\Lib\Routing;
 
@@ -16,11 +24,18 @@ class Router implements RouterInterface
 
     private static $instances = [];
     /**
-     * this will hold information if exactly one valid route was successfully executed
+     * This will hold information if exactly one valid route was successfully executed
      *
      * @var 
      */
     private $routeExecuted = false;
+    /**
+     * structure: ['route' => ['handler' => ['varName1','varName2',...]]]
+     * e.g. [/person/{id} => ['personHandler' => ['id']]]
+     * 
+     * @var array
+     */
+    private $routes = [];
     /**
      * Route name that is valid and is executed properly
      *

@@ -4,8 +4,9 @@ namespace App\Lib\Routing\Validator;
 class RouteValidator
 {
     /**
+     * 
      * Validate route, checks if $_SERVER['REQUEST_URI'] parameters are matching specified route parameters
-     *
+     * 
      * @param  string $route
      * @return bool
      */

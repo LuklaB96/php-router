@@ -3,6 +3,7 @@
  * TODO:
  *  - Add support for Database transactions, currently every query is executed separately
  *  - Add EntityInterface implementation 
+ *  - Relations support
  */
 namespace App\Lib\Entity;
 

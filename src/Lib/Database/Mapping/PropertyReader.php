@@ -5,12 +5,12 @@ use App\Lib\Entity\Entity;
 
 
 /**
- * Gets property name and value in given class.
+ * Gets the property name and value in the given class.
  */
 class PropertyReader
 {
     /**
-     * Get all properites with attributes (Name => Value) from valid Entity object instance.
+     * Get all properties with attributes (name => value) from a valid Entity object instance.
      * Optional parameter notNull for properties with assigned values only.
      *
      * @param  \App\Lib\Entity\Entity $object
@@ -42,7 +42,7 @@ class PropertyReader
         return false;
     }
     /**
-     * Returns array with name and value keys
+     * Returns an array as [name => value]
      *
      * @param  \App\Lib\Entity\Entity $entity
      * @throws \Exception
