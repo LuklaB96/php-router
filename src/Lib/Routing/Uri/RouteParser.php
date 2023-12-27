@@ -11,7 +11,6 @@ class RouteParser
      */
     public static function getRouteParams(string $route): ?array
     {
-
         $uriParams = trim($_SERVER['REQUEST_URI']);
 
         //split all params from route and uri into arrays
@@ -46,7 +45,7 @@ class RouteParser
         if (!empty($paramKeys) && !empty($paramPositions) && !empty($paramValues)) {
             $params = [];
             for ($i = 0; $i < count($paramKeys); $i++) {
-                $params[$paramKeys[$i]] = $paramValues[$paramPositions[$i]];
+                $params[] = $paramValues[$paramPositions[$i]];
             }
             return $params;
         }

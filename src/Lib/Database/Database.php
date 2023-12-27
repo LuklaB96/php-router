@@ -5,6 +5,15 @@ use App\Lib\Database\Exception\DatabaseNotConnectedException;
 use App\Lib\Database\Interface\DatabaseInterface;
 use App\Lib\Config;
 
+/**
+ * TODO:
+ *  - Create mysql ping function for PDO that will check if connection to database is still alive and 100% working properly.
+ *  - Better error handling after queries execution
+ * 
+ * 
+ * 
+ * Main database class for connection, queries and raw data.
+ */
 class Database implements DatabaseInterface
 {
     /**
@@ -62,17 +71,12 @@ class Database implements DatabaseInterface
             throw new DatabaseNotConnectedException();
         }
         $stmt = $this->conn->prepare($query);
-        if (empty($data)) {
-            try {
-                $stmt->execute();
-                return $this->handleExecutionResult($stmt, $query);
-            } catch (\PDOException $e) {
-                return $this->handleExecutionException($e);
-            }
-        }
-
         try {
-            $stmt->execute($data);
+            if (empty($data)) {
+                $stmt->execute();
+            } else {
+                $stmt->execute($data);
+            }
             return $this->handleExecutionResult($stmt, $query);
         } catch (\PDOException $e) {
             return $this->handleExecutionException($e);

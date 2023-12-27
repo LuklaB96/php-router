@@ -16,7 +16,7 @@ class App
         //router instance, multiple instances are possible.
         $router = Router::getInstance();
 
-        $router->get("/", function (Request $request, Response $response) {
+        $router->get("/", function () {
             $person1 = new Person();
             $personRepository = $person1->findAll();
             foreach ($personRepository as $p) {
@@ -35,8 +35,8 @@ class App
             }
         );
         $router->get(
-            '/pers/{id}', function () {
-                echo 'second route should handle and return data searched by id';
+            '/pers/{id}', function ($id) {
+                echo 'id: ' . $id;
             }
         );
         $router->get(
@@ -58,7 +58,7 @@ class App
 
 
         $router->get(
-            '/phpinfo', function (Request $req) {
+            '/phpinfo', function () {
                 echo apache_get_version();
             }
         );
@@ -73,11 +73,12 @@ class App
         );
 
         $router->get(
-            '/post/{id}', function (Request $req, Response $res) {
+            '/post/{id}', function ($id) {
+                $res = new Response();
                 $res->toJSON(
                     [
                         'post' => [
-                            'id' => $req->params->id,
+                            'id' => $id,
                         ],
                         'status' => 'ok'
                     ]
@@ -85,13 +86,14 @@ class App
             }
         );
         $router->get(
-            '/person/{id}/{firstName}/{lastName}', function (Request $req, Response $res) {
+            '/person/{id}/{firstName}/{lastName}', function ($id, $firstName, $lastName) {
+                $res = new Response();
                 $res->toJSON(
                     [
                         'post' => [
-                            'id' => $req->params->id,
-                            'imie' => $req->params->firstName,
-                            'nazwisko' => $req->params['lastName'],
+                            'id' => $id,
+                            'imie' => $firstName,
+                            'nazwisko' => $lastName,
                         ],
                         'status' => 'ok'
                     ]
@@ -100,9 +102,10 @@ class App
         );
 
         $router->get(
-            '/person/{id}', function (Request $req, Response $res) {
+            '/person/{id}', function ($id) {
                 $person = new Person();
-                $person->find($req->params->id);
+                $res = new Response();
+                $person->find($id);
                 if ($person->getId() == null) {
                     $res->toJSON(
                         [
@@ -124,9 +127,13 @@ class App
             }
         );
 
-        //will only work when properly sent POST request.
+        //will only work when properly sent POST request
         $router->post(
-            '/test', function (Request $req, Response $res) {
+            '/test', function () {
+                $req = new Request();
+                $res = new Response();
+
+
                 $result = $req->getData();
                 $person = new Person();
 
@@ -139,7 +146,7 @@ class App
 
 
 
-        //check if any route has been set as valid, display error like 'page not found' or render specific view for this type of event.
+        //dispatch current route provided by user. 
         $executed = $router->dispatch();
         if ($executed === false) {
             View::render('Error404');

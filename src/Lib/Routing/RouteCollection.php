@@ -64,4 +64,5 @@ class RouteCollection
         $dpost = count($this->dynamicPostRoutes);
         return $sget + $dget + $dpost;
     }
+
 }

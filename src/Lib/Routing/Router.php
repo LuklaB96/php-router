@@ -62,14 +62,13 @@ class Router implements RouterInterface
         $route = trim($_SERVER['REQUEST_URI']);
         $routeObject = $this->routeCollection->find($requestMethod, $route);
         if (!empty($routeObject)) {
-            $params = RouteParser::getRouteParams($route);
+            $params = RouteParser::getRouteParams($routeObject->getRoute());
             $callback = $routeObject->getHandler();
             if (!empty($params)) {
-                $params = (object) $params;
-                $callback(new Request($params), new Response());
+                $callback(...$params);
                 return true;
             } else {
-                $callback(new Request(), new Response());
+                $callback();
                 return true;
             }
         }

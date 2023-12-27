@@ -37,6 +37,8 @@ class Request
     }
     /**
      * Returns data sent with contentType header set as 'application/json', decode data into array and return.
+     * 
+     * Docs: https://www.php.net/manual/en/wrappers.php.php#wrappers.php.input
      *
      * @return mixed
      */

@@ -23,5 +23,5 @@ function get($var)
 }
 
 App::run();
-
+//App::benchmark(10000);
 ?>
