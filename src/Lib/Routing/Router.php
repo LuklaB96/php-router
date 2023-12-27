@@ -12,49 +12,32 @@
  */
 namespace App\Lib\Routing;
 
-use App\Lib\Logger\Logger;
-use App\Lib\Logger\Types\FileLogger;
-use App\Lib\Routing\Exception\RouterCheckException;
 use App\Lib\Routing\Interface\RouterInterface;
 use App\Lib\Routing\Uri\RouteParser;
-use App\Lib\Routing\Validator\RouteValidator;
 
 class Router implements RouterInterface
 {
 
-    private static $instances = [];
     /**
-     * This will hold information if exactly one valid route was successfully executed
-     *
-     * @var 
-     */
-    private $routeExecuted = false;
-    /**
-     * structure: ['route' => ['handler' => ['varName1','varName2',...]]]
-     * e.g. [/person/{id} => ['personHandler' => ['id']]]
-     * 
+     * Router instances, default = 'main'
      * @var array
      */
-    private $routes = [];
+    protected static $instances = [];
     /**
-     * Route name that is valid and is executed properly
-     *
-     * @var string
+     * Collection with all avaible routes
+     * @var RouteCollection
      */
-    private $validRouteName = '';
+    public RouteCollection $routeCollection;
+    public function __construct()
+    {
+        $this->routeCollection = new RouteCollection();
+    }
     /**
-     * Last route that router tried to execute, can be valid/invalid
-     *
-     * @var string
+     * Get new or existing Router instance
+     * @param string $router
+     * @return \App\Lib\Routing\Interface\RouterInterface
      */
-    private $lastRoute = '';
-    /**
-     * true if check() function has been used, otherwise false
-     *
-     * @var 
-     */
-    private $checked = false;
-    public static function getInstance(string $router): RouterInterface
+    public static function getInstance(string $router = 'main'): RouterInterface
     {
         if (empty(self::$instances[$router])) {
             return self::$instances[$router] = new Router();
@@ -64,86 +47,53 @@ class Router implements RouterInterface
     }
     public function get($route, $callback)
     {
-        $this->lastRoute = $_SERVER['REQUEST_URI'];
-        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') !== 0) {
-            return;
-        }
-        //if route with same name has been executed already, do nothing.
-        if ($this->validRouteName == $route) {
-            return throw new \Exception('Duplicated route: ' . $route);
-        }
-
-        $this->on($route, $callback);
+        $static = $this->isRouteStatic($route);
+        $route = new Route('GET', $route, $callback, $static);
+        $this->routeCollection->add($route);
     }
-    public function post($route, $callback)
+    public function post(string $route, $callback)
     {
-        $this->lastRoute = $_SERVER['REQUEST_URI'];
-        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'POST') !== 0) {
-            return;
-        }
-        //if route with same name has been executed already, do nothing.
-        if ($this->validRouteName == $route) {
-            return throw new \Exception('Duplicated route: ' . $route);
-        }
-        $this->on($route, $callback);
+        $route = new Route('POST', $route, $callback, false);
+        $this->routeCollection->add($route);
     }
-
-    private function on($route, $callback)
+    public function dispatch(): bool
     {
-        $validRoute = RouteValidator::validate($route);
-        if ($validRoute) {
-            $this->routeExecuted = true;
-            //create params object from valid route and uri
+        $requestMethod = trim($_SERVER['REQUEST_METHOD']);
+        $route = trim($_SERVER['REQUEST_URI']);
+        $routeObject = $this->routeCollection->find($requestMethod, $route);
+        if (!empty($routeObject)) {
             $params = RouteParser::getRouteParams($route);
-
-            //check if any parameters have been created and send them back to route handler
+            $callback = $routeObject->getHandler();
             if (!empty($params)) {
                 $params = (object) $params;
                 $callback(new Request($params), new Response());
+                return true;
             } else {
                 $callback(new Request(), new Response());
+                return true;
             }
-            $this->validRouteName = $route;
         }
+        return false;
     }
     /**
-     * Reset router properties to default values, check function can be called again.
-     *
-     * @return void
+     * Checking if route has a custom {var} pattern, otherwise mark as static.
+     * @param string $route
+     * @return bool
      */
-    public function reset()
+    public function isRouteStatic(string $route): bool
     {
-        $this->clear();
-        $this->checked = false;
-    }
-    /**
-     * @return bool true if route was executed correctly, otherwise false
-     */
-    public function check(): bool
-    {
-        if (!$this->checked) {
-            $this->checked = true;
-        } else {
-            return throw new RouterCheckException(message: "Route::check() function was called twice on the same route.");
+        $matching = preg_match("/{.*?}/", $route);
+        if ($matching == 0) {
+            return true;
         }
-        if (!$this->routeExecuted) {
-            $logger = Logger::getInstance(new FileLogger());
-            $logger->log('Trying to access invalid route: ' . $this->lastRoute);
-            $this->clear();
-            return false;
-        }
-        $this->clear();
-        return true;
+        return false;
     }
-    /**
-     * Clears all information about current and previous routes
-     *
-     * @return void
-     */
-    public function clear()
+    public function getRouteCollection(): RouteCollection
     {
-        $this->routeExecuted = false;
-        $this->lastRoute = '';
-        $this->validRouteName = '';
+        return $this->routeCollection;
+    }
+    public function clear(): void
+    {
+        $this->routeCollection = new RouteCollection();
     }
 }

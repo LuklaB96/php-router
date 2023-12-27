@@ -12,7 +12,7 @@ class RouteParser
     public static function getRouteParams(string $route): ?array
     {
 
-        $uriParams = $_SERVER['REQUEST_URI'];
+        $uriParams = trim($_SERVER['REQUEST_URI']);
 
         //split all params from route and uri into arrays
         $paramValues = explode('/', $uriParams);

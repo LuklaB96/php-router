@@ -18,7 +18,7 @@ class Column
      * 
      * @param string                             $name
      * @param \App\Lib\Database\Enums\ColumnType $type 
-     * @param mixed                              $length
+     * @param int                                $length
      * @param bool                               $primaryKey
      * @param bool                               $autoIncrement
      * @param bool                               $nullable
@@ -26,7 +26,7 @@ class Column
     public function __construct(
         string $name,
         ColumnType $type = ColumnType::TEXT,
-        ?int $length = null,
+        int $length = 0,
         bool $primaryKey = false,
         bool $autoIncrement = false,
         bool $nullable = false

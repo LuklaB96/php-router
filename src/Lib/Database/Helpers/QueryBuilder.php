@@ -30,7 +30,7 @@ class QueryBuilder implements QueryBuilderInterface
     public static function createColumnDefinition(Column $column): string
     {
         $definition = strtoupper($column->type->value);
-        if ($column->length) {
+        if ($column->length > 0) {
             $definition .= "($column->length)";
         }
         if ($column->autoIncrement) {

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
+
 use App\Lib\Assets\AssetMapper;
 use App\Main\App;
 use App\Lib\Config;

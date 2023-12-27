@@ -12,35 +12,23 @@ class App
 {
     public static function run()
     {
-        //router instance, multiple instances are possible.
-        $router = Router::getInstance('default');
-        //every route is unique, if we make two identical endpoints, only first one will be executed.
-
-        //example routes
-        //This is very slow approach to match the correct route, because every get and post request made below will check if it is a valid route
-        //Better approach is to make an $router->addRoute('route','request_type','handler') function, route validator should check if valid route exist, execute its handler and return correct response. 
-        //Example situation: when it is the first route in the list, it is an optimistic situation, when it is the last - pessimistic. 
-        //We want the router to perform no further checking or even any interaction with subsequent cases if the route has been found and executed properly.
         $startTime = microtime(true);
-        $router->get(
-            '/', function () {
-                $person1 = new Person();
-                $person2 = new Person();
-                $personRepository = $person1->findAll();
-                foreach ($personRepository as $p) {
-                    echo $p->getImie() . '</br>';
-                }
+        //router instance, multiple instances are possible.
+        $router = Router::getInstance();
 
-                View::render(
-                    'ExampleView', [
-                        'helloWorld' => 'Hello World!',
-                    ]
-                );
+        $router->get("/", function (Request $request, Response $response) {
+            $person1 = new Person();
+            $personRepository = $person1->findAll();
+            foreach ($personRepository as $p) {
+                echo $p->getImie() . '</br>';
             }
-        );
 
-        //problem with those two is that both are valid at the same time, our validator cant tell the difference between them. 
-        //When we call /pers/2 it will return only this one, but when we call /pers/all we are getting both responses which is BAD
+            View::render(
+                'ExampleView', [
+                    'helloWorld' => 'Hello World!',
+                ]
+            );
+        });
         $router->get(
             '/pers/all', function () {
                 echo 'first route should handle and return all data';
@@ -49,6 +37,21 @@ class App
         $router->get(
             '/pers/{id}', function () {
                 echo 'second route should handle and return data searched by id';
+            }
+        );
+        $router->get(
+            '/arrayinit', function () {
+                $startTime = microtime(true);
+                $arr = [];
+                for ($i = 0; $i < 100000; $i++) {
+                    //$arr[] = '/abs/{' . $i . '}'; //array with auto increment key | ~6 ms
+                    $arr['key_' . $i] = '/abs/{' . $i . '}'; //array with custom key | ~14 ms
+                    //array_push($arr, '/abs/{' . $i . '}'); //function call | ~12 ms
+    
+                }
+                $executionTime = microtime(true) - $startTime;
+                print_r($executionTime);
+                print_r(count($arr));
             }
         );
 
@@ -134,13 +137,16 @@ class App
             }
         );
 
-        $executionTime = microtime(true) - $startTime;
-        print_r($executionTime);
+
 
         //check if any route has been set as valid, display error like 'page not found' or render specific view for this type of event.
-        $executed = $router->check();
+        $executed = $router->dispatch();
         if ($executed === false) {
             View::render('Error404');
         }
+        $endTime = microtime(true) - $startTime;
+        $time = intval($endTime * ($p = pow(10, 3))) / $p;
+        $routeCollection = $router->getRouteCollection();
+        echo '</br>Route executed in: ' . $time . 's, amount of routes: ' . $routeCollection->countRoutes();
     }
 }

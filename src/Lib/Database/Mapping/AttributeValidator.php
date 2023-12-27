@@ -29,5 +29,9 @@ class AttributeValidator
         if (empty($type)) {
             throw new EmptyColumnTypeException();
         }
+        $length = $attributes['length'] ?? 0;
+        if (!is_numeric($length)) {
+            throw new \Exception('Length parameter needs to be a numeric type.');
+        }
     }
 }

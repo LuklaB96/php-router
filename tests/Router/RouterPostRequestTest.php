@@ -5,17 +5,14 @@ use App\Lib\Routing\Router;
 
 final class RouterPostRequestTest extends TestCase
 {
-    //using this to check if route is valid successfully
-    private $validRoute;
     private $router;
     protected function setUp(): void
     {
-        $this->validRoute = false;
         $this->router = Router::getInstance('test router');
     }
     protected function tearDown(): void
     {
-        $this->router->reset();
+        $this->router->clear();
     }
     public function testValidPostRoute(): void
     {
@@ -23,26 +20,22 @@ final class RouterPostRequestTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/test';
 
         $this->router->post('/test', function () {
-            $this->validRoute = true;
+            //valid route
         });
-        $this->router->check();
+        $valid = $this->router->dispatch();
 
-        $this->assertTrue($this->validRoute);
+        $this->assertTrue($valid);
     }
     public function testInvalidPostRouter(): void
     {
-        //Assign
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/test';
-        $this->validRoute = false;
 
-        //Act
         $this->router->post('/test', function () {
-            $this->validRoute = true;
+            //invalid route
         });
-        $this->router->check();
-        $this->router->reset();
-        //Assert
-        $this->assertFalse($this->validRoute);
+        $valid = $this->router->dispatch();
+
+        $this->assertFalse($valid);
     }
 }
