@@ -4,13 +4,11 @@ namespace App\Lib\Routing;
 
 class Request
 {
-    public $params;
     public $reqMethod;
     public $contentType;
 
-    public function __construct($params = null)
+    public function __construct()
     {
-        $this->params = $params;
         $this->reqMethod = trim($_SERVER['REQUEST_METHOD']);
         $this->contentType = !empty($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
     }

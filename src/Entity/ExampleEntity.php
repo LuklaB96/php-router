@@ -2,7 +2,7 @@
 namespace App\Entity;
 
 use App\Lib\Database\Enums\ColumnType;
-use App\Lib\Entity\Entity;
+use App\Lib\Database\Entity\Entity;
 use App\Lib\Database\Mapping\Attributes\Column;
 
 class ExampleEntity extends Entity

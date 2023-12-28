@@ -11,7 +11,7 @@ class View
         if (!empty($data)) {
             extract($data);
         }
-        include Config::get('MAIN_DIR') . '/Views/' . $viewName . '.php';
+        include Config::get('MAIN_DIR') . '/src/Views/' . $viewName . '.php';
     }
 }
 
