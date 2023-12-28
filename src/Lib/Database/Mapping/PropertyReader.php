@@ -1,7 +1,7 @@
 <?php
 namespace App\Lib\Database\Mapping;
 
-use App\Lib\Entity\Entity;
+use App\Lib\Database\Entity\Entity;
 
 
 /**
@@ -13,7 +13,7 @@ class PropertyReader
      * Get all properties with attributes (name => value) from a valid Entity object instance.
      * Optional parameter notNull for properties with assigned values only.
      *
-     * @param  \App\Lib\Entity\Entity $object
+     * @param  \App\Lib\Database\Entity\Entity $object
      * @return array
      */
     public static function getProperties(Entity $object, bool $null = true): array
@@ -44,7 +44,7 @@ class PropertyReader
     /**
      * Returns an array as [name => value]
      *
-     * @param  \App\Lib\Entity\Entity $entity
+     * @param  \App\Lib\Database\Entity\Entity $entity
      * @throws \Exception
      * @return array
      */

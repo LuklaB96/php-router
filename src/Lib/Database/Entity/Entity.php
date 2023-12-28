@@ -5,7 +5,7 @@
  *  - Add EntityInterface implementation 
  *  - Relations support
  */
-namespace App\Lib\Entity;
+namespace App\Lib\Database\Entity;
 
 use App\Lib\Config;
 use App\Lib\Database\Database;

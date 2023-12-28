@@ -3,14 +3,13 @@ namespace App\Lib\Database\Mapping;
 
 
 use App\Lib\Database\Mapping\Attributes\Column;
-use App\Lib\Entity\Entity;
+use App\Lib\Database\Entity\Entity;
 
 class AttributeReader
 {
     /**
      * Get all column attributes from the entity.
-     *
-     * @param  \App\Lib\Database\Mapping\Attributes\Column $object
+     * @param \App\Lib\Database\Entity\Entity $object
      * @return array
      */
     public static function getAttributes(Entity $object): array

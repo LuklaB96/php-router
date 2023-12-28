@@ -4,7 +4,7 @@ namespace App\Lib\Database;
 use App\Lib\Database\Helpers\QueryBuilder;
 use App\Lib\Database\Interface\MigrationsInterface;
 use App\Lib\Database\Mapping\AttributeReader;
-use App\Lib\Entity\Entity;
+use App\Lib\Database\Entity\Entity;
 use App\Lib\Config;
 
 class Migrations implements MigrationsInterface
@@ -12,7 +12,7 @@ class Migrations implements MigrationsInterface
     /**
      * Creates table in default or specified database from entity class properties
      *
-     * @param  \App\Lib\Entity\Entity $entity
+     * @param  \App\Lib\Database\Entity\Entity $entity
      * @param  string                 $dbname
      * @return void
      */
