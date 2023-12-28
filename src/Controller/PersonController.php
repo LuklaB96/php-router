@@ -12,7 +12,6 @@ class PersonController extends BaseController
         $person = new Person();
         $res = new Response();
         $person->find($id);
-        var_dump($person->getImie());
         if ($person->getId() == null) {
             $res->toJSON(
                 [
@@ -24,8 +23,8 @@ class PersonController extends BaseController
                 [
                     'person' => [
                         'id' => $person->getId(),
-                        'imie' => $person->getImie(),
-                        'nazwisko' => $person->getNazwisko()
+                        'firstName' => $person->getFirstName(),
+                        'lastName' => $person->getLastName()
                     ],
                     'status' => 'ok'
                 ]
