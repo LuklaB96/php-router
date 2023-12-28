@@ -15,14 +15,16 @@ use App\Lib\Database\Mapping\PropertyReader;
 use App\Lib\Database\Mapping\PropertyWriter;
 
 /**
- * Main class used for communication with controllers and data layer.
+ * Represents model in database
  */
 class Entity
 {
     public Database $db;
+    private EntityValidator $entityValidator;
     function __construct()
     {
         $this->db = Database::getInstance();
+        $this->entityValidator = new EntityValidator();
     }
     /**
      * Insert entity data into database
@@ -212,6 +214,10 @@ class Entity
             }
         }
         return $entityRepository;
+    }
+    public function validate(): bool
+    {
+        return $this->entityValidator->validate($this);
     }
 }
 

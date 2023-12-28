@@ -111,7 +111,7 @@ class Database implements DatabaseInterface
      */
     private function handleExecutionException($e)
     {
-        return $e;
+        return $e->getCode();
     }
 }
 

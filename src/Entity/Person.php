@@ -26,28 +26,38 @@ class Person extends Entity
      * Nullable varchar(32) columns
      */
     #[Column(type: ColumnType::VARCHAR, nullable: true, length: 32)]
-    protected $imie;
+    protected $firstName;
     #[Column(type: ColumnType::VARCHAR, nullable: true, length: 32)]
-    protected $nazwisko;
+    protected $lastName;
+    #[Column(type: ColumnType::VARCHAR, nullable: false, length: 32)]
+    protected $login;
 
     public function getId()
     {
         return $this->id;
     }
-    public function getImie()
+    public function getFirstName()
     {
-        return $this->imie;
+        return $this->firstName;
     }
-    public function getNazwisko()
+    public function getLastName()
     {
-        return $this->nazwisko;
+        return $this->lastName;
     }
-    public function setImie($imie)
+    public function getLogin()
     {
-        $this->imie = $imie;
+        return $this->login;
     }
-    public function setNazwisko($nazwisko)
+    public function setFirstName($firstName)
     {
-        $this->nazwisko = $nazwisko;
+        $this->firstName = $firstName;
+    }
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
+    }
+    public function setLogin($login)
+    {
+        $this->login = $login;
     }
 }

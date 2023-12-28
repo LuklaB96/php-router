@@ -2,6 +2,7 @@
 namespace App\Main;
 
 use App\Controller\PersonController;
+use App\Lib\Database\Entity\EntityValidator;
 use App\Entity\Person;
 use App\Lib\Assets\AssetMapper;
 use App\Lib\Routing\Router;
@@ -21,7 +22,7 @@ class App
             $person1 = new Person();
             $personRepository = $person1->findAll();
             foreach ($personRepository as $p) {
-                echo $p->getImie() . '</br>';
+                echo $p->getFirstName() . '</br>';
             }
 
             View::render(
@@ -62,19 +63,26 @@ class App
             (new PersonController())->getPersonById($id);
         });
 
-        //will only work when properly sent POST request
+        //will only work when properly sent POST request with payload
         $router->post('/test', function () {
             $req = new Request();
             $res = new Response();
-
-
-            $result = $req->getData();
             $person = new Person();
-
-            $person->setImie($result['imie']);
-            $person->setNazwisko($result['nazwisko']);
+            $result = $req->getData();
+            $person->setFirstName($result['imie']);
+            $person->setLastName($result['nazwisko']);
             $message = $person->insert();
             $res->toJSON($message);
+            $result = $req->getData();
+        });
+        $router->get('/attr', function () {
+            $person = new Person();
+
+            $person->setFirstName('test');
+            $person->setLastName('test');
+            $person->setLogin('testLogin');
+            $valid = $person->validate();
+            var_dump($valid);
         });
 
 

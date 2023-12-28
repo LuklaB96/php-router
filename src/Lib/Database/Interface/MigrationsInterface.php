@@ -1,7 +1,7 @@
 <?php
 namespace App\Lib\Database\Interface;
 
-use \App\Lib\Entity\Entity;
+use \App\Lib\Database\Entity\Entity;
 
 /**
  * 
@@ -11,7 +11,7 @@ interface MigrationsInterface
     /**
      * Creates table in default or specified database from entity class properties
      *
-     * @param  \App\Lib\Entity\Entity $entity
+     * @param  \App\Lib\Database\Entity\Entity $entity
      * @param  string                 $dbname
      * @return void
      */
