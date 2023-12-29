@@ -65,15 +65,7 @@ class App
 
         //will only work when properly sent POST request with payload
         $router->post('/test', function () {
-            $req = new Request();
-            $res = new Response();
-            $person = new Person();
-            $result = $req->getData();
-            $person->setFirstName($result['imie']);
-            $person->setLastName($result['nazwisko']);
-            $message = $person->insert();
-            $res->toJSON($message);
-            $result = $req->getData();
+            var_dump($_POST);
         });
         $router->get('/attr', function () {
             $person = new Person();

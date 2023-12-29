@@ -22,4 +22,5 @@ return [
     'DB_HOST' => '127.0.0.1',
     //if true, all migrations will also be created in testing database
     'TEST_DB_ACTIVE' => true,
+    'CSRF_TOKEN_LIFETIME' => 60 * 60,
 ];

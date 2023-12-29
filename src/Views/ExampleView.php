@@ -11,8 +11,9 @@
 </head>
 
 <body>
-    <?php get($helloWorld) ?>
+    <?php get($helloWorld); ?>
     <form action="/test" method="post">
+        <?php HiddenCSRF(); ?>
         <input type="text" name="imie" placeholder="imie" />
         <input type="text" name="nazwisko" placeholder="nazwisko" />
         <input type="submit" />
