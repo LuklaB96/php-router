@@ -5,7 +5,7 @@ namespace App\Lib\Security\CSRF;
  * Use this for csrf token validation
  */
 
-class SessionStorageManager
+class SessionTokenManager
 {
     private static $instance;
     private CsrfToken $csrfToken;
@@ -21,7 +21,7 @@ class SessionStorageManager
         if (self::$instance !== null) {
             return self::$instance;
         }
-        return self::$instance = new SessionStorageManager();
+        return self::$instance = new SessionTokenManager();
     }
     /**
      * Checks if php session is active

@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Lib\Assets\AssetMapper;
+use App\Lib\Security\CSRF\SessionTokenManager;
 use App\Lib\Security\HTML\HiddenFieldGenerator;
-use App\Lib\Security\CSRF\SessionStorageManager;
 use App\Main\App;
 use App\Lib\Config;
 
@@ -26,10 +26,9 @@ function get($var)
 }
 function HiddenCSRF()
 {
-    $sessionStorageManager = SessionStorageManager::getInstance();
+    $sessionStorageManager = SessionTokenManager::getInstance();
     $hiddenField = HiddenFieldGenerator::generate('token', $sessionStorageManager->getToken());
     echo $hiddenField;
 }
 App::run();
-//App::benchmark(10000);
 ?>
