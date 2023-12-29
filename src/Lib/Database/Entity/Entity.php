@@ -81,7 +81,7 @@ class Entity
      * @throws \Exception
      * @throws \App\Lib\Database\Exception\DatabaseNotConnectedException
      */
-    public function find($key, $testdb = false, string $dbname = null)
+    public function find($key, $testdb = false, string $dbname = null): bool
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
         $primaryKey = PropertyReader::getPrimaryProperty($this);
@@ -92,7 +92,10 @@ class Entity
         //set values to properties for this instance
         if (is_array($result) && !empty($result)) {
             PropertyWriter::setPropertiesFromArray($this, $result[0]);
+            return true;
         }
+        return false;
+
     }
     /**
      * Find all data for this entity in database
@@ -215,6 +218,13 @@ class Entity
         }
         return $entityRepository;
     }
+    /**
+     * Validate Entity data before sending it to database
+     * Ignores properties with attribute autoIncrement set as true
+     * 
+     * 
+     * @return bool true if all required property values are set, otherwise false
+     */
     public function validate(): bool
     {
         return $this->entityValidator->validate($this);

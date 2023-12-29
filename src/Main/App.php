@@ -1,13 +1,10 @@
 <?php
 namespace App\Main;
 
-use App\Controller\PersonController;
-use App\Lib\Database\Entity\EntityValidator;
+use App\Controller\TestController;
 use App\Entity\Person;
-use App\Lib\Assets\AssetMapper;
 use App\Lib\Routing\Router;
 use App\Lib\Routing\Response;
-use App\Lib\Routing\Request;
 use App\Lib\View\View;
 
 class App
@@ -15,57 +12,47 @@ class App
     public static function run()
     {
         $startTime = microtime(true);
-        //router instance, multiple instances are possible.
+        //router instance, multiple instances are possible
         $router = Router::getInstance();
 
+        //basic GET request with route and view
         $router->get("/", function () {
-            $person1 = new Person();
-            $personRepository = $person1->findAll();
-            foreach ($personRepository as $p) {
-                echo $p->getFirstName() . '</br>';
-            }
-
             View::render(
                 'ExampleView', [
                     'helloWorld' => 'Hello World!',
                 ]
             );
         });
-        $router->get('/post/{id}', function ($id) {
+
+        //basic Entity usage to get data from db
+        $router->get('/person/{id}', function ($id) {
             $res = new Response();
-            $res->toJSON(
-                [
-                    'post' => [
-                        'id' => $id,
-                    ],
+            $person = new Person();
+            $found = $person->find($id);
+            if ($found) {
+                $data = ['post' => [
+                    'id' => $person->getId(),
+                    'firstName' => $person->getFirstName(),
+                    'lastName' => $person->getLastName(),
+                ],
                     'status' => '200'
-                ]
-            );
-        }
-        );
-        $router->get(
-            '/person/{id}/{firstName}/{lastName}', function ($id, $firstName, $lastName) {
-                $res = new Response();
-                $res->toJSON(
-                    [
-                        'post' => [
-                            'id' => $id,
-                            'imie' => $firstName,
-                            'nazwisko' => $lastName,
-                        ],
-                        'status' => 'ok'
-                    ]
-                );
+                ];
+                $res->toJSON();
             }
-        );
+        });
+        //route with parameters
+        $router->get('/person/{id}/{firstName}/{lastName}', function ($id, $firstName, $lastName) {
+            $res = new Response();
+            echo 'first param(id): ' . $id . ', second param(first name): ' . $firstName . ', third param(last name): ' . $lastName;
+        });
 
         $router->get('/person/{id}', function ($id) {
-            (new PersonController())->getPersonById($id);
+            (new TestController())->getPersonById($id);
         });
 
         //will only work when properly sent POST request with payload
         $router->post('/test', function () {
-            var_dump($_POST);
+            (new TestController())->csrfValidationExample();
         });
         $router->get('/attr', function () {
             $person = new Person();

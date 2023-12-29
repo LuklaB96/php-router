@@ -24,11 +24,17 @@ function get($var)
 {
     echo isset($var) ? $var : null;
 }
+
+/**
+ * This will put hidden input field in form that is sending post request, check src/Views/ExampleView.php for more info
+ * @return void
+ */
 function HiddenCSRF()
 {
-    $sessionStorageManager = SessionTokenManager::getInstance();
-    $hiddenField = HiddenFieldGenerator::generate('token', $sessionStorageManager->getToken());
+    $sessionTokenManager = SessionTokenManager::getInstance();
+    $hiddenField = HiddenFieldGenerator::generate('token', $sessionTokenManager->getToken());
     echo $hiddenField;
 }
+
 App::run();
 ?>

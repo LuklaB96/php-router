@@ -30,12 +30,12 @@ class CsrfToken
         return $this->token;
     }
     /**
-     * Check if token lifetime is greater than current time
+     * Check if token lifetime did not reach current time
      * @return bool
      */
     public function isAlive(): bool
     {
-        return $this->tokenCreationTime + $this->tokenLifeTime >= time();
+        return $this->tokenCreationTime + $this->tokenLifeTime <= time();
     }
     /**
      * Save current token informations to $_SESSION storage
