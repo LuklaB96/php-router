@@ -34,7 +34,7 @@ abstract class BaseController
         View::render($view, $data);
     }
     /**
-     * Checks if $_POST data sent has valid csrf token
+     * Checks if $_POST data received has valid csrf token
      * @return bool
      */
     protected function csrfAuth(): bool

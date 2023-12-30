@@ -11,14 +11,14 @@ class App
 {
     public static function run()
     {
-        $startTime = microtime(true);
         //router instance, multiple instances are possible
         $router = Router::getInstance();
 
-        //basic GET request with route and view
+        //basic GET request route thats renders view as a response.
         $router->get("/", function () {
             View::render(
-                'ExampleView', [
+                'ExampleView',
+                [
                     'helloWorld' => 'Hello World!',
                 ]
             );
@@ -30,38 +30,72 @@ class App
             $person = new Person();
             $found = $person->find($id);
             if ($found) {
-                $data = ['post' => [
-                    'id' => $person->getId(),
-                    'firstName' => $person->getFirstName(),
-                    'lastName' => $person->getLastName(),
-                ],
+                $res->status(200);
+                $data = [
+                    'post' => [
+                        'id' => $person->getId(),
+                        'firstName' => $person->getFirstName(),
+                        'lastName' => $person->getLastName(),
+                    ],
                     'status' => '200'
                 ];
-                $res->toJSON();
+                $res->toJSON($data);
+            } else {
+                $res->status(404);
+                $data = [
+                    'status' => '404'
+                ];
+                $res->toJSON($data);
             }
         });
-        //route with parameters
+
+        //GET request route with parameters
         $router->get('/person/{id}/{firstName}/{lastName}', function ($id, $firstName, $lastName) {
             $res = new Response();
             echo 'first param(id): ' . $id . ', second param(first name): ' . $firstName . ', third param(last name): ' . $lastName;
         });
 
+        //GET route that is handled by controller
         $router->get('/person/{id}', function ($id) {
             (new TestController())->getPersonById($id);
         });
 
-        //will only work when properly sent POST request with payload
+        //POST request route handled by controller with csrf token validation
+        //Check example usage in src/Views/ExampleView.php
+        //Modify HiddenCSRF() function in public/index.php so it will meet your needs
         $router->post('/test', function () {
             (new TestController())->csrfValidationExample();
         });
-        $router->get('/attr', function () {
-            $person = new Person();
 
+        //valid entity example
+        $router->get('/valid-entity', function () {
+            $person = new Person();
             $person->setFirstName('test');
             $person->setLastName('test');
             $person->setLogin('testLogin');
+
+            //check if all required properties are set - should return true
             $valid = $person->validate();
-            var_dump($valid);
+            echo 'Entity is valid and ready to be sent to db: ';
+            echo $valid ? 'true' : 'false';
+        });
+
+        //invalid entity example
+        $router->get('/invalid-entity', function () {
+            $person = new Person();
+            $person->setFirstName('test');
+            $person->setLastName('test');
+            $person->setLogin('');
+
+            //check if all required properties are set, we did not set login property which is required - should return false.
+            $valid = $person->validate();
+            echo 'Entity is valid and ready to be sent to db: ';
+            echo $valid ? 'true' : 'false';
+        });
+
+
+        $router->get('/error', function () {
+            View::render('ExceptionView');
         });
 
 
@@ -71,9 +105,5 @@ class App
         if ($executed === false) {
             View::render('Error404');
         }
-        $endTime = microtime(true) - $startTime;
-        $time = intval($endTime * ($p = pow(10, 3))) / $p;
-        $routeCollection = $router->getRouteCollection();
-        echo '</br>Route executed in: ' . $time . 's, avaible routes: ' . $routeCollection->countRoutes();
     }
 }

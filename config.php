@@ -22,5 +22,9 @@ return [
     'DB_HOST' => '127.0.0.1',
     //if true, all migrations will also be created in testing database
     'TEST_DB_ACTIVE' => true,
+    //CSRF Token lifetime, default = 60 minutes
     'CSRF_TOKEN_LIFETIME' => 60 * 60,
+    //errors and exception routes for the end user
+    'EXCEPTION_ROUTE' => '/error',
+    'ERROR_ROUTE' => '/error',
 ];

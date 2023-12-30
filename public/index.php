@@ -2,11 +2,24 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Lib\Assets\AssetMapper;
+use App\Lib\ErrorHandler\ErrorHandler;
+use App\Lib\ExceptionHandler\ExceptionHandler;
 use App\Lib\Security\CSRF\SessionTokenManager;
 use App\Lib\Security\HTML\HiddenFieldGenerator;
 use App\Main\App;
 use App\Lib\Config;
 
+
+//error/exception handlers
+$errorHandler = function ($errno, $errstr, $errfile, $errline) {
+    (new ErrorHandler())->handle($errno, $errstr, $errfile, $errline);
+};
+set_error_handler($errorHandler);
+
+$exceptionHandler = function ($exception) {
+    (new ExceptionHandler())->handle($exception);
+};
+set_exception_handler($exceptionHandler);
 
 //check if uri exists as a public file or is in /config/asset_mapper.php
 $isAsset = AssetMapper::isAsset();

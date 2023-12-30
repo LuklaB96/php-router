@@ -9,6 +9,7 @@ namespace App\Lib\Database\Entity;
 
 use App\Lib\Config;
 use App\Lib\Database\Database;
+use App\Lib\Database\Exception\DatabaseNotConnectedException;
 use App\Lib\Database\Helpers\QueryBuilder;
 use App\Lib\Database\Mapping\AttributeReader;
 use App\Lib\Database\Mapping\PropertyReader;
@@ -88,6 +89,7 @@ class Entity
         $query = QueryBuilder::select($this->getEntityName(), $dbname, conditions: [$primaryKey['name'] => '']);
         $data = [$primaryKey['name'] => $key];
         $result = $this->db->execute($query, $data);
+
 
         //set values to properties for this instance
         if (is_array($result) && !empty($result)) {
