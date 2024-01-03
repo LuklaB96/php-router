@@ -20,6 +20,7 @@ class CsrfToken
         }
         //get token lifetime from config, default is 60 minutes.
         $this->tokenLifeTime = Config::get('CSRF_TOKEN_LIFETIME', 60 * 60);
+        $this->save();
     }
     /**
      * Get current token
@@ -35,7 +36,7 @@ class CsrfToken
      */
     public function isAlive(): bool
     {
-        return $this->tokenCreationTime + $this->tokenLifeTime <= time();
+        return $this->tokenCreationTime + $this->tokenLifeTime >= time();
     }
     /**
      * Save current token informations to $_SESSION storage

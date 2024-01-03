@@ -45,8 +45,8 @@ class AssetMapper
     public static function isPublicFile(): bool
     {
         $uri = $_SERVER["REQUEST_URI"];
-        $assets = Config::get('assets');
-        $url1 = Config::get('MAIN_DIR') . $uri;
+        $assets = Config::get('ASSETS');
+        $url1 = Config::get('MAIN_DIR') . AssetMapper::getRootDir() . $uri;
         $pathInfo = pathinfo($url1);
         //check if our route ends with file.extension
         if (isset($pathInfo['extension'])) {
@@ -54,7 +54,7 @@ class AssetMapper
             if (array_key_exists($pathInfo['basename'], $assets)) {
                 $url2 = Config::get('MAIN_DIR') . $assets[$pathInfo['basename']];
 
-                //check if asset url is the same as asset path, case-sensitive, asset/styles/app.css == asset/styles/APP.CSS
+                //check if asset url is the same as asset path, case-insensitive, asset/styles/app.css == asset/styles/APP.CSS
                 return strcasecmp($url1, $url2) === 0 ? true : false;
             }
             return false;
@@ -72,12 +72,27 @@ class AssetMapper
         $path = Config::get('MAIN_DIR') . $uri;
         //split uri into params
         $uriParams = explode('/', $uri);
-        //first param is empty so we can get rid of it
+        //first param is empty so we can shift it from array
         array_shift($uriParams);
         //check if file exists and if given path is correct and pointing to /public/assets/ folder.
         if (file_exists($path) && strcasecmp($uriParams[0], 'public') === 0 && strcasecmp($uriParams[1], 'assets') === 0) {
             return true;
         }
         return false;
+    }
+    private static function isApacheServer(): bool
+    {
+        if (strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
+            return true;
+        }
+        return false;
+    }
+    public static function getRootDir(): string
+    {
+        if (self::isApacheServer()) {
+            return '/assets';
+        } else {
+            return '/public/assets';
+        }
     }
 }

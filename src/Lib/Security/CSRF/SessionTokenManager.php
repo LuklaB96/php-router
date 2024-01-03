@@ -16,7 +16,11 @@ class SessionTokenManager
         $this->csrfToken = $this->startSession();
         $this->csrfToken->save();
     }
-    public static function getInstance()
+    /**
+     * Returns existing or new SessionTokenManager instance
+     * @return \App\Lib\Security\CSRF\SessionTokenManager
+     */
+    public static function getInstance(): SessionTokenManager
     {
         if (self::$instance !== null) {
             return self::$instance;
@@ -33,7 +37,7 @@ class SessionTokenManager
         return session_status() === PHP_SESSION_ACTIVE;
     }
     /**
-     * Start user session and retrive or generate new csrf token
+     * Start user session and retrive or generate new CSRF token
      * 
      * @return \App\Lib\Security\CSRF\CsrfToken
      */
@@ -49,8 +53,7 @@ class SessionTokenManager
             return $this->retriveTokenFromSession();
         }
         //if token is not present in session storage, create new.
-        $token = $this->tokenGenerator->generate();
-        return new CsrfToken($token);
+        return $this->newToken();
     }
     /**
      * Retrive token and its creation time from $_SESSION storage
@@ -74,7 +77,7 @@ class SessionTokenManager
         return $this->csrfToken->getToken();
     }
     /**
-     * Validate csrf token
+     * Validate CSRF token
      * @param string $token
      * @return bool
      */
@@ -82,6 +85,23 @@ class SessionTokenManager
     {
         $alive = $this->csrfToken->isAlive();
         return ($token === $this->getToken() && $alive);
+    }
+    /**
+     * Create new CsrfToken instance with valid token and lifetime
+     * @return \App\Lib\Security\CSRF\CsrfToken
+     */
+    public function newToken(): CsrfToken
+    {
+        $token = $this->tokenGenerator->generate();
+        return new CsrfToken($token);
+    }
+    /**
+     * Regenerate CSRF token for 
+     * @return void
+     */
+    public function regenerateToken()
+    {
+        $this->csrfToken = $this->newToken();
     }
 }
 

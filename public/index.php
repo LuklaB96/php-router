@@ -9,8 +9,7 @@ use App\Lib\Security\HTML\HiddenFieldGenerator;
 use App\Main\App;
 use App\Lib\Config;
 
-
-//error/exception handlers
+// error/exception handlers
 $errorHandler = function ($errno, $errstr, $errfile, $errline) {
     (new ErrorHandler())->handle($errno, $errstr, $errfile, $errline);
 };
@@ -21,18 +20,26 @@ $exceptionHandler = function ($exception) {
 };
 set_exception_handler($exceptionHandler);
 
-//check if uri exists as a public file or is in /config/asset_mapper.php
+// check if uri exists as a public file or is in /config/asset_mapper.php
 $isAsset = AssetMapper::isAsset();
 if ($isAsset) {
     return false;
 }
-//helper function to inject assets into views, they must exist in /config/asset_mapper.php
+/**
+ * Support function for valid asset path injection into views, configuration & more info in /config/asset_mapper.php
+ * @param mixed $asset
+ * @return void
+ */
 function asset($asset)
 {
-    $assets = Config::get('assets');
-    echo $assets[$asset];
+    $assets = Config::get('ASSETS');
+    echo AssetMapper::getRootDir() . $assets[$asset];
 }
-//can be used in views if we are sure that specific variable will be extracted.
+/**
+ * used in views to display extracted variable value
+ * @param mixed $var
+ * @return void
+ */
 function get($var)
 {
     echo isset($var) ? $var : null;
@@ -45,6 +52,10 @@ function get($var)
 function HiddenCSRF()
 {
     $sessionTokenManager = SessionTokenManager::getInstance();
+    $isValidToken = $sessionTokenManager->validateToken($sessionTokenManager->getToken());
+    if (!$isValidToken) {
+        $sessionTokenManager->regenerateToken();
+    }
     $hiddenField = HiddenFieldGenerator::generate('token', $sessionTokenManager->getToken());
     echo $hiddenField;
 }

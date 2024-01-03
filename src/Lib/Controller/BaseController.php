@@ -41,8 +41,16 @@ abstract class BaseController
     {
         $data = $this->request->getData();
         if (isset($data['token'])) {
+
             $token = $data['token'];
-            return $this->sessionTokenManager->validateToken($token);
+            $valid = $this->sessionTokenManager->validateToken($token);
+
+            if ($valid) {
+                return true;
+            }
+
+            $this->sessionTokenManager->regenerateToken();
+            return false;
         }
         return false;
     }
