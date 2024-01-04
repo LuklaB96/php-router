@@ -5,7 +5,7 @@ use App\Lib\Config;
 
 class ErrorHandler
 {
-    private string $errorRoute;
+    private string $errorRoute = '';
     public function __construct(string $errorRoute = '')
     {
         $this->$errorRoute = empty($errorRoute) ? Config::get('ERROR_ROUTE') : $errorRoute;

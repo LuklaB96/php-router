@@ -12,7 +12,8 @@ class ExceptionHandler
     }
     public function handle(\Throwable $exception)
     {
-        header('Location: ' . $this->exceptionRoute);
+        //header('Location: ' . $this->exceptionRoute);
+        echo $exception;
     }
 }
 

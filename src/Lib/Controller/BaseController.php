@@ -1,6 +1,7 @@
 <?php
 namespace App\Lib\Controller;
 
+use App\Lib\Database\Database;
 use App\Lib\Routing\Request;
 use App\Lib\Routing\Response;
 use App\Lib\Security\CSRF\SessionTokenManager;
@@ -19,11 +20,13 @@ abstract class BaseController
      */
     protected Request $request;
     protected SessionTokenManager $sessionTokenManager;
+    protected Database $db;
     public function __construct()
     {
         $this->sessionTokenManager = SessionTokenManager::getInstance();
         $this->request = new Request();
         $this->response = new Response();
+        $this->db = Database::getInstance();
     }
     protected function redirectToRoute(string $route, array $parameters = [])
     {

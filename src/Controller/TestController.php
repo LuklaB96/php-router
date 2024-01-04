@@ -25,5 +25,13 @@ class TestController extends BaseController
         }
         echo 'csrf token is valid';
     }
+
+    public function standardQueryExample()
+    {
+        //if we dont want to use entity standard query functions
+        $query = 'SELECT * FROM main_db.person LIMIT 1';
+        $result = $this->db->execute($query);
+        echo $result[0]['login'];
+    }
 }
 ?>

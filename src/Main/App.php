@@ -49,6 +49,58 @@ class App
             }
         });
 
+        $router->get('/find-one', function () {
+            $person = new Person();
+            $person->find(1);
+            echo $person->getFirstName() . '<br/><br/><br/>===================================<br/>';
+        });
+        $router->get('/find-one-by', function () {
+            $person = new Person();
+            $person->findOneBy(['id', '=', 5]);
+            echo 'ID: ' . $person->getId() . '<br/>';
+            echo $person->getFirstName() . '<br/>';
+            echo $person->getLastName() . '<br/>';
+        });
+        $router->get('/find-all', function () {
+            $person = new Person();
+            $repository = $person->findAll();
+            foreach ($repository as $item) {
+                echo 'Person ID: ' . $item->getId() . '<br/>';
+                echo $item->getFirstName() . '<br/>';
+                echo $item->getLastName() . '<br/>';
+                echo $item->getLogin() . '<br/>';
+            }
+        });
+        $router->get('/find-by', function () {
+            $person = new Person();
+            $repository = $person->findBy(['id', '>=', 10]);
+
+            foreach ($repository as $item) {
+                echo 'ID: ' . $item->getId() . '<br/>';
+            }
+        });
+
+        $router->get('/find-by-with-offset', function () {
+            $person = new Person();
+            $repository = $person->findBy(['id', '>=', 10], limit: 10, offset: 10);
+
+            foreach ($repository as $item) {
+                echo 'ID: ' . $item->getId() . '<br/>';
+            }
+        });
+
+        $router->get('/create-person', function () {
+            for ($i = 1; $i <= 100; $i++) {
+                $person = new Person();
+                $person->setFirstName('FirstName' . $i);
+                $person->setLastName('LastName' . $i);
+                $person->setLogin('login' . $i);
+                $valid = $person->validate();
+                if ($valid) {
+                    $person->insert();
+                }
+            }
+        });
         //GET request route with parameters
         $router->get('/person/{id}/{firstName}/{lastName}', function ($id, $firstName, $lastName) {
             $res = new Response();
@@ -58,6 +110,9 @@ class App
         //GET route that is handled by controller
         $router->get('/person/{id}', function ($id) {
             (new TestController())->getPersonById($id);
+        });
+        $router->get('/db-execute-example', function () {
+            (new TestController())->standardQueryExample();
         });
 
         //POST request route handled by controller with csrf token validation

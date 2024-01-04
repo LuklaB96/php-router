@@ -9,11 +9,11 @@ use App\Lib\Database\Mapping\Attributes\Column;
  */
 class QueryBuilder implements QueryBuilderInterface
 {
-    public static function createTable(array $columns, string $tableName, #[\SensitiveParameter] string $dbname, bool $checkExists = false): string
+    public static function createTable(array $columns, string $tableName, #[\SensitiveParameter] string $dbname, bool $checkTableExists = false): string
     {
 
         $query = "CREATE TABLE `$dbname`.`$tableName` (";
-        if ($checkExists) {
+        if ($checkTableExists) {
             $query = "CREATE TABLE IF NOT EXISTS `$dbname`.`$tableName` (";
         }
 
@@ -69,7 +69,7 @@ class QueryBuilder implements QueryBuilderInterface
 
         return $query;
     }
-    public static function select(string $tableName, #[\SensitiveParameter] string $dbName, string $orderBy = null, array $columns = null, array $conditions = null, int $limit = null): string
+    public static function select(string $tableName, #[\SensitiveParameter] string $dbName, string $orderBy = null, array $columns = null, array $criteria = null, int $limit = null, int $offset = null): string
     {
         $columnsStr = '*';
         if ($columns !== null) {
@@ -77,9 +77,9 @@ class QueryBuilder implements QueryBuilderInterface
         }
         $query = "SELECT $columnsStr FROM `$dbName`.`$tableName`";
 
-        if ($conditions !== null && !empty($conditions)) {
-            $conditionsStr = self::selectFilter($conditions);
-            $query .= " WHERE $conditionsStr";
+        if ($criteria !== null && !empty($criteria)) {
+            $criteriaStr = self::selectFilter($criteria);
+            $query .= " WHERE $criteriaStr";
         }
 
         if ($orderBy !== null) {
@@ -89,31 +89,32 @@ class QueryBuilder implements QueryBuilderInterface
         if ($limit !== null) {
             $query .= " LIMIT $limit";
         }
+        if ($offset !== null) {
+            $query .= " OFFSET $offset";
+        }
 
         $query .= ";";
 
         return $query;
     }
-    public static function delete(string $tableName, #[\SensitiveParameter] string $dbName, array $conditions): string
+    public static function delete(string $tableName, #[\SensitiveParameter] string $dbName, array $criteria): string
     {
-        $conditionsStr = self::selectFilter($conditions);
+        $criteriaStr = self::selectFilter($criteria);
 
-        $query = "DELETE FROM `$dbName`.`$tableName` WHERE $conditionsStr;";
+        $query = "DELETE FROM `$dbName`.`$tableName` WHERE $criteriaStr;";
 
         return $query;
     }
     /**
-     * Creates a parametrized SQL filter e.g. column_name = :column_name for sql injection security 
+     * Creates a parametrized SQL filter e.g. 'column_name = :column_name' for sql injection security 
      *
-     * @param  array $conditions syntax: ['column_name' => 'value'], only column_name will be used
+     * @param  array $criteria syntax: ['column_name' 'operator' 'value'], only column_name will be used
      * @return string string ready to be concatenated with other parts of the SQL query
      */
-    private static function selectFilter(array $conditions): string
+    private static function selectFilter(array $criteria): string
     {
         $conditionStr = [];
-        foreach ($conditions as $key => $value) {
-            $conditionStr[] = "$key = :$key";
-        }
+        $conditionStr[] = "$criteria[0] $criteria[1] :$criteria[0]";
 
         return implode(' AND ', $conditionStr);
     }

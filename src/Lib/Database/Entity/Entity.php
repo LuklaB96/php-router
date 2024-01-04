@@ -38,9 +38,9 @@ class Entity
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
-        $data = PropertyReader::getProperties($this); //get all entity properties, key(column name) => value array
-        $query = QueryBuilder::insert($data, $this->getEntityName(), $dbname); //build full query from data provided
-        return $this->db->execute($query, $data); //execute query using EntityManager
+        $data = $this->getProperties(null: false); //get all entity properties, key(column name) => value
+        $query = QueryBuilder::insert($data, $this->getEntityName(), $dbname);
+        return $this->db->execute($query, $data);
     }
     /**
      * Update entity in database
@@ -53,9 +53,9 @@ class Entity
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
-        $data = PropertyReader::getProperties($this, null: false); //get all entity properties, key(column name) => value array
-        $query = QueryBuilder::update($data, $this->getEntityName(), $dbname); //build full query from data provided
-        return $this->db->execute($query, $data); //execute query using EntityManager
+        $data = $this->getProperties(null: false); //get all entity properties, key(column name) => value
+        $query = QueryBuilder::update($data, $this->getEntityName(), $dbname);
+        return $this->db->execute($query, $data);
     }
     /**
      * Delete entity from database
@@ -69,8 +69,8 @@ class Entity
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
 
         $primaryKey = PropertyReader::getPrimaryProperty($this); //Get primary key if exists
-        $query = QueryBuilder::delete($this->getEntityName(), $dbname, [$primaryKey['name'] => $primaryKey['value']]); //build full query from data provided
-        return $this->db->execute($query); //execute query using EntityManager
+        $query = QueryBuilder::delete($this->getEntityName(), $dbname, [$primaryKey['name'] => $primaryKey['value']]);
+        return $this->db->execute($query);
     }
     /**
      * Find entity by primary key in database and update instance properties
@@ -86,16 +86,14 @@ class Entity
     {
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
         $primaryKey = PropertyReader::getPrimaryProperty($this);
-        $query = QueryBuilder::select($this->getEntityName(), $dbname, conditions: [$primaryKey['name'] => '']);
+        $criteria = [$primaryKey['name'], '=', $key];
+        $query = QueryBuilder::select($this->getEntityName(), $dbname, criteria: $criteria);
         $data = [$primaryKey['name'] => $key];
         $result = $this->db->execute($query, $data);
 
 
         //set values to properties for this instance
-        if (is_array($result) && !empty($result)) {
-            PropertyWriter::setPropertiesFromArray($this, $result[0]);
-            return true;
-        }
+        $this->setProperties($result);
         return false;
 
     }
@@ -124,30 +122,39 @@ class Entity
      * @param  array  $criteria
      * @param  string $orderBy  syntax: column_name ASC|DESC
      * @param  int    $limit
+     * @param  int    $offset
      * @param  mixed  $testdb
      * @return array|null
      */
-    public function findBy(array $criteria, string $orderBy = null, int $limit = null, $testdb = false, string $dbname = null): array
+    public function findBy(array $criteria, string $orderBy = null, int $limit = null, int $offset = null, $testdb = false, string $dbname = null): array
     {
+        // ['column_name','condition','value'] = ['id','>',5]
         $dbname = $this->getDbName(testdb: $testdb, dbname: $dbname);
-        $query = QueryBuilder::select($this->getEntityName(), $dbname, conditions: $criteria, limit: $limit);
-        $result = $this->db->execute($query, $criteria);
+        $query = QueryBuilder::select($this->getEntityName(), $dbname, criteria: $criteria, limit: $limit, offset: $offset);
+        $data = $this->convertCriteriaToDataArray($criteria);
+        $result = $this->db->execute($query, $data);
+        if ($limit === 1) {
+            $this->setProperties($result);
+        }
         $repository = $this->createRepository($result);
         return $repository;
     }
     /**
      * Find one entity that meets the criteria and order if specified
      *
-     * @param array  $criteria syntax: array['column_name' => 'value']
+     * @param array  $criteria syntax: array['column_name' => 'value'] ['id','>',5]
      * @param string $orderBy  syntax: column_name ASC|DESC
      * @param bool   $testdb
+     * @return bool
      */
-    public function findOneBy(array $criteria, string $orderBy = null, bool $testdb = false, string $dbname = null)
+    public function findOneBy(array $criteria, string $orderBy = null, bool $testdb = false, string $dbname = null): bool
     {
         $result = $this->findBy($criteria, orderBy: $orderBy, limit: 1, testdb: $testdb, dbname: $dbname);
-        if (is_array($result) && !empty($result)) {
-            PropertyWriter::setPropertiesFromArray($this, $result[0]);
+        if (!empty($result)) {
+            return true;
         }
+        return false;
+
     }
     /**
      * @param  bool $withNamespace if true, will return \\App\\Namespace\\Example\\ClassName, if false will return only ClassName
@@ -170,9 +177,18 @@ class Entity
         $classAttributes = AttributeReader::getAttributes($this);
         return $classAttributes;
     }
-    private function setProperties(array $properties)
+    /**
+     * Set properties for current entity instance
+     * @param array $properties result data from executed select * query
+     * @return bool
+     */
+    private function setProperties(array $properties): bool
     {
-        PropertyWriter::setPropertiesFromArray($this, $properties);
+        if (is_array($properties) && !empty($properties)) {
+            PropertyWriter::setPropertiesFromArray($this, $properties[0]);
+            return true;
+        }
+        return false;
     }
     /**
      * @param  bool $null if needs all or only with not empty value
@@ -230,6 +246,22 @@ class Entity
     public function validate(): bool
     {
         return $this->entityValidator->validate($this);
+    }
+    /**
+     * Converts searching conditions array into PDO execute data array.
+     * 
+     * Criteria array: ['column_name','>=','value'] = ['column_name','value']
+     * 
+     * @param array $criteria
+     * @return array
+     */
+    private function convertCriteriaToDataArray(array $criteria): array
+    {
+        if (empty($criteria)) {
+            return [];
+        }
+        $result = [$criteria[0] => $criteria[2]];
+        return $result;
     }
 }
 
