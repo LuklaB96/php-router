@@ -23,8 +23,8 @@ return [
     //database credentials
     'DB_USER' => 'root',
     'DB_PASSWORD' => '',
-    'DB_NAME' => 'main_db',
-    'TEST_DB_NAME' => 'test_db',
+    'DB_NAME' => 'app_db',
+    'TEST_DB_NAME' => 'app_db_test',
     'DB_HOST' => '127.0.0.1',
     //if true, all migrations will also be created in testing database
     'TEST_DB_ACTIVE' => true,

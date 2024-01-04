@@ -12,6 +12,7 @@ class TestController extends BaseController
         $person = new Person();
         $res = new Response();
         $person->find($id);
+        echo $person->getFirstName() . " " . $person->getLastName();
     }
     /**
      * Csrf auth example

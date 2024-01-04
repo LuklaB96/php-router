@@ -12,7 +12,7 @@
 
 <body>
     <?php get($helloWorld); ?>
-    <form action="/test" method="post">
+    <form action="/csrf-test" method="post">
         <?php
         //this will create hidden input field inside form, and will provide valid csrf token as a value, field name will be set as 'token'
         HiddenCSRF();

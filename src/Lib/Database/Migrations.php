@@ -52,7 +52,9 @@ class Migrations implements MigrationsInterface
             if ($message == 'ok') {
                 echo "Table $tableName created in: $dbname \r\n";
             } else {
-                echo $message['message'] . "\r\n";
+                if ($message === '42S01') {
+                    echo "Table $tableName already exists in $dbname \r\n";
+                }
             }
         }
     }

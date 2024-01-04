@@ -17,4 +17,5 @@ $sql = "
 ";
 
 $conn->exec($sql);
+echo 'database_create.php executed without errors, check database.';
 ?>

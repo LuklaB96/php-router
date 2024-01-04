@@ -24,39 +24,14 @@ class App
             );
         });
 
-        //basic Entity usage to get data from db
-        $router->get('/person/{id}', function ($id) {
-            $res = new Response();
-            $person = new Person();
-            $found = $person->find($id);
-            if ($found) {
-                $res->status(200);
-                $data = [
-                    'post' => [
-                        'id' => $person->getId(),
-                        'firstName' => $person->getFirstName(),
-                        'lastName' => $person->getLastName(),
-                    ],
-                    'status' => '200'
-                ];
-                $res->toJSON($data);
-            } else {
-                $res->status(404);
-                $data = [
-                    'status' => '404'
-                ];
-                $res->toJSON($data);
-            }
-        });
-
         $router->get('/find-one', function () {
             $person = new Person();
-            $person->find(1);
+            $person->find(5);
             echo $person->getFirstName() . '<br/><br/><br/>===================================<br/>';
         });
         $router->get('/find-one-by', function () {
             $person = new Person();
-            $person->findOneBy(['id', '=', 5]);
+            $person->findOneBy(['id', '=', 10]);
             echo 'ID: ' . $person->getId() . '<br/>';
             echo $person->getFirstName() . '<br/>';
             echo $person->getLastName() . '<br/>';
@@ -100,6 +75,7 @@ class App
                     $person->insert();
                 }
             }
+            echo 'Created ' . $i - 1 . ' records for Person entity';
         });
         //GET request route with parameters
         $router->get('/person/{id}/{firstName}/{lastName}', function ($id, $firstName, $lastName) {
@@ -118,7 +94,7 @@ class App
         //POST request route handled by controller with csrf token validation
         //Check example usage in src/Views/ExampleView.php
         //Modify HiddenCSRF() function in public/index.php so it will meet your needs
-        $router->post('/test', function () {
+        $router->post('/csrf-test', function () {
             (new TestController())->csrfValidationExample();
         });
 
