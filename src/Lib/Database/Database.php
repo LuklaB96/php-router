@@ -44,6 +44,9 @@ class Database implements DatabaseInterface
     }
     public function setConnection(#[\SensitiveParameter] string $dbhost, #[\SensitiveParameter] string $dbuser, #[\SensitiveParameter] string $dbpassword = null): bool
     {
+        if ($dbpassword === null) {
+            $dbpassword = '';
+        }
         $dsn = "mysql:host=$dbhost;";
         try {
             $this->conn = new \PDO($dsn, $dbuser, $dbpassword);

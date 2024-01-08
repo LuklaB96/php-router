@@ -9,6 +9,9 @@ use App\Lib\Security\HTML\HiddenFieldGenerator;
 use App\Main\App;
 use App\Lib\Config;
 
+//create global session
+createSession();
+
 // error/exception handlers
 $errorHandler = function ($errno, $errstr, $errfile, $errline) {
     (new ErrorHandler())->handle($errno, $errstr, $errfile, $errline);
@@ -58,6 +61,10 @@ function HiddenCSRF()
     }
     $hiddenField = HiddenFieldGenerator::generate('token', $sessionTokenManager->getToken());
     echo $hiddenField;
+}
+function createSession()
+{
+    $sessionTokenManager = SessionTokenManager::getInstance();
 }
 
 App::run();

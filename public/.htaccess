@@ -2,6 +2,9 @@ RewriteEngine On
 RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.+)$ index.php [QSA,L]
+php_flag output_buffering on
+
+#env for windows, should be deleted when using other env sources
 SetEnv MYSQL_HOST "mysql"
 SetEnv MYSQL_ROOT_PASSWORD "root"
 SetEnv MYSQL_DATABASE "app_db"
