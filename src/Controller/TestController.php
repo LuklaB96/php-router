@@ -11,8 +11,24 @@ class TestController extends BaseController
     {
         $person = new Person();
         $res = new Response();
-        $person->find($id);
-        echo $person->getFirstName() . " " . $person->getLastName();
+        $found = $person->find($id);
+        if ($found) {
+            $res->status(200);
+            $res->toJSON([
+                "message" => "ok",
+                "persons" => [
+                    $id => [
+                        "firstName" => $person->getFirstName(),
+                        "lastName" => $person->getLastName()
+                    ]
+                ]
+            ]);
+            return;
+        }
+        $res->status(404);
+        $res->toJSON([
+            "message" => "not found",
+        ]);
     }
     /**
      * Csrf auth example
@@ -30,7 +46,7 @@ class TestController extends BaseController
     public function standardQueryExample()
     {
         //if we dont want to use entity standard query functions
-        $query = 'SELECT * FROM main_db.person LIMIT 1';
+        $query = 'SELECT * FROM app_db.person LIMIT 1';
         $result = $this->db->execute($query);
         echo $result[0]['login'];
     }

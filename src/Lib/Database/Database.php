@@ -36,9 +36,9 @@ class Database implements DatabaseInterface
     private $dbError = '';
     private function __construct()
     {
-        $dbhost = Config::get('DB_HOST');
-        $dbuser = Config::get('DB_USER');
-        $dbpassword = Config::get('DB_PASSWORD');
+        $dbhost = Config::get('DB_HOST', '127.0.0.1');
+        $dbuser = Config::get('DB_USER', 'root');
+        $dbpassword = Config::get('DB_PASSWORD', '');
 
         $this->setConnection($dbhost, $dbuser, $dbpassword);
     }
@@ -65,31 +65,27 @@ class Database implements DatabaseInterface
     {
         return $this->conn !== null;
     }
-    public function execute(#[\SensitiveParameter] $query, array $data = []): string|array
+    public function execute(#[\SensitiveParameter] $query, array $data = []): array
     {
         if ($this->isConnected() == false) {
             throw new DatabaseNotConnectedException();
         }
         $stmt = $this->conn->prepare($query);
-        try {
-            if (empty($data)) {
-                $stmt->execute();
-            } else {
-                $stmt->execute($data);
-            }
-            return $this->handleExecutionResult($stmt, $query);
-        } catch (\PDOException $e) {
-            return $this->handleExecutionException($e);
+        if (empty($data)) {
+            $stmt->execute();
+        } else {
+            $stmt->execute($data);
         }
+        return $this->handleExecutionResult($stmt, $query);
     }
     /**
      * This method checks the type of query executed and handles the result accordingly.
      *
      * @param  \PDOStatement $stmt 
      * @param  string        $query The executed SQL query
-     * @return array|string 
+     * @return array
      */
-    private function handleExecutionResult(\PDOStatement $stmt, #[\SensitiveParameter] string $query)
+    private function handleExecutionResult(\PDOStatement $stmt, #[\SensitiveParameter] string $query): array
     {
         // Check if the query is a SELECT statement
         $isSelectQuery = strtoupper(substr(trim($query), 0, 6)) === 'SELECT';
@@ -99,19 +95,8 @@ class Database implements DatabaseInterface
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } else {
             // For other queries, return 'ok'
-            return 'ok';
+            return [];
         }
-    }
-
-    /**
-     * Handles exception if thrown by execute
-     *
-     * @param  mixed $e
-     * @return \PDOException
-     */
-    private function handleExecutionException($e)
-    {
-        return $e->getCode();
     }
 }
 

@@ -20,35 +20,33 @@ class Migrations implements MigrationsInterface
     {
         //create main database (default)
         $this->createTable($entity);
-
-        //create table in test db if set to true in config.php
-        $testDbRequired = Config::get('TEST_DB_ACTIVE');
-        if ($testDbRequired) {
-            $dbname = Config::get('TEST_DB_NAME');
-            $this->createTable($entity, $dbname);
-        }
     }
     private function createTable(Entity $entity, $dbname = '')
     {
-        //if $dbname is not specified, get default db name from config
-        if ($dbname == '') {
-            $dbname = Config::get('DB_NAME');
-        }
-
-        //we using entity name as table name, can be customized in every entity class.
-        $tableName = $entity->getEntityName();
-        $properties = $entity->getAttributes();
-
-        $columns = [];
-        foreach ($properties as $property) {
-            $column = AttributeReader::createColumn($property);
-            $columns[] = $column;
-        }
-
-        $query = QueryBuilder::createTable($columns, $tableName, $dbname);
-        //if connection is valid, execute sql query
         if ($entity->db->isConnected()) {
-            $message = $entity->db->execute($query);
+            //if $dbname is not specified, get default db name from config
+            if ($dbname == '') {
+                $dbname = Config::get('DB_NAME', 'app_db');
+            }
+
+            //we using entity name as table name, can be customized in every entity class.
+            $tableName = $entity->getEntityName();
+            $properties = $entity->getAttributes();
+
+            $columns = [];
+            foreach ($properties as $property) {
+                $column = AttributeReader::createColumn($property);
+                $columns[] = $column;
+            }
+
+            $query = QueryBuilder::createTable($columns, $tableName, $dbname);
+            //if connection is valid, execute sql query
+            try {
+                $entity->db->execute($query);
+                $message = 'ok';
+            } catch (\Exception $e) {
+                $message = $e->getCode();
+            }
             if ($message == 'ok') {
                 echo "Table $tableName created in: $dbname \r\n";
             } else {
@@ -56,7 +54,9 @@ class Migrations implements MigrationsInterface
                     echo "Table $tableName already exists in $dbname \r\n";
                 }
             }
+            return;
         }
+        echo "Not connected to database";
     }
 }
 

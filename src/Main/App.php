@@ -39,6 +39,7 @@ class App
         $router->get('/find-all', function () {
             $person = new Person();
             $repository = $person->findAll();
+            echo $person->exception->getMessage();
             foreach ($repository as $item) {
                 echo 'Person ID: ' . $item->getId() . '<br/>';
                 echo $item->getFirstName() . '<br/>';

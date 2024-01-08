@@ -21,13 +21,10 @@ return [
     //asset mapper
     'ASSETS' => $assets,
     //database credentials
-    'DB_USER' => 'root',
-    'DB_PASSWORD' => '',
-    'DB_NAME' => 'app_db',
-    'TEST_DB_NAME' => 'app_db_test',
-    'DB_HOST' => '127.0.0.1',
-    //if true, all migrations will also be created in testing database
-    'TEST_DB_ACTIVE' => true,
+    'DB_USER' => getenv('MYSQL_USER'),
+    'DB_PASSWORD' => getenv('MYSQL_PASSWORD'),
+    'DB_NAME' => getenv('MYSQL_DATABASE'),
+    'DB_HOST' => getenv('MYSQL_HOST'),
     //CSRF Token lifetime, default = 60 minutes
     'CSRF_TOKEN_LIFETIME' => 60 * 60,
     //error and exception routes for the end user

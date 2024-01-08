@@ -2,3 +2,8 @@ RewriteEngine On
 RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.+)$ index.php [QSA,L]
+SetEnv MYSQL_HOST "mysql"
+SetEnv MYSQL_ROOT_PASSWORD "root"
+SetEnv MYSQL_DATABASE "app_db"
+SetEnv MYSQL_USER "root"
+SetEnv MYSQL_PASSWORD "" 
