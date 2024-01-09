@@ -15,10 +15,12 @@ $user = new User();
 
 //create tables from entity properties
 //tables without foreign keys
-$migrations->create($post);
+$migrations->create($user);
+
 //tables with foreign keys
 $migrations->create($comment);
-$migrations->create($user);
+$migrations->create($post);
+
 
 
 ?>

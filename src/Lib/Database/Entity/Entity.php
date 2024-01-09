@@ -47,7 +47,7 @@ class Entity
             $relationData = AttributeReader::getRelationsData($this);
             $data = array_merge($data, $relationData);
         }
-
+        //var_dump($data);
         $query = QueryBuilder::insert($data, $this->getEntityName(), $dbname);
 
         try {
@@ -60,6 +60,7 @@ class Entity
             return true;
         } catch (\Exception $e) {
             $this->exception = $e;
+            //echo $e->getMessage();
             return false;
         }
 
@@ -122,11 +123,12 @@ class Entity
     {
         $dbname = $this->getDbName(dbname: $dbname);
         $primaryKey = $this->getPrimaryKey();
-        $criteria = [$primaryKey['name'], '=', $key];
+        $criteria = [[$primaryKey['name'], '=', $key]];
         $query = QueryBuilder::select($this->getEntityName(), $dbname, criteria: $criteria);
-        $data = [$primaryKey['name'] => $key];
+        $data = $this->convertCriteriaToDataArray($criteria);
         try {
             $result = $this->db->execute($query, $data);
+
             //set values to properties for this instance if request is not empty
             if (!empty($result)) {
                 $this->setProperties($result);
@@ -134,6 +136,7 @@ class Entity
             }
         } catch (\Exception $e) {
             $this->exception = $e;
+            echo $e->getMessage();
             return false;
         }
         return false;
@@ -170,7 +173,10 @@ class Entity
      */
     public function findBy(array $criteria, string $orderBy = null, int $limit = null, int $offset = null, string $dbname = null): array
     {
-        // ['column_name','condition','value'] = ['id','>',5]
+        //convert array to accessible one
+        if (!is_array($criteria[0])) {
+            $criteria = [$criteria];
+        }
         $dbname = $this->getDbName(dbname: $dbname);
         $query = QueryBuilder::select($this->getEntityName(), $dbname, criteria: $criteria, limit: $limit, offset: $offset);
         $data = $this->convertCriteriaToDataArray($criteria);
@@ -303,8 +309,13 @@ class Entity
         if (empty($criteria)) {
             return [];
         }
-        $result = [$criteria[0] => $criteria[2]];
-        return $result;
+        $data = [];
+        $count = 1;
+        foreach ($criteria as $condition) {
+            $data["$condition[0]$count"] = $condition[2];
+            $count++;
+        }
+        return $data;
     }
     private function hasRelations(): bool
     {

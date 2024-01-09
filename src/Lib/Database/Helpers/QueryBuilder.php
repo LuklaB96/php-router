@@ -49,6 +49,9 @@ class QueryBuilder implements QueryBuilderInterface
         } else {
             $definition .= ' NOT NULL';
         }
+        if ($column->unique) {
+            $definition .= ' UNIQUE';
+        }
         return "`$column->name`" . ' ' . $definition;
     }
     public static function createRelationDefinition(array $relation): string
@@ -124,8 +127,13 @@ class QueryBuilder implements QueryBuilderInterface
     private static function selectFilter(array $criteria): string
     {
         $conditionStr = [];
-        $conditionStr[] = "$criteria[0] $criteria[1] :$criteria[0]";
-
+        $count = 1;
+        foreach ($criteria as $condition) {
+            $conditionStr[] = "$condition[0] $condition[1] :$condition[0]$count";
+            $count++;
+        }
         return implode(' AND ', $conditionStr);
+
+
     }
 }

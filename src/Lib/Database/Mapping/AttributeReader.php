@@ -100,7 +100,8 @@ class AttributeReader
         $primaryKey = $attributes['primaryKey'] ?? false;
         $autoIncrement = $attributes['autoIncrement'] ?? false;
         $nullable = $attributes['nullable'] ?? false;
+        $unique = $attributes['unique'] ?? false;
 
-        return new Column($name, $type, $length, $primaryKey, $autoIncrement, $nullable);
+        return new Column($name, $type, $length, $primaryKey, $autoIncrement, $nullable, $unique);
     }
 }

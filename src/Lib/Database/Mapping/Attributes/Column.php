@@ -11,6 +11,7 @@ class Column
     public bool $primaryKey;
     public bool $autoIncrement;
     public bool $nullable;
+    public bool $unique;
     /**
      * Be sure to read and follow rules for SQL column creation.
      * 
@@ -29,7 +30,8 @@ class Column
         ?int $length = 0,
         bool $primaryKey = false,
         bool $autoIncrement = false,
-        bool $nullable = false
+        bool $nullable = false,
+        bool $unique = false
     ) {
         $this->name = $name;
         $this->type = $type;
@@ -37,5 +39,6 @@ class Column
         $this->primaryKey = $primaryKey;
         $this->autoIncrement = $autoIncrement;
         $this->nullable = $nullable;
+        $this->unique = $unique;
     }
 }
