@@ -3,10 +3,6 @@ composer.phar
 /vendor/
 /logs/
 
-# Ignore .htaccess main file, keep template
-/public/.htaccess
-
-
 # Ignore all custom scripts, keep database scripts
 /scripts/*
 !/scripts/Database
