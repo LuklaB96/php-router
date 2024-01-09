@@ -2,7 +2,10 @@ composer.phar
 /.backups/
 /vendor/
 /logs/
-/scripts/CodeAnalyzer/
+
+# Ignore all custom scripts, keep database scripts
+/scripts/*
+!/scripts/Database
 
 # Ignore all Controller files, keep examples
 /src/Controller/*
