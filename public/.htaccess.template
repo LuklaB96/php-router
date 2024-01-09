@@ -1,10 +1,15 @@
+# Redirect all requests to example.com/index.php
+# Files can be accessed in /public directory
+# /public subdirectiorires can not be accessed.
 RewriteEngine On
 RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.+)$ index.php [QSA,L]
+
+# Default behaviour for php apache
 php_flag output_buffering on
 
-#env for windows, should be deleted when using other env sources
+# Only for testing environment, delete on production
 SetEnv MYSQL_HOST "mysql"
 SetEnv MYSQL_ROOT_PASSWORD "root"
 SetEnv MYSQL_DATABASE "app_db"
