@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use App\Entity\Person;
 use App\Lib\Assets\AssetMapper;
+use App\Lib\Database\Mapping\AttributeReader;
 use App\Lib\ErrorHandler\ErrorHandler;
 use App\Lib\ExceptionHandler\ExceptionHandler;
 use App\Lib\Security\CSRF\SessionTokenManager;

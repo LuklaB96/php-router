@@ -34,6 +34,7 @@ class Database implements DatabaseInterface
      * @var string
      */
     private $dbError = '';
+    private $lastInsertedId = 0;
     private function __construct()
     {
         $dbhost = Config::get('DB_HOST', '127.0.0.1');
@@ -79,6 +80,7 @@ class Database implements DatabaseInterface
         } else {
             $stmt->execute($data);
         }
+        $this->lastInsertedId = $this->conn->lastInsertId();
         return $this->handleExecutionResult($stmt, $query);
     }
     /**
@@ -100,6 +102,10 @@ class Database implements DatabaseInterface
             // For other queries, return 'ok'
             return [];
         }
+    }
+    public function getLastInsertedId(): int
+    {
+        return $this->lastInsertedId ?? 0;
     }
 }
 

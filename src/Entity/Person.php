@@ -3,16 +3,19 @@ namespace App\Entity;
 
 use App\Lib\Database\Enums\ColumnType;
 use App\Lib\Database\Entity\Entity;
+use App\Lib\Database\Enums\RelationType;
 use App\Lib\Database\Mapping\Attributes\Column;
+use App\Lib\Database\Mapping\Attributes\Relation;
 
 class Person extends Entity
 {
     /**
      * This is an example class that is extending Entity parent class
-     * Every property should be protected
+     * Every property should be protected/private
      * Every property should have getters and setters (except for auto increment primary keys) to read/write from database.
      * Attributes are used to tell parent class which properties should be used as column names and definitions.
      * Use #[Column(...)] attribute to define them, examples are below.
+     * Use #[Relation(...)] to create a relation between entities.
      */
 
     /**
@@ -21,14 +24,14 @@ class Person extends Entity
      * @var 
      */
     #[Column(type: ColumnType::INT, primaryKey: true, autoIncrement: true)]
-    protected $id;
+    protected int $id;
     /**
      * Nullable varchar(32) columns
      */
     #[Column(type: ColumnType::VARCHAR, nullable: true, length: 32)]
-    protected $firstName;
+    protected ?string $firstName;
     #[Column(type: ColumnType::VARCHAR, nullable: true, length: 32)]
-    protected $lastName;
+    protected ?string $lastName;
     #[Column(type: ColumnType::VARCHAR, nullable: false, length: 32)]
     protected $login;
 

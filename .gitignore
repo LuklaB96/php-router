@@ -4,6 +4,31 @@ composer.phar
 /logs/
 /scripts/CodeAnalyzer/
 
+# Ignore all Controller files, keep examples
+/src/Controller/*
+!/src/Controller/TestController.php
+
+# Ignore all Entity files, keep examples
+/src/Entity/*
+!/src/Entity/ExampleEntity.php
+!/src/Entity/Person.php
+
+# Ignore all Main files, keep examples
+/src/Main/*
+!/src/Main/App.php
+
+# Ignore all View files, keep examples
+/src/Views/*
+!/src/Views/Error404.php
+!/src/Views/ExampleView.php
+!/src/Views/ExceptionView.php
+
+# Ignore .env files, keep template
+.env
+.env.*
+!.env.template
+
+
 # Commit your application's lock file https://getcomposer.org/doc/01-basic-usage.md#commit-your-composer-lock-file-to-version-control
 # You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
 # composer.lock

@@ -33,13 +33,33 @@ class Migrations implements MigrationsInterface
             $tableName = $entity->getEntityName();
             $properties = $entity->getAttributes();
 
+            $relations = [];
+
             $columns = [];
             foreach ($properties as $property) {
-                $column = AttributeReader::createColumn($property);
-                $columns[] = $column;
+                if ($property['attributeType'] === 'Column') {
+                    $column = AttributeReader::createColumn($property);
+                    $columns[] = $column;
+                }
+                if ($property['attributeType'] === 'Relation') {
+                    $relationProperty = [
+                        'name' => $property['name'] . '_' . $property['propertyPrimaryKey']['name'],
+                        'type' => $property['propertyPrimaryKey']['columnDefinition']->type,
+                        'length' => $property['propertyPrimaryKey']['columnDefinition']->length,
+                        'nullable' => false,
+                        'attributeType' => 'Column',
+                    ];
+                    $column = AttributeReader::createColumn($relationProperty);
+                    $relation = [
+                        'column' => $property['name'] . '_' . $property['propertyPrimaryKey']['name'],
+                        'reference_table' => $property['name'],
+                        'reference_column' => $property['propertyPrimaryKey']['name']
+                    ];
+                    $columns[] = $column;
+                    $relations[] = $relation;
+                }
             }
-
-            $query = QueryBuilder::createTable($columns, $tableName, $dbname);
+            $query = QueryBuilder::createTable($columns, $tableName, $dbname, relations: $relations);
             //if connection is valid, execute sql query
             try {
                 $entity->db->execute($query);

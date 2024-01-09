@@ -11,6 +11,8 @@ use App\Lib\Config;
 use App\Lib\Database\Database;
 use App\Lib\Database\Helpers\QueryBuilder;
 use App\Lib\Database\Mapping\AttributeReader;
+use App\Lib\Database\Mapping\Attributes\Column;
+use App\Lib\Database\Mapping\Attributes\Relation;
 use App\Lib\Database\Mapping\PropertyReader;
 use App\Lib\Database\Mapping\PropertyWriter;
 
@@ -30,7 +32,7 @@ class Entity
     }
     /**
      * Insert entity data into database
-     *
+     * 
      * @param  bool   $testdb
      * @param  string $dbname
      * @return string
@@ -39,10 +41,22 @@ class Entity
     {
         $dbname = $this->getDbName(dbname: $dbname);
 
-        $data = $this->getProperties(null: false); //get all entity properties, key(column name) => value
+        $data = $this->getProperties(null: false, targetAttribute: Column::class); //get all entity column properties, key(column name) => value
+        //get relation properties
+        if ($this->hasRelations()) {
+            $relationData = AttributeReader::getRelationsData($this);
+            $data = array_merge($data, $relationData);
+        }
+
         $query = QueryBuilder::insert($data, $this->getEntityName(), $dbname);
+
         try {
             $this->db->execute($query, $data);
+
+            //update entity
+            if ($this->db->getLastInsertedId() !== 0) {
+                $this->find($this->db->getLastInsertedId());
+            }
             return true;
         } catch (\Exception $e) {
             $this->exception = $e;
@@ -83,9 +97,11 @@ class Entity
         $dbname = $this->getDbName(dbname: $dbname);
 
         $primaryKey = PropertyReader::getPrimaryProperty($this); //Get primary key if exists
-        $query = QueryBuilder::delete($this->getEntityName(), $dbname, [$primaryKey['name'] => $primaryKey['value']]);
+        $criteria = [$primaryKey['name'], '=', $primaryKey['value']];
+        $query = QueryBuilder::delete($this->getEntityName(), $dbname, $criteria);
+        echo $query;
         try {
-            $this->db->execute($query);
+            $this->db->execute($query, [$primaryKey['name'] => $primaryKey['value']]);
             return true;
         } catch (\Exception $e) {
             $this->exception = $e;
@@ -105,7 +121,7 @@ class Entity
     public function find($key, string $dbname = null): bool
     {
         $dbname = $this->getDbName(dbname: $dbname);
-        $primaryKey = PropertyReader::getPrimaryProperty($this);
+        $primaryKey = $this->getPrimaryKey();
         $criteria = [$primaryKey['name'], '=', $key];
         $query = QueryBuilder::select($this->getEntityName(), $dbname, criteria: $criteria);
         $data = [$primaryKey['name'] => $key];
@@ -225,10 +241,10 @@ class Entity
      * @param  bool $null if needs all or only with not empty value
      * @return array entity properties array(property_name => value)
      */
-    public function getProperties(bool $null = true): array
+    public function getProperties(bool $null = true, string $targetAttribute = null): array
     {
-        $classProperties = PropertyReader::getProperties($this, $null);
-        return $classProperties;
+        $entityProperties = PropertyReader::getProperties($this, $null, $targetAttribute);
+        return $entityProperties;
     }
     /**
      * @param  mixed $testdb
@@ -289,6 +305,22 @@ class Entity
         }
         $result = [$criteria[0] => $criteria[2]];
         return $result;
+    }
+    private function hasRelations(): bool
+    {
+        return AttributeReader::hasAttribute($this, Relation::class);
+    }
+    private function getRelations()
+    {
+
+    }
+    private function setRelations()
+    {
+
+    }
+    public function getPrimaryKey(): array
+    {
+        return PropertyReader::getPrimaryProperty($this);
     }
 }
 

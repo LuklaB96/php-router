@@ -2,7 +2,10 @@
 namespace App\Main;
 
 use App\Controller\TestController;
+use App\Entity\ExampleEntity;
 use App\Entity\Person;
+use App\Entity\User;
+use App\Lib\Database\Mapping\AttributeReader;
 use App\Lib\Routing\Router;
 use App\Lib\Routing\Response;
 use App\Lib\View\View;
@@ -23,6 +26,23 @@ class App
                 ]
             );
         });
+        $router->get('/attr', function () {
+            $person = new Person();
+            if ($person->find(7)) {
+                $example = new ExampleEntity();
+                $example->setPerson($person);
+                $example->insert();
+
+                var_dump($example->delete());
+            }
+
+
+            $example = new ExampleEntity();
+            $example->setPerson($person);
+            //$example->insert();
+            $res = new Response();
+            $res->toJSON(AttributeReader::getAttributes(new ExampleEntity()));
+        });
 
         $router->get('/find-one', function () {
             $person = new Person();
@@ -37,14 +57,12 @@ class App
             echo $person->getLastName() . '<br/>';
         });
         $router->get('/find-all', function () {
-            $person = new Person();
-            $repository = $person->findAll();
-            echo $person->exception->getMessage();
+            $example = new ExampleEntity();
+            $repository = $example->findAll();
             foreach ($repository as $item) {
                 echo 'Person ID: ' . $item->getId() . '<br/>';
-                echo $item->getFirstName() . '<br/>';
-                echo $item->getLastName() . '<br/>';
-                echo $item->getLogin() . '<br/>';
+                echo $item->getTitle() . '<br/>';
+                echo $item->getDescription() . '<br/>';
             }
         });
         $router->get('/find-by', function () {
@@ -65,18 +83,19 @@ class App
             }
         });
 
-        $router->get('/create-person', function () {
+        $router->get('/create-users', function () {
             for ($i = 1; $i <= 100; $i++) {
-                $person = new Person();
-                $person->setFirstName('FirstName' . $i);
-                $person->setLastName('LastName' . $i);
-                $person->setLogin('login' . $i);
-                $valid = $person->validate();
+                $user = new User();
+                $user->setLogin('Login' . $i);
+                $user->setPassword('Password' . $i);
+                $user->setEmail('Email' . $i);
+                $user->setNickname('Nickname' . $i);
+                $valid = $user->validate();
                 if ($valid) {
-                    $person->insert();
+                    $user->insert();
                 }
             }
-            echo 'Created ' . $i - 1 . ' records for Person entity';
+            echo 'Created ' . $i - 1 . ' records for User entity';
         });
         //GET request route with parameters
         $router->get('/person/{id}/{firstName}/{lastName}', function ($id, $firstName, $lastName) {

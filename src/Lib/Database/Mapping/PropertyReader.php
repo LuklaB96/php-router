@@ -16,14 +16,16 @@ class PropertyReader
      * @param  \App\Lib\Database\Entity\Entity $object
      * @return array
      */
-    public static function getProperties(Entity $object, bool $null = true): array
+    public static function getProperties(Entity $object, bool $null = true, string $targetAttribute = null): array
     {
         $reflection = new \ReflectionClass($object);
         $properties = [];
-
         foreach ($reflection->getProperties() as $property) {
-            if (self::hasAttribute($property)) {
-                $propertyValue = $property->getValue($object);
+            if (self::hasAttribute($property, targetAttribute: $targetAttribute)) {
+                $propertyValue = null;
+                if ($property->isInitialized($object)) {
+                    $propertyValue = $property->getValue($object);
+                }
                 if (!empty($propertyValue) || $null) {
                     $propertyName = $property->getName();
                     $properties[$propertyName] = $propertyValue;
@@ -33,10 +35,18 @@ class PropertyReader
 
         return $properties;
     }
-    private static function hasAttribute($property): bool
+    private static function hasAttribute($property, string $targetAttribute = null): bool
     {
         $attributes = $property->getAttributes();
         if (!empty($attributes)) {
+            if ($targetAttribute !== null) {
+                foreach ($attributes as $attribute) {
+                    if ($attribute->getName() === $targetAttribute) {
+                        return true;
+                    }
+                }
+                return false;
+            }
             return true;
         }
         return false;
@@ -48,13 +58,18 @@ class PropertyReader
      * @throws \Exception
      * @return array
      */
-    public static function getPrimaryProperty(Entity $entity): array
+    public static function getPrimaryProperty(Entity $entity, bool $withValue = true): array
     {
         $attrs = AttributeReader::getAttributes($entity);
         foreach ($attrs as $attribute) {
             if ($attribute['primaryKey']) {
-                return ['name' => $attribute['name'],
-                    'value' => $attribute['value']
+                $column = AttributeReader::createColumn($attribute);
+                //var_dump($column);
+                $value = $withValue ? $attribute['value'] : null;
+                return [
+                    'name' => $attribute['name'],
+                    'value' => $value,
+                    'columnDefinition' => $column
                 ];
             }
         }

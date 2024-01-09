@@ -19,7 +19,7 @@ interface QueryBuilderInterface
      * @param  bool   $checkExists if true, query will have 'CREATE TABLE IF NOT EXISTS' clause, otherwise 'CREATE TABLE dbname.tablename...'
      * @return string full query ready to be executed
      */
-    public static function createTable(array $columns, string $tableName, string $dbname, bool $checkExists = false): string;
+    public static function createTable(array $columns, string $tableName, string $dbname, array $relations = [], bool $checkExists = false): string;
     /**
      * Creates a column definition from avaible data in Column object
      *

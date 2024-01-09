@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Entity\Person;
+use App\Entity\User;
 use App\Lib\Controller\BaseController;
 use App\Lib\Routing\Response;
 
@@ -49,6 +50,10 @@ class TestController extends BaseController
         $query = 'SELECT * FROM app_db.person LIMIT 1';
         $result = $this->db->execute($query);
         echo $result[0]['login'];
+    }
+    public function createPost()
+    {
+
     }
 }
 ?>

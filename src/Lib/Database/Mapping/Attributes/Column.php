@@ -25,7 +25,7 @@ class Column
      */
     public function __construct(
         string $name,
-        ColumnType $type = ColumnType::TEXT,
+        ColumnType $type,
         ?int $length = 0,
         bool $primaryKey = false,
         bool $autoIncrement = false,

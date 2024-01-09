@@ -16,8 +16,10 @@ class AttributeValidator
      * @throws \App\Lib\Database\Exception\EmptyColumnTypeException
      * @return void
      */
-    public static function validate(array $attributes)
+    public static function validateColumn(array $attributes)
     {
+        if ($attributes['attributeType'] !== 'Column')
+            return;
         if (empty($attributes)) {
             throw new EmptyAttributeArrayException();
         }

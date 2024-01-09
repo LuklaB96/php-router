@@ -9,7 +9,7 @@ use App\Lib\Database\Mapping\Attributes\Column;
  */
 class QueryBuilder implements QueryBuilderInterface
 {
-    public static function createTable(array $columns, string $tableName, #[\SensitiveParameter] string $dbname, bool $checkTableExists = false): string
+    public static function createTable(array $columns, string $tableName, #[\SensitiveParameter] string $dbname, array $relations = [], bool $checkTableExists = false): string
     {
 
         $query = "CREATE TABLE `$dbname`.`$tableName` (";
@@ -19,8 +19,10 @@ class QueryBuilder implements QueryBuilderInterface
 
         $columnDefinitions = [];
         foreach ($columns as $column) {
-
-            $columnDefinitions[] = "`$column->name`" . ' ' . self::createColumnDefinition($column);
+            $columnDefinitions[] = self::createColumnDefinition($column);
+        }
+        foreach ($relations as $relation) {
+            $columnDefinitions[] = self::createRelationDefinition($relation);
         }
 
         $query .= implode(', ', $columnDefinitions);
@@ -47,7 +49,15 @@ class QueryBuilder implements QueryBuilderInterface
         } else {
             $definition .= ' NOT NULL';
         }
-        return $definition;
+        return "`$column->name`" . ' ' . $definition;
+    }
+    public static function createRelationDefinition(array $relation): string
+    {
+        $columnName = "`{$relation['column']}`";
+        $referenceTable = "`{$relation['reference_table']}`";
+        $referenceColumn = "`{$relation['reference_column']}`";
+
+        return "FOREIGN KEY ($columnName) REFERENCES $referenceTable($referenceColumn)";
     }
     public static function insert(array $data, string $tableName, #[\SensitiveParameter] string $dbname): string
     {
