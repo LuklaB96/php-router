@@ -41,6 +41,8 @@ class ExampleEntity extends Entity
      * Variable can be named as we wish it to be, framework will use class name and property with primary key attribute as column name, 
      * if our class is named Person, and primary key is called id, the end result will be person_id.
      * 
+     * RelationType should point out if 
+     * 
      */
     #[Relation(targetEntity: Person::class, relationType: RelationType::MANY_TO_ONE)]
     protected Person $person;

@@ -185,6 +185,8 @@ class Entity
             $result = $this->db->execute($query, $data);
             if ($limit === 1) {
                 $this->setProperties($result);
+                $this->invokeRelations();
+                return [];
             }
             $repository = $this->createRepository($result);
         } catch (\Exception $e) {
@@ -280,6 +282,7 @@ class Entity
                 $className = $this->getEntityName(withNamespace: true);
                 $entity = new $className;
                 PropertyWriter::setPropertiesFromArray($entity, $entityProperties);
+                $entity->invokeRelations();
                 $entityRepository[] = $entity;
             }
         }
@@ -321,10 +324,6 @@ class Entity
     {
         return AttributeReader::hasAttribute($this, Relation::class);
     }
-    private function getRelations()
-    {
-
-    }
     private function setRelations()
     {
 
@@ -332,6 +331,23 @@ class Entity
     public function getPrimaryKey(): array
     {
         return PropertyReader::getPrimaryProperty($this);
+    }
+    public function getEntityRelations(): array
+    {
+        return PropertyReader::getEntityRelations($this);
+    }
+    private function invokeRelations(): bool
+    {
+        $relations = $this->getEntityRelations();
+        foreach ($relations as $relation) {
+            $value = PropertyReader::getPropertyValue($this, $relation['foreignKey']);
+            if ($value !== null) {
+                $entity = PropertyWriter::initEntity($relation['targetEntity']);
+                $entity->find($value);
+                PropertyWriter::setPropertyValue($this, $relation['propertyName'], $entity);
+            }
+        }
+        return true;
     }
 }
 

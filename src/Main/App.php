@@ -52,9 +52,11 @@ class App
             echo $user->getNickname() . '<br/><br/><br/>===================================<br/>';
         });
         $router->get('/find-one-by', function () {
-            $user = new User();
-            $user->findOneBy(['id', '=', 10]);
-            echo 'ID: ' . $user->getId() . '<br/>';
+            $comment = new Comment();
+            $comment->findOneBy(['id', '=', 1]);
+
+            $author = $comment->getAuthor();
+            echo $author->getLogin() . '';
         });
         $router->get('/find-all', function () {
             $example = new User();
@@ -66,11 +68,11 @@ class App
             }
         });
         $router->get('/find-by', function () {
-            $user = new User();
+            $comment = new Comment();
             // findBy should be extended to read more conditions
-            $repository = $user->findBy([
+            $repository = $comment->findBy([
                 ['id', '>=', 1],
-                ['id', '<=', 20]
+                ['id', '<=', 3]
             ]);
 
             foreach ($repository as $item) {

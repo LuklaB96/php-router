@@ -2,6 +2,7 @@
 namespace App\Lib\Database\Mapping;
 
 use App\Lib\Database\Entity\Entity;
+use App\Lib\Database\Mapping\Attributes\Relation;
 
 
 /**
@@ -64,7 +65,6 @@ class PropertyReader
         foreach ($attrs as $attribute) {
             if ($attribute['primaryKey']) {
                 $column = AttributeReader::createColumn($attribute);
-                //var_dump($column);
                 $value = $withValue ? $attribute['value'] : null;
                 return [
                     'name' => $attribute['name'],
@@ -74,5 +74,38 @@ class PropertyReader
             }
         }
         throw new \Exception('Entity primary attribute not specified or null');
+    }
+    public static function getEntityRelations(Entity $object, bool $withValue = false): array
+    {
+        $reflection = new \ReflectionClass($object);
+        $data = [];
+        foreach ($reflection->getProperties() as $property) {
+            $propertyAttributes = $property->getAttributes();
+            foreach ($propertyAttributes as $attribute) {
+                if ($attribute->getName() === Relation::class) {
+                    $arguments = $attribute->getArguments();
+                    $relationObject = new $arguments['targetEntity'];
+                    $relationPrimaryKey = PropertyReader::getPrimaryProperty($relationObject, true);
+                    $params = explode('\\', $arguments['targetEntity']);
+                    $relationEntity = end($params);
+                    $data[] = [
+                        'foreignKey' => strtolower($relationEntity) . '_' . $relationPrimaryKey['name'],
+                        'targetEntity' => $arguments['targetEntity'],
+                        'propertyName' => $property->getName(),
+                    ];
+                }
+            }
+        }
+        return $data;
+    }
+    public static function getPropertyValue(Entity $object, string $propertyName)
+    {
+        $reflection = new \ReflectionClass($object);
+        $property = $reflection->getProperty($propertyName);
+        $property->setAccessible(true);
+        if ($property->isInitialized($object)) {
+            return $property->getValue($object);
+        }
+        return null;
     }
 }

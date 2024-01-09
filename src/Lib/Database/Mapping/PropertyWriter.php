@@ -1,6 +1,8 @@
 <?php
 namespace App\Lib\Database\Mapping;
 
+use App\Lib\Database\Entity\Entity;
+
 
 /**
  * Set property value in object
@@ -29,6 +31,11 @@ class PropertyWriter
         } else {
             throw new \Exception("Property '$propertyName' not found in class " . get_class($object));
         }
+    }
+    public static function initEntity(string $targetEntity): Entity
+    {
+        $entity = new $targetEntity;
+        return $entity;
     }
 
     /**
