@@ -18,8 +18,8 @@ $user = new User();
 $migrations->create($user);
 
 //tables with foreign keys
-$migrations->create($comment);
 $migrations->create($post);
+$migrations->create($comment);
 
 
 

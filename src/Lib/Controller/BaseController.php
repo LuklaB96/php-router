@@ -30,7 +30,7 @@ abstract class BaseController
     }
     protected function redirectToRoute(string $route, array $parameters = [])
     {
-
+        header("Location: $route");
     }
     protected function renderView(string $view, array $data = [])
     {
@@ -42,7 +42,12 @@ abstract class BaseController
      */
     protected function csrfAuth(): bool
     {
-        $data = $this->request->getData();
+        $data = [];
+        if (strcasecmp($this->request->contentType, 'application/json') === 0) {
+            $data = $this->request->getJSON();
+        } else {
+            $data = $this->request->getData();
+        }
         if (isset($data['token'])) {
 
             $token = $data['token'];
@@ -56,6 +61,15 @@ abstract class BaseController
             return false;
         }
         return false;
+    }
+    protected function postResponse(int $code, $data)
+    {
+        $this->response->setStatusCode($code);
+        $data = [
+            'code' => $this->response->getStatusCode(),
+            'data' => $data
+        ];
+        $this->response->toJSON($data);
     }
 
 }

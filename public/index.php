@@ -68,6 +68,46 @@ function createSession()
 {
     $sessionTokenManager = SessionTokenManager::getInstance();
 }
+function renderBody(string $viewName)
+{
+    include Config::get('MAIN_DIR') . '/src/Views/' . $viewName . '.php';
+    echo PHP_EOL;
+}
+function renderScripts(array $scripts)
+{
+
+    if (isset($scripts) && !empty($scripts)) {
+        foreach ($scripts as $script) {
+            if (!empty($script['type']) && !empty($script['path'])) {
+                echo '<script type="' . $script['type'] . '" src="' . $script['path'] . '"></script>' . PHP_EOL;
+            } else {
+                // Handle the case where either 'type' or 'path' is empty
+                echo '<!-- Invalid script data -->';
+            }
+        }
+    }
+}
+
+function renderStyles(array $styles)
+{
+    if (isset($styles) && !empty($styles)) {
+        foreach ($styles as $style) {
+            if (!empty($style)) {
+                echo '<link rel="stylesheet" type="text/css" href="' . $style . '">' . PHP_EOL;
+            } else {
+                // Handle the case where a style path is empty
+                echo '<!-- Invalid style data -->';
+            }
+        }
+    }
+}
+
+function renderHead(string $headHTML)
+{
+    if (isset($headHTML)) {
+        echo $headHTML . PHP_EOL;
+    }
+}
 
 App::run();
 ?>

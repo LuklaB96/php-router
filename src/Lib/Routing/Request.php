@@ -6,11 +6,17 @@ class Request
 {
     public $reqMethod;
     public $contentType;
+    private $isJson = false;
 
     public function __construct()
     {
         $this->reqMethod = trim($_SERVER['REQUEST_METHOD']);
         $this->contentType = !empty($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
+
+        //check if content type is json
+        if (strcasecmp($this->contentType, 'application/json') === 0) {
+            $this->isJson = true;
+        }
     }
 
     /**
@@ -27,9 +33,14 @@ class Request
 
         $data = [];
         //filter all data in $_POST variable, get only data sent by POST method.
-        foreach ($_POST as $key => $value) {
-            $data[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+        if (!$this->isJSON()) {
+            foreach ($_POST as $key => $value) {
+                $data[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+            }
+        } else {
+            $data = $this->getJSON();
         }
+
 
         return $data;
     }
@@ -54,8 +65,12 @@ class Request
 
         //Receive the RAW post data.
         $content = trim(file_get_contents("php://input"));
-        $decoded = json_decode($content);
+        $decoded = json_decode($content, true);
 
         return $decoded;
+    }
+    public function isJSON(): bool
+    {
+        return $this->isJson;
     }
 }

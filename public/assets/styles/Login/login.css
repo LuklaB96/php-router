@@ -1,0 +1,22 @@
+#loginForm {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+#loginForm label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.sign-in-container {
+    display: block;
+    position: absolute;
+    max-width: 800px;
+    min-width: 400px;
+    left: 50%;
+    transform: translate(-50%);
+}

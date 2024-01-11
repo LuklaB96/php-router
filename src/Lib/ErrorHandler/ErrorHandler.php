@@ -12,7 +12,9 @@ class ErrorHandler
     }
     public function handle($errno, $errstr, $errfile, $errline)
     {
-        header('Location: ' . $this->errorRoute);
+        error_log($errstr);
+        error_log($errfile);
+        error_log($errline);
     }
 }
 

@@ -6,10 +6,14 @@ class Response
 {
     private $status = 200;
 
-    public function status(int $code)
+    public function setStatusCode(int $code)
     {
         $this->status = $code;
         return $this;
+    }
+    public function getStatusCode(): int
+    {
+        return $this->status;
     }
     /**
      * Simple json response with default header and response code.

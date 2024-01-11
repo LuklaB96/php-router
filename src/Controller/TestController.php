@@ -2,7 +2,6 @@
 namespace App\Controller;
 
 use App\Entity\Person;
-use App\Entity\User;
 use App\Lib\Controller\BaseController;
 use App\Lib\Routing\Response;
 
@@ -11,11 +10,10 @@ class TestController extends BaseController
     public function getPersonById($id)
     {
         $person = new Person();
-        $res = new Response();
         $found = $person->find($id);
         if ($found) {
-            $res->status(200);
-            $res->toJSON([
+            $this->response->setStatusCode(200);
+            $this->response->toJSON([
                 "message" => "ok",
                 "persons" => [
                     $id => [
@@ -26,22 +24,26 @@ class TestController extends BaseController
             ]);
             return;
         }
-        $res->status(404);
-        $res->toJSON([
+        $this->response->setStatusCode(404);
+        $this->response->toJSON([
             "message" => "not found",
         ]);
     }
     /**
-     * Csrf auth example
+     * POST route should always return a valid response
      * @return void
      */
     public function csrfValidationExample()
     {
         if (!$this->csrfAuth()) {
-            echo 'csrf token expired';
+            //postResponse helper function, if custom data need to be sent use $this->response->toJSON() instead.
+            $this->postResponse(401, 'Unauthorized');
             return;
         }
-        echo 'csrf token is valid';
+        //do stuff
+
+        //send response
+        $this->postResponse(200, 'ok');
     }
 
     public function standardQueryExample()

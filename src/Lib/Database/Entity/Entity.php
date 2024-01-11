@@ -24,11 +24,13 @@ class Entity
     public Database $db;
     public ?\Exception $exception;
     private EntityValidator $entityValidator;
+    private $exists;
     function __construct()
     {
         $this->db = Database::getInstance();
         $this->entityValidator = new EntityValidator();
         $this->exception = new \Exception;
+        $this->exists = false;
     }
     /**
      * Insert entity data into database
@@ -60,7 +62,6 @@ class Entity
             return true;
         } catch (\Exception $e) {
             $this->exception = $e;
-            //echo $e->getMessage();
             return false;
         }
 
@@ -136,7 +137,6 @@ class Entity
             }
         } catch (\Exception $e) {
             $this->exception = $e;
-            echo $e->getMessage();
             return false;
         }
         return false;
@@ -185,7 +185,6 @@ class Entity
             $result = $this->db->execute($query, $data);
             if ($limit === 1) {
                 $this->setProperties($result);
-                $this->invokeRelations();
                 return [];
             }
             $repository = $this->createRepository($result);
@@ -241,6 +240,8 @@ class Entity
     {
         if (is_array($properties) && !empty($properties)) {
             PropertyWriter::setPropertiesFromArray($this, $properties[0]);
+            $this->invokeRelations();
+            $this->exists = true;
             return true;
         }
         return false;
@@ -255,9 +256,9 @@ class Entity
         return $entityProperties;
     }
     /**
-     * @param  mixed $testdb
-     * @param  mixed $dbname
-     * @return string test db name if $testdb = true, custom dbname if $dbname parameter is not null/empty or base name from config file in this particular order
+     * 
+     * @param string $dbname
+     * @return string
      */
     private function getDbName(string $dbname = null): string
     {
@@ -348,6 +349,10 @@ class Entity
             }
         }
         return true;
+    }
+    public function exists(): bool
+    {
+        return $this->exists;
     }
 }
 

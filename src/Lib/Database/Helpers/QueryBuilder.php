@@ -60,7 +60,7 @@ class QueryBuilder implements QueryBuilderInterface
         $referenceTable = "`{$relation['reference_table']}`";
         $referenceColumn = "`{$relation['reference_column']}`";
 
-        return "FOREIGN KEY ($columnName) REFERENCES $referenceTable($referenceColumn)";
+        return "FOREIGN KEY ($columnName) REFERENCES $referenceTable($referenceColumn) ON DELETE CASCADE";
     }
     public static function insert(array $data, string $tableName, #[\SensitiveParameter] string $dbname): string
     {

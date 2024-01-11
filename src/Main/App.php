@@ -1,6 +1,9 @@
 <?php
 namespace App\Main;
 
+use App\Controller\LoginController;
+use App\Controller\LogoutController;
+use App\Controller\RegisterController;
 use App\Controller\TestController;
 use App\Entity\Comment;
 use App\Entity\ExampleEntity;
@@ -18,6 +21,24 @@ class App
     {
         //router instance, multiple instances are possible
         $router = Router::getInstance();
+        $router->get('/register', function () {
+            (new RegisterController())->registerGET();
+        });
+        $router->post('/register', function () {
+            (new RegisterController())->registerPOST();
+        });
+        $router->get("/login", function () {
+            (new LoginController())->loginGET();
+        });
+        $router->post("/login", function () {
+            (new LoginController())->loginPOST();
+        });
+        $router->post('/logout', function () {
+            (new LogoutController())->logout();
+        });
+        $router->get('/przyklad', function () {
+            View::render('jakiesview', ['nazwa2' => 'jakis text']);
+        });
 
         //basic GET request route thats renders view as a response.
         $router->get("/", function () {
@@ -28,28 +49,38 @@ class App
                 ]
             );
         });
-        $router->get('/attr', function () {
-            $person = new Person();
-            if ($person->find(7)) {
-                $example = new ExampleEntity();
-                $example->setPerson($person);
-                $example->insert();
-
-                var_dump($example->delete());
+        $router->get('/find-post-data', function () {
+            $post = new Post();
+            $post->find(19);
+            $comment = new Comment();
+            $commentsRepository = $comment->findBy(['post_id', '=', $post->getId()]);
+            $data[0] = [
+                'id' => $post->getId(),
+                'title' => $post->getTitle(),
+                'content' => $post->getContent(),
+                'author' => [
+                    'id' => $post->getAuthorId(),
+                    'nickname' => $post->getAuthor()->getLogin(),
+                    'email' => $post->getAuthor()->getEmail(),
+                ]
+            ];
+            foreach ($commentsRepository as $c) {
+                $data[0]['comments'][$c->getId()] = [
+                    'content' => $c->getContent(),
+                    'author' => [
+                        'id' => $c->getAuthor()->getId(),
+                        'nickname' => $c->getAuthor()->getNickname(),
+                        'email' => $c->getAuthor()->getEmail(),
+                    ]
+                ];
             }
-
-
-            $example = new ExampleEntity();
-            $example->setPerson($person);
-            //$example->insert();
-            $res = new Response();
-            $res->toJSON(AttributeReader::getAttributes(new ExampleEntity()));
+            echo (new Response())->toJSON($data);
         });
 
         $router->get('/find-one', function () {
             $user = new User();
             $user->find(1);
-            echo $user->getNickname() . '<br/><br/><br/>===================================<br/>';
+            echo $user->getLogin() . '<br/><br/><br/>===================================<br/>';
         });
         $router->get('/find-one-by', function () {
             $comment = new Comment();
@@ -64,7 +95,7 @@ class App
             foreach ($repository as $item) {
                 echo 'User ID: ' . $item->getId() . '<br/>';
                 echo $item->getEmail() . '<br/>';
-                echo $item->getNickname() . '<br/>';
+                echo $item->getLogin() . '<br/>';
             }
         });
         $router->get('/find-by', function () {
@@ -82,7 +113,10 @@ class App
 
         $router->get('/find-by-with-offset', function () {
             $user = new User();
-            $repository = $user->findBy(['id', '>=', 10], limit: 10, offset: 10);
+            $page = 1;
+            $offest = 10;
+            $finalOffset = ($page - 1) * $offest;
+            $repository = $user->findBy(['id', '>=', 10], limit: 10, offset: $finalOffset);
 
             foreach ($repository as $item) {
                 echo 'ID: ' . $item->getId() . '<br/>';
@@ -100,12 +134,11 @@ class App
             $users = 0;
             $posts = 0;
             $comments = 0;
-            for ($i = 1; $i <= 100; $i++) {
+            for ($i = 0; $i < 5; $i++) {
                 $user = new User();
                 $user->setLogin('Login' . $i);
                 $user->setPassword('Password' . $i);
                 $user->setEmail('Email' . $i);
-                $user->setNickname('Nickname' . $i);
                 $valid = $user->validate();
 
                 if ($valid) {
@@ -116,25 +149,28 @@ class App
                     }
 
                 }
+                for ($j = 0; $j < 5; $j++) {
+                    $post = new Post();
+                    $post->setTitle('Title' . $j);
+                    $post->setContent('Content' . $j);
+                    $post->setAuthor($user);
+                    $valid = $post->validate();
+                    if ($valid) {
+                        if ($post->insert())
+                            $posts++;
+                    }
+                    for ($k = 0; $k < 5; $k++) {
+                        $comment = new Comment();
+                        $comment->setContent('Content' . $k);
+                        $comment->setAuthor($user);
+                        $comment->setPost($post);
+                        $valid = $comment->validate();
+                        if ($valid) {
+                            if ($comment->insert())
+                                $comments++;
+                        }
 
-                $post = new Post();
-                $post->setTitle('Title' . $i);
-                $post->setContent('Content' . $i);
-                $post->setAuthor($user);
-                $valid = $post->validate();
-                if ($valid) {
-                    if ($post->insert())
-                        $posts++;
-                }
-
-                $comment = new Comment();
-                $comment->setContent('Content' . $i);
-                $comment->setAuthor($user);
-                $comment->setPost($post);
-                $valid = $comment->validate();
-                if ($valid) {
-                    if ($comment->insert())
-                        $comments++;
+                    }
                 }
             }
             echo 'Created ' . $users . ' records for User entity</br>';
@@ -167,7 +203,6 @@ class App
             $user = new User();
             $user->setEmail("email");
             $user->setLogin("login");
-            $user->setNickname("nickname");
             $user->setPassword("password");
 
             //check if all required properties are set - should return true
