@@ -1,5 +1,5 @@
 <?php
-include 'config/asset_mapper.php';
+include 'asset_config/asset_mapper.php';
 
 /**
  * This is main config file, it should be properly configured, otherwise server will work in an unexpected way
@@ -9,9 +9,11 @@ return [
     /**
      * PHP_SERVER - Use this if default php server is used, need to start it with valid path to index.php as router e.g. 'php -S localhost:8000 public/index.php'
      * 
-     * APACHE - If xampp with apache is main server software, document root must be set to /public directory
+     * APACHE - If apache is main server software, document root must be set to /public directory
      * 
-     * AUTO - It will try to automatically check for server software that has been used.
+     * AUTO - It will try to automatically check for server software that has been used
+     * 
+     * NGINX - Not yet supported
      */
     'SERVER_SOFTWARE' => 'AUTO', //PHP_SERVER,APACHE,AUTO
     //absolute dir paths

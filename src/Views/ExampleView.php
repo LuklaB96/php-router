@@ -15,7 +15,6 @@
     use App\Lib\Security\HTML\SafeLogoutButtonGenerator;
 
     SafeLogoutButtonGenerator::generate();
-
     ?>
 </body>
 

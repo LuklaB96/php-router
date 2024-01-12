@@ -60,6 +60,7 @@ class Router implements RouterInterface
     {
         $requestMethod = trim($_SERVER['REQUEST_METHOD']);
         $route = trim($_SERVER['REQUEST_URI']);
+
         $routeObject = $this->routeCollection->find($requestMethod, $route);
         if (!empty($routeObject)) {
             $params = RouteParser::getRouteParams($routeObject->getRoute());

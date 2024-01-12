@@ -7,7 +7,7 @@ use App\Lib\Config;
 
 class View
 {
-    private string $layout;
+    private string $layout = '';
     private string $view = '';
     private string $title = '';
     private array $styles = [];
@@ -24,12 +24,13 @@ class View
      * @param string $view
      * @return void
      */
-    public static function render(string $view, array $data = [])
+    public static function render(string $viewName, array $data = [])
     {
         if (!empty($data)) {
             extract($data);
         }
-        include Config::get('MAIN_DIR') . '/src/Views/' . $view . '.php';
+        error_log('render_view: ' . $viewName);
+        include Config::get('MAIN_DIR') . '/src/Views/' . $viewName . '.php';
     }
     /**
      * render body into existing layout
@@ -59,7 +60,6 @@ class View
         if (!empty($data)) {
             extract($data);
         }
-
         self::render($this->layout, $data);
     }
     public function addStyle(string $asset)

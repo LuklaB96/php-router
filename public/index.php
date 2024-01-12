@@ -68,14 +68,15 @@ function createSession()
 {
     $sessionTokenManager = SessionTokenManager::getInstance();
 }
-function renderBody(string $viewName)
+function renderBody(string $view)
 {
-    include Config::get('MAIN_DIR') . '/src/Views/' . $viewName . '.php';
+    error_log('render_body');
+    include Config::get('MAIN_DIR') . '/src/Views/' . $view . '.php';
     echo PHP_EOL;
 }
 function renderScripts(array $scripts)
 {
-
+    error_log('render_scripts');
     if (isset($scripts) && !empty($scripts)) {
         foreach ($scripts as $script) {
             if (!empty($script['type']) && !empty($script['path'])) {
@@ -90,6 +91,7 @@ function renderScripts(array $scripts)
 
 function renderStyles(array $styles)
 {
+    error_log('render_styles');
     if (isset($styles) && !empty($styles)) {
         foreach ($styles as $style) {
             if (!empty($style)) {
