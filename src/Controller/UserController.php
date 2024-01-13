@@ -2,10 +2,11 @@
 namespace App\Controller;
 
 use App\Entity\EmailActivationCode;
+use App\Entity\User;
 use App\Lib\Controller\BaseController;
 use App\Lib\View\View;
 
-class AccountController extends BaseController
+class UserController extends BaseController
 {
     /**
      * [GET] /account/activate/{code}
@@ -17,7 +18,6 @@ class AccountController extends BaseController
         $message = 'Failed to activate account, contact administrator.';
         $activation = new EmailActivationCode();
         if ($activation->findOneBy(['activation_code', '=', $code])) {
-            error_log('test');
             $user = $activation->getUser();
             if (!$user->getActivated()) {
                 $user->setActivated(true);
@@ -30,8 +30,19 @@ class AccountController extends BaseController
             }
 
         }
-        $view = new View('Account/ActivationPartialView', 'Account - Activation info');
+        $view = new View('User/ActivationPartialView', 'Account - Activation info');
         $view->addStyle('error.css');
         $view->renderPartial(['message' => $message]);
+    }
+    public function showProfile($userLogin)
+    {
+        $user = new User();
+        $user->findOneBy(['login', '=', $userLogin]);
+        if ($user->exists()) {
+            $data['user'] = $user;
+            $view = new View('User/UserProfilePartialView', $user->getLogin() . ' - Profile');
+            $view->addStyle('blog/post.css');
+            $view->renderPartial($data);
+        }
     }
 }

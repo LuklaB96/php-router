@@ -1,12 +1,12 @@
 <?php
 namespace App\Main;
 
-use App\Controller\AccountController;
 use App\Controller\BlogController;
 use App\Controller\LoginController;
 use App\Controller\LogoutController;
 use App\Controller\PostApiController;
 use App\Controller\RegisterController;
+use App\Controller\UserController;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Entity\User;
@@ -52,11 +52,11 @@ class App
 
         // Routes only for authorized users
         // Show main page with all posts including pagination and filters
-        $router->get('/blog', function () {
-            (new BlogController())->blogGET();
+        $router->get('/blog/page/{page}', function ($page) {
+            (new BlogController())->showAllPosts($page);
         });
         $router->get('/blog/post/{id}', function ($postId) {
-            (new BlogController())->showPostPage($postId);
+            (new BlogController())->showSinglePost($postId);
         });
         // Returns 10 posts with two first comments
         // To fetch more comments use /api/v1/post/{postId} route
@@ -136,12 +136,17 @@ class App
 
         //acount route handlers
         $router->get('/account/activate/{code}', function ($code) {
-            (new AccountController())->activateGET($code);
+            (new UserController())->activateGET($code);
+        });
+        $router->get('/profile/{login}', function ($login) {
+            (new UserController())->showProfile($login);
         });
 
         $router->get('/phpinfo', function () {
             phpinfo();
         });
+
+
 
         // Dispatch requested route
         $executed = $router->dispatch();

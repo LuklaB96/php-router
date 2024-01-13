@@ -11,6 +11,29 @@ body {
     min-height: 100vh;
 }
 
+[contenteditable][placeholder]:empty:before {
+    content: attr(placeholder);
+    position: absolute;
+    color: gray;
+    background-color: transparent;
+}
+
+.border-left {
+    border-left: 1px solid var(--color-light-7);
+}
+
+.border-right {
+    border-right: 1px solid var(--color-light-7);
+}
+
+.border-top {
+    border-top: 1px solid var(--color-light-7);
+}
+
+.border-bottom {
+    border-bottom: 1px solid var(--color-light-7);
+}
+
 /* Main container holds all content inside body (page,footer) */
 
 .main-container {
@@ -432,4 +455,11 @@ body.dark-mode::-webkit-scrollbar-thumb {
 /* Handle on hover */
 body.dark-mode::-webkit-scrollbar-thumb:hover {
     background: var(--bg-color-dark-4);
+}
+
+body.dark-mode .border-left,
+body.dark-mode .border-right,
+body.dark-mode .border-top,
+body.dark-mode .border-bottom {
+    border-color: var(--color-dark-8);
 }

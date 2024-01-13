@@ -1,5 +1,28 @@
 @import '../constants.css';
 
+.page-btn {
+    display: block;
+    min-width: 150px;
+    padding: 20px;
+    text-align: center;
+}
+
+.pagination-container {
+    position: relative;
+    display: flex;
+    max-width: calc(50% + 40px);
+    left: 50%;
+    transform: translate(-50%);
+    border-radius: 8px;
+    min-height: 50px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    background-color: var(--bg-color-light-2);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-light), 0.2);
+    border: 1px solid var(--color-light-7);
+
+}
+
 .add-post-container {
     position: relative;
     display: block;
@@ -108,11 +131,12 @@
 }
 
 /* Dark Mode */
+body.dark-mode .pagination-container,
 body.dark-mode .add-post-container,
 body.dark-mode .post-container {
     background-color: var(--bg-color-dark-1);
     box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.2);
-    border: 0px;
+    border: 1px solid var(--color-dark-8);
 }
 
 body.dark-mode .post-author {

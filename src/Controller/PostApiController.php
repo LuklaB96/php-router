@@ -83,7 +83,6 @@ class PostApiController extends BaseController
             $this->postResponse(401, 'Unauthorized');
             return;
         }
-        error_log('got it');
         //validate data
         $data = $this->request->getData();
         if (empty($data)) {
@@ -92,7 +91,6 @@ class PostApiController extends BaseController
             return;
         }
         $content = $data['content'];
-        error_log(print_r($data, true));
         if (empty($content)) {
             $this->error['message'] = 'empty data';
             $this->postResponse(400, $this->error);
@@ -112,12 +110,10 @@ class PostApiController extends BaseController
         $post->setContent($postContent);
         $inserted = $post->insert();
         if ($inserted) {
-            error_log('inserted');
             $resData['post']['author'] = $post->getAuthor()->getLogin();
             $resData['post']['content'] = $post->getContent();
             $resData['post']['title'] = $post->getTitle();
             $resData['post']['id'] = $post->getId();
-            error_log(print_r($resData, true));
             $this->postResponse(200, $resData);
         } else {
             $this->postResponse(400, 'Error');
@@ -143,7 +139,6 @@ class PostApiController extends BaseController
             return;
         }
         $content = $data['content'];
-        error_log(print_r($data, true));
         if (empty($content)) {
             $this->error['message'] = 'empty data';
             $this->postResponse(400, $this->error);

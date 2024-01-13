@@ -9,6 +9,7 @@ use App\Lib\Database\Mapping\Attributes\Relation;
 
 class Post extends Entity
 {
+
     /**
      * This is an example class that is extending Entity parent class
      * Every property should be protected/private

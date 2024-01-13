@@ -1,13 +1,16 @@
 class PostManager {
+
     async fetchPosts() {
         try {
-            const response = await fetch('/api/v1/posts/page/1');
+            const pageNumber = this.getPageNumberFromUrl();
+            const response = await fetch('/api/v1/posts/page/' + pageNumber);
             const jsonData = await response.json();
             this.displayPosts(jsonData.data.posts);
         } catch (error) {
             console.error('Error fetching posts:', error);
         }
     }
+
 
     async fetchMoreComments(postId) {
         try {
@@ -83,6 +86,13 @@ class PostManager {
             console.error('Error adding post:', error);
         }
     }
+    getPageNumberFromUrl() {
+        const url = window.location.href;
+        const lastSlashIndex = url.lastIndexOf('/');
+        const pageNumber = url.substring(lastSlashIndex + 1);
+
+        return parseInt(pageNumber, 10) || 1; // Default to 1 if not a valid number
+    }
 
     addComment(postId) {
         const commentContent = document.getElementById(`commentContent-${postId}`);
@@ -141,35 +151,44 @@ class PostManager {
             });
     }
 
-    generatePostHTML(postId, post) {
+    generatePostHTML(postId, post, loadAll = false) {
 
         let loadMoreCommentsBtn = ``;
-        if (post.commentsCountDb - 2 > 0) {
+        if (post.commentsCountDb - 2 > 0 && !loadAll) {
             loadMoreCommentsBtn = `
                 <button class="btn btn-primary load-more-comments-btn" onclick="postManager.fetchMoreComments('${postId}')">
                     Load more comments(${post.commentsCountDb - 2})
                 </button>
             `
         }
-
+        let commentField = ``;
+        let replyButton = ``;
+        if (window.location.pathname === '/blog/post/' + postId || post.commentsCountDb === 0 || post.commentsCountDb === undefined) {
+            commentField = `
+                <div class="add-comment-form">
+                    <label for="commentContent">Answer:</label>
+                    <span contenteditable role="textbox" rows="5" class="input text-area" id="commentContent-${postId}" name="commentContent" required></span>
+                    <button class="btn btn-primary" onclick="window.postManager.addComment('${postId}')">Add Comment</button>
+                </div>
+            `
+        } else {
+            replyButton = `<a class="basic-link" href="/blog/post/${postId}">Reply</a>`;
+        }
         let postContainer = `
             <div class="post-container" id="post-container-${postId}">
                 <div class="post-author">Author: <span>${post.author}</span></div>
                 <div class="post-info">
-                    <h1>${post.title}</h1>
+                    <h1><a class="basic-link" href="/blog/post/${postId}">${post.title}</a></h1>
                 </div>
                 <p>${post.content}</p>
                 <div class="comment-section">
+                    ${replyButton}
                     <h2>Comments</h2>
                     <div class="comments">
                         ${this.generateCommentsHTML(postId, post.comments)}
                     </div>
                     ${loadMoreCommentsBtn}
-                    <div class="add-comment-form">
-                        <label for="commentContent">Answer:</label>
-                        <span contenteditable role="textbox" rows="5" class="input text-area" id="commentContent-${postId}" name="commentContent" required></span>
-                        <button class="btn btn-primary" onclick="window.postManager.addComment('${postId}')">Add Comment</button>
-                    </div>
+                    ${commentField}
                 </div>
             </div>
             `;

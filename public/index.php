@@ -11,7 +11,8 @@ use App\Main\App;
 use App\Lib\Config;
 
 //force HTTPS
-requireSSL();
+//requireSSL();
+
 //create global session
 createSession();
 

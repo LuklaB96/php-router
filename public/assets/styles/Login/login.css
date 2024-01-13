@@ -5,7 +5,8 @@
     margin: 0 auto;
     padding: 15px;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(var(--color-box-shadow-light), 0.1);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.2);
+    background-color: var(--bg-color-light-1);
 }
 
 #loginForm label {
@@ -29,5 +30,5 @@ h1 {
 body.dark-mode #loginForm {
     background-color: var(--bg-color-dark-1);
     color: var(--color-dark-1);
-    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.1);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.2);
 }

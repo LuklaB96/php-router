@@ -22,7 +22,11 @@
     <div class="main-container">
         <div class="navbar">
             <a class="navbar-item" href="/">Home</a>
-            <a class="navbar-item" href="/blog">Multi-Blog</a>
+            <?php
+            if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
+                echo '<a class="navbar-item" href="/blog/page/1">Blog</a>';
+            }
+            ?>
             <div class="dropdown">
                 <button class="navbutton">Dropdown</button>
                 <div class="dropdown-content">
