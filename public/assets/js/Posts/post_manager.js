@@ -1,0 +1,216 @@
+class PostManager {
+    async fetchPosts() {
+        try {
+            const response = await fetch('/api/v1/posts/page/1');
+            const jsonData = await response.json();
+            this.displayPosts(jsonData.data.posts);
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+        }
+    }
+
+    async fetchMoreComments(postId) {
+        try {
+            const response = await fetch(`/api/v1/post/${postId}`);
+            const jsonData = await response.json();
+
+            if (jsonData.code === 200 && jsonData.data.post && jsonData.data.post[postId]) {
+                const postData = jsonData.data.post[postId];
+                const postContainer = document.getElementById(`post-container-${postId}`);
+                const commentSection = postContainer.querySelector('.comments');
+
+                // Generate and append additional comments
+                commentSection.insertAdjacentHTML('beforeend', this.generateCommentsHTML(postId, postData.comments));
+
+                // Remove the "Load More Comments" button
+                const loadMoreButton = postContainer.querySelector('.load-more-comments-btn');
+                if (loadMoreButton) {
+                    loadMoreButton.remove();
+                }
+            } else {
+                console.error(`Invalid response for post ${postId}:`, jsonData);
+            }
+        } catch (error) {
+            console.error(`Error fetching more comments for post ${postId}:`, error);
+        }
+    }
+    async addPost() {
+        try {
+            const title = document.getElementById('title');
+            const content = document.querySelector('.post-content-input');
+
+            // Validate title and content
+            if (!title.value.trim() || !content.innerText.trim()) {
+                return;
+            }
+
+            // Assuming your server API endpoint for adding posts is /api/v1/posts
+            const apiUrl = '/api/v1/post/create';
+
+            // Example data to be sent in the request body
+            const postData = {
+                title: title.value,
+                content: content.innerText,
+                token: document.getElementById('token').value
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData),
+            });
+
+            const jsonData = await response.json();
+
+            if (jsonData.code === 200 && jsonData.data.post) {
+                // Assuming the server responds with the new post data
+                const newPost = jsonData.data.post;
+                title.value = '';
+                content.innerText = '';
+
+                // Update the posts section in the UI
+                const postsContainer = document.getElementById('posts-container');
+                const postHTML = this.generatePostHTML(newPost.id, newPost);
+
+                // Append the new post to the posts section
+                postsContainer.insertAdjacentHTML('afterbegin', postHTML);
+            } else {
+                console.error('Invalid response for adding post:', jsonData);
+            }
+        } catch (error) {
+            console.error('Error adding post:', error);
+        }
+    }
+
+    addComment(postId) {
+        const commentContent = document.getElementById(`commentContent-${postId}`);
+
+        // Validate content
+        if (!commentContent.textContent.trim()) {
+            return;
+        }
+
+        // Assuming your server API endpoint for adding comments is /api/v1/comments
+        const apiUrl = '/api/v1/comment/create';
+
+        // Example data to be sent in the request body
+        const commentData = {
+            postId: postId,
+            content: commentContent.textContent,
+            token: document.getElementById('token').value
+        };
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(commentData),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(JSON.stringify(data));
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+
+                const newComment = data.data.comment;
+
+                // Update the comments section in the UI
+                commentContent.textContent = '';
+                const postContainer = document.getElementById(`post-container-${postId}`);
+                const commentSection = postContainer.querySelector('.comments');
+
+                // Append the new comment to the comments section
+                commentSection.insertAdjacentHTML('beforeend', `
+            <div class="comments">
+                <div class="comment">
+                    <span class="comment-author">By: ${newComment.author}</span>
+                    <p class="comment-content">${newComment.content}</p>
+                </div>
+            </div>
+        `);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    generatePostHTML(postId, post) {
+
+        let loadMoreCommentsBtn = ``;
+        if (post.commentsCountDb - 2 > 0) {
+            loadMoreCommentsBtn = `
+                <button class="btn btn-primary load-more-comments-btn" onclick="postManager.fetchMoreComments('${postId}')">
+                    Load more comments(${post.commentsCountDb - 2})
+                </button>
+            `
+        }
+
+        let postContainer = `
+            <div class="post-container" id="post-container-${postId}">
+                <div class="post-author">Author: <span>${post.author}</span></div>
+                <div class="post-info">
+                    <h1>${post.title}</h1>
+                </div>
+                <p>${post.content}</p>
+                <div class="comment-section">
+                    <h2>Comments</h2>
+                    <div class="comments">
+                        ${this.generateCommentsHTML(postId, post.comments)}
+                    </div>
+                    ${loadMoreCommentsBtn}
+                    <div class="add-comment-form">
+                        <label for="commentContent">Answer:</label>
+                        <span contenteditable role="textbox" rows="5" class="input text-area" id="commentContent-${postId}" name="commentContent" required></span>
+                        <button class="btn btn-primary" onclick="window.postManager.addComment('${postId}')">Add Comment</button>
+                    </div>
+                </div>
+            </div>
+            `;
+
+        return postContainer;
+    }
+
+    generateCommentsHTML(postId, comments) {
+        let commentsHTML = '';
+        if (comments) {
+
+            const startFromIndex = Object.keys(comments).length > 2 ? 2 : 0;
+
+            let index = 0;
+            for (const commentId in comments) {
+                if (index < startFromIndex) {
+                    // Skip comments until reaching the starting index
+                    index++;
+                    continue;
+                }
+
+                const comment = comments[commentId];
+                commentsHTML += `
+                <div class="comment">
+                    <span class="comment-author">By: ${comment.author}</span>
+                    <p class="comment-content">${comment.content}</p>
+                </div>
+        `;
+            }
+        }
+        return commentsHTML;
+    }
+
+
+    displayPosts(posts) {
+        const postsContainer = document.getElementById('posts-container');
+        for (const postId in posts) {
+            const post = posts[postId];
+            const postHTML = this.generatePostHTML(postId, post);
+            postsContainer.insertAdjacentHTML('beforeend', postHTML)
+        }
+    }
+}
+export default PostManager;

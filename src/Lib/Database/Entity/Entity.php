@@ -71,7 +71,7 @@ class Entity
      *
      * @param  bool   $testdb
      * @param  string $dbname
-     * @return mixed
+     * @return bool
      */
     public function update(string $dbname = null): bool
     {
@@ -79,6 +79,7 @@ class Entity
 
         $data = $this->getProperties(null: false); //get all entity properties, key(column name) => value
         $query = QueryBuilder::update($data, $this->getEntityName(), $dbname);
+        error_log($query);
         try {
             $this->db->execute($query, $data);
             return true;
@@ -161,6 +162,23 @@ class Entity
         $repository = $this->createRepository($result);
         return $repository;
     }
+    public function count(array $criteria = null): int
+    {
+        $data = [];
+        if (isset($criteria) && !is_array($criteria[0])) {
+            $criteria = [$criteria];
+            $data = $this->convertCriteriaToDataArray($criteria);
+        }
+        $dbname = $this->getDbName();
+        $query = QueryBuilder::count($this->getEntityName(), $dbname, criteria: $criteria);
+
+        $result = $this->db->execute($query, $data);
+        if (isset($result[0]['COUNT(*)'])) {
+            return $result[0]['COUNT(*)'];
+        }
+        return 0;
+
+    }
     /**
      * Find entities in database that meets criteria passed in array
      *
@@ -171,21 +189,22 @@ class Entity
      * @param  mixed  $testdb
      * @return array
      */
-    public function findBy(array $criteria, string $orderBy = null, int $limit = null, int $offset = null, string $dbname = null): array
+    public function findBy(array $criteria = null, string $orderBy = null, int $limit = null, int $offset = null, string $dbname = null): array
     {
+        $data = [];
         //convert array to accessible one
-        if (!is_array($criteria[0])) {
+        if (isset($criteria) && !is_array($criteria[0])) {
             $criteria = [$criteria];
+            $data = $this->convertCriteriaToDataArray($criteria);
         }
         $dbname = $this->getDbName(dbname: $dbname);
         $query = QueryBuilder::select($this->getEntityName(), $dbname, criteria: $criteria, limit: $limit, offset: $offset);
-        $data = $this->convertCriteriaToDataArray($criteria);
         $repository = [];
         try {
             $result = $this->db->execute($query, $data);
             if ($limit === 1) {
                 $this->setProperties($result);
-                return [];
+                return ['found' => true];
             }
             $repository = $this->createRepository($result);
         } catch (\Exception $e) {
@@ -201,7 +220,7 @@ class Entity
      * @param bool   $testdb
      * @return bool
      */
-    public function findOneBy(array $criteria, string $orderBy = null, string $dbname = null): bool
+    public function findOneBy(array $criteria = null, string $orderBy = null, string $dbname = null): bool
     {
         $result = $this->findBy($criteria, orderBy: $orderBy, limit: 1, dbname: $dbname);
         if (!empty($result)) {

@@ -9,6 +9,9 @@ $assets = [
     'app.js' => '/js/app.js',
     'app_register.js' => '/js/app_register.js',
     'app_login.js' => '/js/app_login.js',
+    'app_posts.js' => '/js/app_posts.js',
+    'error.css' => '/styles/error.css',
+    'blog/post.css' => '/styles/Blog/post.css',
 ];
 
 ?>

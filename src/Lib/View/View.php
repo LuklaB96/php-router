@@ -26,11 +26,21 @@ class View
      */
     public static function render(string $viewName, array $data = [])
     {
-        if (!empty($data)) {
-            extract($data);
+        if (self::exists($viewName)) {
+            if (!empty($data)) {
+                extract($data);
+            }
+            include Config::get('MAIN_DIR') . '/src/Views/' . $viewName . '.php';
         }
-        error_log('render_view: ' . $viewName);
-        include Config::get('MAIN_DIR') . '/src/Views/' . $viewName . '.php';
+
+    }
+    public static function exists(string $viewName): bool
+    {
+        $viewFile = Config::get('MAIN_DIR') . '/src/Views/' . $viewName . '.php';
+        if (file_exists($viewFile)) {
+            return true;
+        }
+        return false;
     }
     /**
      * render body into existing layout
@@ -40,7 +50,7 @@ class View
     {
         $data = [];
         if (!empty($additionalData)) {
-            $data = array_merge($data, $additionalData);
+            $data['additionalViewData'] = $additionalData;
         }
         if (!empty($this->view)) {
             $data['view'] = $this->view;
@@ -56,9 +66,6 @@ class View
         }
         if (!empty($this->headHTML)) {
             $data['headHTML'] = $this->headHTML . PHP_EOL;
-        }
-        if (!empty($data)) {
-            extract($data);
         }
         self::render($this->layout, $data);
     }

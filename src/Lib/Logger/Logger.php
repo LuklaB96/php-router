@@ -2,6 +2,7 @@
 
 namespace App\Lib\Logger;
 
+use App\Lib\Logger\Enums\LogLevel;
 use App\Lib\Logger\Interfaces\LoggerInterface;
 
 /**
@@ -47,8 +48,9 @@ class Logger
      * @param  string $message
      * @return void
      */
-    public function log(string $message): string
+    public function log(string $message, LogLevel $logLevel = LogLevel::DEBUG): string
     {
+        $this->config->setLogLevel($logLevel);
         $formattedMessage = $this->logger->log($message, $this->config);
         return $formattedMessage;
     }

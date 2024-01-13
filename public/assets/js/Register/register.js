@@ -1,6 +1,6 @@
 // Import the Modal class
 import Modal from '../Modal/Modal.js';
-import ErrorHandler from '../ErrorHandler/ErrorHandler.js';
+import ErrorHandler from '../ErrorHandler/errorHandler.js';
 
 class RegisterUser {
     constructor(modalId, errorContainerId) {

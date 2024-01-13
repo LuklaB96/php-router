@@ -1,16 +1,17 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Entity\Person;
 use App\Lib\Assets\AssetMapper;
-use App\Lib\Database\Mapping\AttributeReader;
 use App\Lib\ErrorHandler\ErrorHandler;
 use App\Lib\ExceptionHandler\ExceptionHandler;
 use App\Lib\Security\CSRF\SessionTokenManager;
 use App\Lib\Security\HTML\HiddenFieldGenerator;
+use App\Lib\View\View;
 use App\Main\App;
 use App\Lib\Config;
 
+//force HTTPS
+requireSSL();
 //create global session
 createSession();
 
@@ -68,15 +69,16 @@ function createSession()
 {
     $sessionTokenManager = SessionTokenManager::getInstance();
 }
-function renderBody(string $view)
+function renderBody(string $view, array $additionalData)
 {
-    error_log('render_body');
-    include Config::get('MAIN_DIR') . '/src/Views/' . $view . '.php';
-    echo PHP_EOL;
+    if ($view !== '') {
+        View::render($view, $additionalData);
+        echo PHP_EOL;
+    }
+
 }
 function renderScripts(array $scripts)
 {
-    error_log('render_scripts');
     if (isset($scripts) && !empty($scripts)) {
         foreach ($scripts as $script) {
             if (!empty($script['type']) && !empty($script['path'])) {
@@ -91,7 +93,6 @@ function renderScripts(array $scripts)
 
 function renderStyles(array $styles)
 {
-    error_log('render_styles');
     if (isset($styles) && !empty($styles)) {
         foreach ($styles as $style) {
             if (!empty($style)) {
@@ -108,6 +109,13 @@ function renderHead(string $headHTML)
 {
     if (isset($headHTML)) {
         echo $headHTML . PHP_EOL;
+    }
+}
+function requireSSL()
+{
+    if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] !== "on") {
+        header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+        exit();
     }
 }
 

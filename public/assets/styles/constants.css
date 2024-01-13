@@ -1,0 +1,64 @@
+:root {
+    /* Light Mode Colors */
+    --bg-color-light-1: #f9f9f9;
+    --bg-color-light-2: #e6e6e6;
+    --bg-color-light-3: #cccccc;
+    --bg-color-light-4: #b3b3b3;
+    --bg-color-light-5: #999999;
+    --bg-color-light-6: #808080;
+    --bg-color-light-7: #666666;
+    --bg-color-light-8: #333333;
+
+    --color-light-1: #333333;
+    --color-light-2: #4d4d4d;
+    --color-light-3: #666666;
+    --color-light-4: #808080;
+    --color-light-5: #999999;
+    --color-light-6: #b3b3b3;
+    --color-light-7: #cccccc;
+    --color-light-8: #e6e6e6;
+
+    --red-light-1: #FFEBEE;
+    --red-light-2: #FFCDD2;
+    --red-light-3: #EF9A9A;
+    --red-light-4: #E57373;
+    --red-light-5: #EF5350;
+    --red-light-6: #F44336;
+    --red-light-7: #E53935;
+    --red-light-8: #D32F2F;
+
+    --btn-primary: #007bff;
+    --btn-primary-hover: #0056b3;
+
+    /* Dark Mode Colors */
+    --bg-color-dark-1: #121212;
+    --bg-color-dark-2: #1f1f1f;
+    --bg-color-dark-3: #333333;
+    --bg-color-dark-4: #404040;
+    --bg-color-dark-5: #666666;
+    --bg-color-dark-6: #808080;
+    --bg-color-dark-7: #999999;
+    --bg-color-dark-8: #cccccc;
+
+    --color-dark-1: #f9f9f9;
+    --color-dark-2: #e6e6e6;
+    --color-dark-3: #cccccc;
+    --color-dark-4: #b3b3b3;
+    --color-dark-5: #999999;
+    --color-dark-6: #808080;
+    --color-dark-7: #666666;
+    --color-dark-8: #4d4d4d;
+
+    --red-dark-1: #FF8A80;
+    --red-dark-2: #FF5252;
+    --red-dark-3: #FF1744;
+    --red-dark-4: #D50000;
+    --red-dark-5: #C51162;
+    --red-dark-6: #880E4F;
+    --red-dark-7: #4A148C;
+    --red-dark-8: #311B92;
+
+    /* Additional colors */
+    --color-box-shadow-light: 255, 255, 255;
+    --color-box-shadow-dark: 0, 0, 0;
+}

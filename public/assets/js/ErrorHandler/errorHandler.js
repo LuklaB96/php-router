@@ -25,7 +25,7 @@ class ErrorHandler {
         this.errorContainer.style.display = 'none';
     }
     showErrorContainer() {
-        this.errorContainer.style.display = 'block';
+        this.errorContainer.style.display = 'flex';
     }
     displayErrors() {
         if (!this.errorContainer) {
@@ -37,6 +37,12 @@ class ErrorHandler {
 
 
         if (this.errorMessages.length > 0) {
+            // Add close button
+            const closeButton = document.createElement('span');
+            closeButton.className = 'btn-close-error-container';
+            closeButton.innerHTML = '&times;'; // '×' character for close icon
+            closeButton.addEventListener('click', () => this.clearErrors());
+
             const errorList = document.createElement('ul');
 
             this.errorMessages.forEach(message => {
@@ -44,7 +50,7 @@ class ErrorHandler {
                 errorItem.textContent = message;
                 errorList.appendChild(errorItem);
             });
-
+            this.errorContainer.appendChild(closeButton);
             this.errorContainer.appendChild(errorList);
             this.showErrorContainer();
         }

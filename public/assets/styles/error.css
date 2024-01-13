@@ -1,0 +1,22 @@
+@import './constants.css';
+
+.server-message-container {
+    position: relative;
+    display: block;
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 800px;
+    min-width: 400px;
+    margin-top: 40px;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: var(--bg-color-light-1);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.2);
+}
+
+body.dark-mode .server-message-container {
+    background-color: var(--bg-color-dark-1);
+    color: var(--color-dark-1);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.2);
+}

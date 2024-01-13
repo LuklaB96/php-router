@@ -1,6 +1,7 @@
 <?php
 namespace App\Lib\Database\Helpers;
 
+use App\Lib\Database\Enums\ColumnType;
 use App\Lib\Database\Interface\QueryBuilderInterface;
 use App\Lib\Database\Mapping\Attributes\Column;
 
@@ -32,6 +33,9 @@ class QueryBuilder implements QueryBuilderInterface
     public static function createColumnDefinition(Column $column): string
     {
         $definition = strtoupper($column->type->value);
+        if ($column->type == ColumnType::TIMESTAMP) {
+            $definition .= " DEFAULT CURRENT_TIMESTAMP";
+        }
         if ($column->length > 0) {
             $definition .= "($column->length)";
         }
@@ -61,6 +65,19 @@ class QueryBuilder implements QueryBuilderInterface
         $referenceColumn = "`{$relation['reference_column']}`";
 
         return "FOREIGN KEY ($columnName) REFERENCES $referenceTable($referenceColumn) ON DELETE CASCADE";
+    }
+    public static function count(string $tableName, #[\SensitiveParameter] string $dbName, array $criteria = null): string
+    {
+        $query = "SELECT COUNT(*) FROM `$dbName`.`$tableName`";
+
+        if ($criteria !== null && !empty($criteria)) {
+            $criteriaStr = self::selectFilter($criteria);
+            $query .= " WHERE $criteriaStr";
+        }
+
+        $query .= ";";
+
+        return $query;
     }
     public static function insert(array $data, string $tableName, #[\SensitiveParameter] string $dbname): string
     {

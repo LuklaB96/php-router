@@ -1,10 +1,11 @@
+@import '../constants.css';
+
 #loginForm {
     max-width: 400px;
     margin: 0 auto;
     padding: 15px;
-    background-color: #fff;
     border-radius: 5px;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-light), 0.1);
 }
 
 #loginForm label {
@@ -19,4 +20,14 @@
     min-width: 400px;
     left: 50%;
     transform: translate(-50%);
+}
+
+h1 {
+    text-align: center;
+}
+
+body.dark-mode #loginForm {
+    background-color: var(--bg-color-dark-1);
+    color: var(--color-dark-1);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.1);
 }

@@ -6,6 +6,7 @@ enum ColumnType: string
     case DECIMAL = 'decimal';
     case INT = 'int';
     case TINYINT = 'tinyint';
+    case BOOLEAN = 'boolean';
     case SMALLINT = 'smallint';
     case MEDIUMINT = 'mediumint';
     case BIGINT = 'bigint';

@@ -48,7 +48,7 @@ abstract class BaseController
         } else {
             $data = $this->request->getData();
         }
-        if (isset($data['token'])) {
+        if (isset($data['token']) && isset($_SESSION['user']) && !empty($_SESSION['user'])) {
 
             $token = $data['token'];
             $valid = $this->sessionTokenManager->validateToken($token);
@@ -59,6 +59,13 @@ abstract class BaseController
 
             $this->sessionTokenManager->regenerateToken();
             return false;
+        }
+        return false;
+    }
+    protected function authUser(): bool
+    {
+        if (isset($_SESSION['csrf_token']) && isset($_SESSION['user']) && !empty($_SESSION['user'])) {
+            return true;
         }
         return false;
     }

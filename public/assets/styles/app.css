@@ -1,26 +1,110 @@
+@import './constants.css';
+
 /* Main HTML */
 
 body {
+    display: flex;
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: var(--bg-color-light-1);
+    color: var(--color-light-1);
+    min-height: 100vh;
 }
 
-h1 {
-    text-align: center;
-    color: #333;
+/* Main container holds all content inside body (page,footer) */
+
+.main-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
 }
+
+/* Page content holds content rendered from partial view */
+.page-content {
+    position: relative;
+    display: block;
+    margin: 10px 0 10px 0;
+}
+
+/* Footer Content */
+
+.footer-content {
+    text-align: center;
+    overflow: hidden;
+    margin-top: auto;
+    bottom: 0;
+    padding: 10px;
+    max-width: 100%;
+    background-color: var(--bg-color-light-2);
+    color: var(--color-light-1);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.1);
+    z-index: 2;
+}
+
+/* Scrollbar */
+
+/* width */
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: inherit;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--bg-color-light-3);
+    border: 1px solid var(--color-light-5);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--bg-color-light-2);
+}
+
+/* Site links */
+
+a.basic-link {
+    text-decoration: none;
+}
+
+a.basic-link:hover {
+    text-decoration: underline;
+}
+
+a.basic-link:link {
+    color: var(--btn-primary);
+}
+
+a.basic-link:visited {
+    color: var(--btn-primary);
+}
+
+/* Error Container */
 
 .error-container {
     display: none;
+    flex-direction: column;
     background-color: #f8d7da;
     color: #721c24;
-    padding: 10px;
+    padding: 15px;
     border: 1px solid #f5c6cb;
     border-radius: 5px;
     margin-bottom: 5px;
     max-width: 100%;
     text-align: center;
+}
+
+.btn-close-error-container {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 25px;
+    color: #555;
 }
 
 .error-container ul {
@@ -36,6 +120,8 @@ h1 {
     border-radius: 3px;
 }
 
+
+
 /* Modal */
 
 .modal {
@@ -45,10 +131,11 @@ h1 {
     top: 10%;
     left: 50%;
     transform: translate(-50%, -10%);
-    background-color: #fff;
+    background-color: var(--bg-color-light-2);
     padding: 20px;
+    border: 1px solid var(--bg-color-light-8);
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-light), 0.3);
     z-index: 1000;
 }
 
@@ -73,9 +160,158 @@ h1 {
     z-index: 999;
 }
 
+.w-100 {
+    width: 100% !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--btn-primary-hover);
+    border-color: var(--btn-primary-hover);
+}
+
+/* Inputs */
+.input {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: var(--bg-color-light-1);
+    border: 1px solid var(--color-light-5);
+    border-radius: 4px;
+
+}
+
+.input:focus {
+    border-color: var(--bg-color-dark-5);
+    box-shadow: 0 1px 1px var(--bg-color-light-1) inset, 0 0 8px var(--color-light-7);
+    outline: 0 none;
+}
+
+.input-error {
+    color: var(--red-light-5);
+    margin-top: 5px;
+    display: block;
+}
+
+/* Navbar */
+.navbar {
+    position: sticky;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    width: 100%;
+    background-color: var(--bg-color-light-2);
+    color: var(--color-light-1);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.1);
+    font-family: Arial;
+    z-index: 100;
+}
+
+.navbar-item {
+    float: left;
+    font-size: 16px;
+    color: var(--color-light-1);
+    padding: 14px 16px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background-color: inherit;
+}
+
+.dropdown-content a {
+    float: left;
+    font-size: 16px;
+    color: var(--color-light-1);
+    padding: 14px 16px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background-color: inherit;
+}
+
+.dropdown-content button,
+.dropdown-content input {
+    text-align: left;
+    font-size: 16px;
+    color: var(--color-light-1);
+    padding: 14px 16px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background-color: inherit;
+    width: 100%;
+}
+
+.dropdown {
+    float: left;
+}
+
+.navbutton {
+    display: block;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    color: var(--color-light-1);
+    padding: 14px 16px;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
+    cursor: pointer;
+}
+
+.navbutton:hover {
+    background-color: var(--btn-primary);
+    color: var(--color-light-8);
+}
+
+.navbar .navbar-item:hover,
+.dropdown:hover .navbutton {
+    background-color: var(--btn-primary);
+    color: var(--color-light-8);
+}
+
+.dropdown-content {
+    display: none;
+    position: fixed;
+    background-color: var(--bg-color-light-2);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    float: none;
+    color: var(--color-light-1);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: var(--btn-primary);
+    color: var(--color-light-8);
+}
+
+.dropdown-content button:hover,
+.dropdown-content input:hover {
+    background-color: var(--btn-primary);
+    color: var(--color-light-8);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.navbar-right {
+    display: flex;
+    float: right;
+}
 
 /* Buttons */
-
 .btn {
     display: inline-block;
     font-weight: 400;
@@ -88,102 +324,112 @@ h1 {
     font-size: 1rem;
     line-height: 1.5;
     border-radius: 0.25rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     cursor: pointer;
 }
 
 .btn-primary {
-    background-color: #007bff;
-    color: #fff;
+    color: var(--color-light-8);
+    background-color: var(--btn-primary);
+    border: 1px solid var(--btn-primary);
     padding: 10px 15px;
-    border: 1px solid #007bff;
     border-radius: 5px;
     cursor: pointer;
 }
 
-.w-100 {
-    width: 100% !important;
+/* Dark Mode - Body */
+body.dark-mode {
+    background-color: var(--bg-color-dark-2);
+    color: var(--color-dark-2);
 }
 
-.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+/* Dark Mode - Navbar */
+body.dark-mode .navbar {
+    background-color: var(--bg-color-dark-1);
+    color: var(--color-dark-1);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.2);
 }
 
-/* Inputs */
-.input {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
+body.dark-mode .footer-content {
+    background-color: var(--bg-color-dark-1);
+    color: var(--color-dark-1);
+    box-shadow: 0 0 5px rgba(var(--color-box-shadow-dark), 0.1);
 }
 
-.input-error {
-    color: red;
-    margin-top: 5px;
-    display: block;
+body.dark-mode .navbar a {
+    color: var(--color-dark-1);
 }
 
-/* Navbar */
-.navbar {
-    overflow: hidden;
-    background-color: #333;
-    font-family: Arial;
+
+body.dark-mode .navbar a:hover,
+body.dark-mode .dropdown:hover .navbutton {
+    background-color: var(--bg-color-dark-3);
+    color: var(--color-dark-1);
 }
 
-.navbar a {
-    float: left;
-    font-size: 16px;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-.dropdown {
-    float: left;
-    overflow: hidden;
-}
-
-.dropdown .dropbtn {
-    font-size: 16px;
-    border: none;
-    outline: none;
-    color: white;
-    padding: 14px 16px;
+body.dark-mode .navbutton {
     background-color: inherit;
-    font-family: inherit;
-    margin: 0;
+    color: var(--color-dark-1);
 }
 
-.navbar a:hover,
-.dropdown:hover .dropbtn {
-    background-color: red;
+body.dark-mode .navbutton:hover {
+    background-color: var(--bg-color-dark-3);
+    color: var(--color-dark-1);
 }
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+body.dark-mode .dropdown-content {
+    background-color: var(--bg-color-dark-3);
 }
 
-.dropdown-content a {
-    float: none;
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
+body.dark-mode .dropdown-content a {
+    background-color: var(--bg-color-dark-4);
+    color: var(--color-dark-1);
 }
 
-.dropdown-content a:hover {
-    background-color: #ddd;
+body.dark-mode .dropdown-content button,
+body.dark-mode .dropdown-content input {
+    background-color: var(--bg-color-dark-4);
+    color: var(--color-dark-1);
 }
 
-.dropdown:hover .dropdown-content {
-    display: block;
+body.dark-mode .dropdown-content button:hover,
+body.dark-mode .dropdown-content input:hover {
+    background-color: var(--bg-color-dark-3);
+    color: var(--color-dark-1);
+}
+
+/* Dark Mode - Inputs */
+body.dark-mode .input {
+    color: var(--color-dark-2);
+    background-color: var(--bg-color-dark-1);
+    border: 1px solid var(--bg-color-dark-3);
+}
+
+body.dark-mode .input:focus {
+    border-color: var(--bg-color-dark-5);
+    box-shadow: 0 1px 1px var(--bg-color-dark-1) inset, 0 0 8px var(--color-dark-8);
+    outline: 0 none;
+}
+
+body.dark-mode .input-error {
+    color: var(--red-light-5);
+}
+
+body.dark-mode .modal {
+    background-color: var(--bg-color-dark-2);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.1);
+}
+
+/* Scrollbar */
+
+/* Handle */
+body.dark-mode::-webkit-scrollbar-thumb {
+    background: var(--bg-color-dark-1);
+    border: 1px solid var(--color-dark-8);
+}
+
+/* Handle on hover */
+body.dark-mode::-webkit-scrollbar-thumb:hover {
+    background: var(--bg-color-dark-4);
 }

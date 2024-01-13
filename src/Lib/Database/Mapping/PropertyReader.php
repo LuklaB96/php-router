@@ -27,7 +27,7 @@ class PropertyReader
                 if ($property->isInitialized($object)) {
                     $propertyValue = $property->getValue($object);
                 }
-                if (!empty($propertyValue) || $null) {
+                if (isset($propertyValue) || $null) {
                     $propertyName = $property->getName();
                     $properties[$propertyName] = $propertyValue;
                 }

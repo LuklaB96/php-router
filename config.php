@@ -32,4 +32,8 @@ return [
     //error and exception routes for the end user
     'EXCEPTION_ROUTE' => '/error',
     'ERROR_ROUTE' => '/error',
+
+    // email sender config
+    // same as email configured in php.ini sendemail_from
+    'EMAIL_SENDER' => 'php.lukasz.bulicz@gmail.com',
 ];
