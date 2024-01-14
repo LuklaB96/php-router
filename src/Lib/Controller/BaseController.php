@@ -30,6 +30,9 @@ abstract class BaseController
     }
     protected function redirectToRoute(string $route, array $parameters = [])
     {
+        if (!empty($parameters)) {
+            $_POST[] = $parameters;
+        }
         header("Location: $route");
     }
     protected function renderView(string $view, array $data = [])

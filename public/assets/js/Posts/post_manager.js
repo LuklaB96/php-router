@@ -140,7 +140,7 @@ class PostManager {
                 commentSection.insertAdjacentHTML('beforeend', `
             <div class="comments">
                 <div class="comment">
-                    <span class="comment-author">By: ${newComment.author}</span>
+                    <span class="comment-author">By: <a class="basic-link" href="/profile/${newComment.author}">${newComment.author}</a></span>
                     <p class="comment-content">${newComment.content}</p>
                 </div>
             </div>
@@ -176,7 +176,7 @@ class PostManager {
         }
         let postContainer = `
             <div class="post-container" id="post-container-${postId}">
-                <div class="post-author">Author: <span>${post.author}</span></div>
+                <div class="post-author">Author: <span><a class="basic-link" href="/profile/${post.author}">${post.author}</a></span></div>
                 <div class="post-info">
                     <h1><a class="basic-link" href="/blog/post/${postId}">${post.title}</a></h1>
                 </div>
@@ -213,7 +213,7 @@ class PostManager {
                 const comment = comments[commentId];
                 commentsHTML += `
                 <div class="comment">
-                    <span class="comment-author">By: ${comment.author}</span>
+                    <span class="comment-author">By: <a class="basic-link" href="/profile/${comment.author}">${comment.author}<a/></span>
                     <p class="comment-content">${comment.content}</p>
                 </div>
         `;

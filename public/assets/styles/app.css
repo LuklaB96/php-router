@@ -121,7 +121,33 @@ a.basic-link:visited {
     text-align: center;
 }
 
-.btn-close-error-container {
+.message-container {
+    display: none;
+    flex-direction: column;
+    background-color: #d7f8da;
+    color: #28914b;
+    padding: 15px;
+    border: 1px solid #d7f8da;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    max-width: 100%;
+    text-align: center;
+}
+
+.message-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.message-container li {
+    background-color: #ace2b0;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 3px;
+}
+
+.btn-close-container {
     position: absolute;
     top: 0px;
     right: 10px;
@@ -222,7 +248,7 @@ a.basic-link:visited {
     margin: 0;
     padding: 0;
     top: 0;
-    width: 100%;
+    max-width: 100%;
     background-color: var(--bg-color-light-2);
     color: var(--color-light-1);
     box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.1);

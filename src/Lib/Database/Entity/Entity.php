@@ -49,7 +49,6 @@ class Entity
             $relationData = AttributeReader::getRelationsData($this);
             $data = array_merge($data, $relationData);
         }
-        //var_dump($data);
         $query = QueryBuilder::insert($data, $this->getEntityName(), $dbname);
 
         try {
@@ -77,9 +76,12 @@ class Entity
     {
         $dbname = $this->getDbName(dbname: $dbname);
 
-        $data = $this->getProperties(null: false); //get all entity properties, key(column name) => value
+        $data = $this->getProperties(null: false, targetAttribute: Column::class); //get all entity properties, key(column name) => value
+        if ($this->hasRelations()) {
+            $relationData = AttributeReader::getRelationsData($this);
+            $data = array_merge($data, $relationData);
+        }
         $query = QueryBuilder::update($data, $this->getEntityName(), $dbname);
-        error_log($query);
         try {
             $this->db->execute($query, $data);
             return true;
@@ -202,7 +204,7 @@ class Entity
         $repository = [];
         try {
             $result = $this->db->execute($query, $data);
-            if ($limit === 1) {
+            if ($limit === 1 && !empty($result)) {
                 $this->setProperties($result);
                 return ['found' => true];
             }

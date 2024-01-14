@@ -24,23 +24,20 @@
             <a class="navbar-item" href="/">Home</a>
             <?php
             if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
-                echo '<a class="navbar-item" href="/blog/page/1">Blog</a>';
+                echo '<a class="navbar-item" href="/blog">Blog</a>';
             }
             ?>
-            <div class="dropdown">
-                <button class="navbutton">Dropdown</button>
-                <div class="dropdown-content">
-                    <a href="#">Link 1</a>
-                    <a href="#">Link 2</a>
-                    <button>Button</button>
-                </div>
-            </div>
             <div class="navbar-right">
-                <button class="navbutton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
-                <?php if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
+                <?php
+                use App\Entity\User;
+
+                if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
+                    $user = new User();
+                    $user->find($_SESSION['user']);
                     echo '<div class="dropdown">';
-                    echo '<button class="navbutton">Profile</button>';
+                    echo '<a class="navbutton" style="text-decoration: none;" href="/profile/' . $user->getLogin() . '">Profile</a>';
                     echo '<div class="dropdown-content">';
+                    echo '<a href="/account/settings">Settings</a>';
                     echo '<form action="/logout" method="post">';
                     HiddenCSRF();
                     echo '<input type="submit" value="Logout" />';
@@ -51,6 +48,7 @@
                     echo '<a class="navbar-item" href="/login">Sign in</a>';
                     echo '<a class="navbar-item" href="/register">Sign up</a>';
                 } ?>
+                <button class="navbutton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
             </div>
         </div>
         <div class="page-content">

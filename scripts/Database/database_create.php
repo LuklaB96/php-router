@@ -14,5 +14,5 @@ $sql = "CREATE DATABASE IF NOT EXISTS $dbname;";
 
 
 $conn->exec($sql);
-echo 'database_create.php executed without errors, check database.';
+echo "Database $dbname created.</br>";
 ?>

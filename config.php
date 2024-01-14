@@ -16,6 +16,7 @@ return [
      * NGINX - Not yet supported
      */
     'SERVER_SOFTWARE' => 'AUTO', //PHP_SERVER,APACHE,AUTO
+    'REQUIRE_SSL' => false,
     //absolute dir paths
     'LOG_PATH' => __DIR__ . '/logs',
     'APP_PATH' => __DIR__ . '/src',

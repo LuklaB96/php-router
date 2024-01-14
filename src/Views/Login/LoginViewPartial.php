@@ -19,6 +19,7 @@
         </div>
         <div class="redirect-link">
             <p>Need account? <a class="basic-link" href="/register">Sign up here</a></p>
+            <p>Forgot password? <a class="basic-link" href="/account/recovery">Recover it.</a></p>
         </div>
     </form>
 

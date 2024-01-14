@@ -1,6 +1,7 @@
 <?php
 namespace App\Main;
 
+use App\Controller\AccountSettingsController;
 use App\Controller\BlogController;
 use App\Controller\LoginController;
 use App\Controller\LogoutController;
@@ -41,7 +42,8 @@ class App
 
         // Base routes avaible for authorized and unauthorized users
         $router->get("/", function () {
-            $view = new View('main', 'Multiblog');
+            $view = new View('Home/HomeViewPartial', 'Multiblog');
+            $view->addStyle('error.css');
             $view->renderPartial();
         });
         $router->get('/error', function () {
@@ -52,6 +54,9 @@ class App
 
         // Routes only for authorized users
         // Show main page with all posts including pagination and filters
+        $router->get('/blog', function () {
+            header("Location: /blog/page/1");
+        });
         $router->get('/blog/page/{page}', function ($page) {
             (new BlogController())->showAllPosts($page);
         });
@@ -75,65 +80,6 @@ class App
             (new PostApiController())->apiCreatePost();
         });
 
-        $router->get('/create-data', function () {
-            $users = 0;
-            $posts = 0;
-            $comments = 0;
-            for ($i = 0; $i < 5; $i++) {
-                $user = new User();
-                $user->setLogin('Login' . $i);
-                $user->setPassword('Password' . $i);
-                $user->setEmail('Email' . $i);
-                $valid = $user->validate();
-
-                if ($valid) {
-                    if ($user->insert()) {
-                        $users++;
-                    } else {
-                        $user->find($i);
-                    }
-
-                }
-                // Post data
-                $postTitles = ['Interesting Topic', 'My Thoughts', 'A Journey', 'Exploring...', 'Discovering New Things'];
-                $postContents = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'];
-
-                for ($j = 0; $j < 5; $j++) {
-                    $post = new Post();
-                    $post->setTitle($postTitles[$j]);
-                    $post->setContent($postContents[$j]);
-                    $post->setAuthor($user);
-                    $valid = $post->validate();
-
-                    if ($valid) {
-                        if ($post->insert()) {
-                            $posts++;
-                        }
-                    }
-
-                    // Comment data
-                    $commentContents = ['Great post!', 'Interesting perspective.', 'I totally agree!', 'Keep up the good work.', 'Looking forward to more content.'];
-
-                    for ($k = 0; $k < 5; $k++) {
-                        $comment = new Comment();
-                        $comment->setContent($commentContents[$k]);
-                        $comment->setAuthor($user);
-                        $comment->setPost($post);
-                        $valid = $comment->validate();
-
-                        if ($valid) {
-                            if ($comment->insert()) {
-                                $comments++;
-                            }
-                        }
-                    }
-                }
-            }
-            echo 'Created ' . $users . ' records for User entity</br>';
-            echo 'Created ' . $posts . ' records for Post entity</br>';
-            echo 'Created ' . $comments . ' records for Comment entity';
-        });
-
         //acount route handlers
         $router->get('/account/activate/{code}', function ($code) {
             (new UserController())->activateGET($code);
@@ -141,7 +87,25 @@ class App
         $router->get('/profile/{login}', function ($login) {
             (new UserController())->showProfile($login);
         });
+        $router->get('/account/recovery', function () {
+            (new UserController())->forgotPasswordGET();
+        });
+        $router->post('/account/recovery', function () {
+            (new UserController())->forgotPasswordPOST();
+        });
+        $router->get('/account/recovery/{code}', function ($code) {
+            (new UserController())->passwordRecoveryFormGET($code);
+        });
+        $router->post('/account/recovery/submit', function () {
+            (new UserController())->passwordRecoveryFormPOST();
+        });
 
+        $router->get('/account/settings', function () {
+            (new AccountSettingsController())->profileSettingsGET();
+        });
+        $router->post('/account/password/change', function () {
+            (new AccountSettingsController())->changePasswordPOST();
+        });
         $router->get('/phpinfo', function () {
             phpinfo();
         });

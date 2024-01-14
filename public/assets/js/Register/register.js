@@ -35,8 +35,11 @@ class RegisterUser {
             }
         });
     }
-    showSuccessModal(userName) {
-        const successMessage = `User "${userName}" successfully registered.`;
+    showSuccessModal(userName, data) {
+        const successMessage = `
+            User "${userName}" successfully registered.</br>
+            ${data.data.message}
+        `;
         this.successModal.clear();
         this.successModal.setContent(successMessage);
 
@@ -202,7 +205,7 @@ class RegisterUser {
 
     handleSuccessResponse(data, user) {
         // Show success modal
-        this.showSuccessModal(user);
+        this.showSuccessModal(user, data);
         // Handle success response here if needed
     }
 

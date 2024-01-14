@@ -12,7 +12,7 @@ if (isset($postRepository) && is_array($postRepository) && count($postRepository
             $commentsAmount = $comment->count(['post_id', '=', $p->getId()]);
             $commentRepository = $comment->findBy(['post_id', '=', $p->getId()], limit: 2, orderBy: 'id ASC');
             echo '<div class="post-container" id="post-container-' . $p->getId() . '">';
-            echo '<div class="post-author">Author: <span>' . $p->getAuthor()->getLogin() . '</span></div>';
+            echo '<div class="post-author">Author: <span><a class="basic-link" href="/profile/' . $p->getAuthor()->getLogin() . '">' . $p->getAuthor()->getLogin() . '</a></span></div>';
             echo '<div class="post-info">';
             echo '<h1>' . $p->getTitle() . '</h1>';
             echo '</div>';
@@ -22,7 +22,7 @@ if (isset($postRepository) && is_array($postRepository) && count($postRepository
             echo '<div class="comments">';
             foreach ($commentRepository as $comment) {
                 echo '<div class="comment">';
-                echo '<span class="comment-author">By: ' . $comment->getAuthor()->getLogin() . '</span>';
+                echo '<span class="comment-author">By: <a class="basic-link" href="/profile/' . $comment->getAuthor()->getLogin() . '">' . $comment->getAuthor()->getLogin() . '</a></span>';
                 echo '<p class="comment-content">' . $comment->getContent() . '</p>';
                 echo '</div>';
             }

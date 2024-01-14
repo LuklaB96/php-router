@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Lib\Assets\AssetMapper;
+use App\Lib\Database\Database;
 use App\Lib\ErrorHandler\ErrorHandler;
 use App\Lib\ExceptionHandler\ExceptionHandler;
 use App\Lib\Security\CSRF\SessionTokenManager;
@@ -11,7 +12,7 @@ use App\Main\App;
 use App\Lib\Config;
 
 //force HTTPS
-//requireSSL();
+requireSSL();
 
 //create global session
 createSession();
@@ -114,11 +115,37 @@ function renderHead(string $headHTML)
 }
 function requireSSL()
 {
-    if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] !== "on") {
+    $requireSSL = Config::get('REQUIRE_SSL', false);
+    if ((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] !== "on") && $requireSSL) {
         header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
         exit();
     }
 }
-
-App::run();
+function checkDatabase()
+{
+    $db = Database::getInstance();
+    if ($db->isConnected()) {
+        $dbname = Config::get('DB_NAME', 'app_db');
+        $result = $db->execute("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$dbname'");
+        if (empty($result)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
+$dbok = checkDatabase();
+if ($dbok) {
+    App::run();
+} else {
+    $db = Database::getInstance();
+    if ($db->isConnected()) {
+        echo 'Creating migrations..</br>';
+        include __DIR__ . '/../scripts/Database/database_create.php';
+        include __DIR__ . '/../scripts/Database/migrations.php';
+        echo '<a href="/">Refresh Page</a>';
+    } else {
+        echo 'Application not connected to database!';
+    }
+}
 ?>

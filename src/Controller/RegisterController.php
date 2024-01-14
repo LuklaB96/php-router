@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use App\Entity\EmailActivationCode;
+use App\Entity\ActivationCode;
 use App\Entity\User;
 use App\Lib\Controller\BaseController;
 use App\Lib\Database\Entity\Entity;
@@ -66,10 +66,11 @@ class RegisterController extends BaseController
         //handle sending activation token to user email
         $tokenGen = new TokenGenerator(1024);
         $activationToken = $tokenGen->generate();
-        $emailActivation = new EmailActivationCode();
+        $emailActivation = new ActivationCode();
 
         $emailActivation->setActivationCode($activationToken);
         $emailActivation->setUser($user);
+        $emailActivation->setUsed(false);
         if ($emailActivation->insert()) {
             $activationUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/account/activate/' . $emailActivation->getActivationCode();
             $content = <<<EmailMessage
@@ -77,12 +78,17 @@ class RegisterController extends BaseController
             EmailMessage;
             $userEmail = $user->getEmail();
             $subject = 'Activation code for ' . $user->getLogin();
-            $this->mailSender->sendMail($userEmail, $subject, $content);
+            $message = 'Activation link sent to: ' . $user->getEmail();
+            try {
+                $this->mailSender->sendMail($userEmail, $subject, $content);
+            } catch (\Exception $e) {
+                $message = 'Server could not send email for unknown reason, click <a class="basic-link" href="' . $activationUrl . '">here to activate.</a>';
+            }
         }
 
 
         //send response
-        $this->postResponse(200, 'ok');
+        $this->postResponse(200, ['message' => $message]);
     }
     /**
      * [GET] Return register view page

@@ -68,15 +68,15 @@ class Migrations implements MigrationsInterface
                 $message = $e->getCode();
             }
             if ($message == 'ok') {
-                echo "Table $tableName created in: $dbname \r\n";
+                echo "Table $tableName created in: $dbname </br>" . PHP_EOL;
             } else {
                 if ($message === '42S01') {
-                    echo "Table $tableName already exists in $dbname \r\n";
+                    echo "Table $tableName already exists in $dbname </br>" . PHP_EOL;
                 }
             }
             return;
         }
-        echo "Not connected to database";
+        echo "Not connected to database </br>" . PHP_EOL;
     }
 }
 

@@ -11,6 +11,7 @@ class ErrorHandler {
         this.errorMessages.push(errorMessage);
     }
     addErrors(errors) {
+        console.log('asd');
         errors.forEach(error => {
             if (typeof error === 'string') {
                 this.addError(error);
@@ -29,7 +30,6 @@ class ErrorHandler {
     }
     displayErrors() {
         if (!this.errorContainer) {
-            console.error(`Error container with id "${this.containerId}" not found.`);
             return;
         }
 
@@ -39,7 +39,7 @@ class ErrorHandler {
         if (this.errorMessages.length > 0) {
             // Add close button
             const closeButton = document.createElement('span');
-            closeButton.className = 'btn-close-error-container';
+            closeButton.className = 'btn-close-container';
             closeButton.innerHTML = '&times;'; // '×' character for close icon
             closeButton.addEventListener('click', () => this.clearErrors());
 

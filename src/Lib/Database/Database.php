@@ -67,7 +67,10 @@ class Database implements DatabaseInterface
     }
     public function isConnected(): bool
     {
-        return $this->conn !== null;
+        if ($this->conn !== null) {
+            return true;
+        }
+        return false;
     }
     public function execute(#[\SensitiveParameter] $query, array $data = []): array
     {

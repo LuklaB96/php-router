@@ -9,7 +9,7 @@ if ($postExists) {
     $comment = new Comment();
     $commentRepository = $comment->findBy(['post_id', '=', $post->getId()]);
     echo '<div class="post-container" id="post-container-' . $post->getId() . '">';
-    echo '<div class="post-author">Author: <span>' . $post->getAuthor()->getLogin() . '</span></div>';
+    echo '<div class="post-author">Author: <span><a class="basic-link" href="/profile/' . $post->getAuthor()->getLogin() . '">' . $post->getAuthor()->getLogin() . '</a></span></div>';
     echo '<div class="post-info">';
     echo '<h1>' . $post->getTitle() . '</h1>';
     echo '</div>';
@@ -19,7 +19,7 @@ if ($postExists) {
     echo '<div class="comments">';
     foreach ($commentRepository as $comment) {
         echo '<div class="comment">';
-        echo '<span class="comment-author">By: ' . $comment->getAuthor()->getLogin() . '</span>';
+        echo '<span class="comment-author">By: <a class="basic-link" href="/profile/' . $comment->getAuthor()->getLogin() . '">' . $comment->getAuthor()->getLogin() . '</a></span>';
         echo '<p class="comment-content">' . $comment->getContent() . '</p>';
         echo '</div>';
     }

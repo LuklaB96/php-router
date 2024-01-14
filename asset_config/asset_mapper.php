@@ -12,6 +12,9 @@ $assets = [
     'app_posts.js' => '/js/app_posts.js',
     'error.css' => '/styles/error.css',
     'blog/post.css' => '/styles/Blog/post.css',
+    'account/recovery.css' => '/styles/account/recovery.css',
+    'app_pass_recovery.js' => '/js/app_pass_recovery.js',
+    'account/settings.css' => '/styles/account/settings.css',
 ];
 
 ?>

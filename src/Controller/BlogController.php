@@ -25,7 +25,7 @@ class BlogController extends BaseController
         $data['page'] = $page;
         $data['lastPage'] = $lastPage;
 
-        $view = new View('Blog/BlogMainViewPartial', 'Blog');
+        $view = new View('Blog/BlogMainViewPartial', 'Multiblog');
         $view->addStyle('blog/post.css');
         $view->addScript('app_posts.js', 'module');
         $view->renderPartial($data);
@@ -42,7 +42,7 @@ class BlogController extends BaseController
             $this->redirectToRoute('/login');
             return;
         }
-        $view = new View('Blog/BlogPostViewPartial', 'Blog');
+        $view = new View('Blog/BlogPostViewPartial', 'Multiblog');
         $view->addStyle('blog/post.css');
         $view->addScript('app_posts.js', 'module');
         $view->renderPartial(['postId' => $postId]);

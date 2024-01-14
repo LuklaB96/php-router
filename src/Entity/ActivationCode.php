@@ -7,7 +7,7 @@ use App\Lib\Database\Enums\RelationType;
 use App\Lib\Database\Mapping\Attributes\Column;
 use App\Lib\Database\Mapping\Attributes\Relation;
 
-class EmailActivationCode extends Entity
+class ActivationCode extends Entity
 {
     /**
      * This is an example class that is extending Entity parent class
@@ -26,13 +26,23 @@ class EmailActivationCode extends Entity
     protected int $id;
     #[Column(type: ColumnType::TEXT, nullable: true)]
     protected string $activation_code;
+    #[Column(type: ColumnType::BOOLEAN, nullable: true)]
+    protected bool $used;
     #[Relation(targetEntity: User::class, relationType: RelationType::MANY_TO_ONE)]
     protected User $user;
     protected int $user_id;
-    #[Column(type: ColumnType::TIMESTAMP, nullable: false)]
     public function getId(): int
     {
         return $this->id;
+    }
+    public function getUsed(): bool
+    {
+        return $this->used;
+    }
+    public function setUsed($used): self
+    {
+        $this->used = $used;
+        return $this;
     }
     public function getUserId(): int
     {
