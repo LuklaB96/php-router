@@ -5,13 +5,14 @@ use App\Lib\Config;
 
 class MailSender
 {
-    public function sendMail($to, $subject, $message)
+    public function sendMail($to, $subject, $message): bool
     {
         $from = Config::get('EMAIL_SENDER');
         // email header
         $header = "From:" . $from;
         // send the email
-        mail($to, $subject, nl2br($message), $header);
+        $sent = mail($to, $subject, nl2br($message), $header);
+        return $sent;
     }
 }
 

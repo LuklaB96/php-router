@@ -54,7 +54,7 @@ class RegisterController extends BaseController
         $user->setEmail($data['email']);
         $hashPassword = $this->hashPassword($data['password']);
         $user->setPassword($hashPassword);
-        $user->setActivated(false);
+        $user->setActivated(0);
 
         $created = $this->registerUser($user);
 
@@ -70,7 +70,7 @@ class RegisterController extends BaseController
 
         $emailActivation->setActivationCode($activationToken);
         $emailActivation->setUser($user);
-        $emailActivation->setUsed(false);
+        $emailActivation->setUsed(0);
         if ($emailActivation->insert()) {
             $activationUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/account/activate/' . $emailActivation->getActivationCode();
             $content = <<<EmailMessage
@@ -79,14 +79,12 @@ class RegisterController extends BaseController
             $userEmail = $user->getEmail();
             $subject = 'Activation code for ' . $user->getLogin();
             $message = 'Activation link sent to: ' . $user->getEmail();
-            try {
-                $this->mailSender->sendMail($userEmail, $subject, $content);
-            } catch (\Exception $e) {
-                $message = 'Server could not send email for unknown reason, click <a class="basic-link" href="' . $activationUrl . '">here to activate.</a>';
+            $sent = $this->mailSender->sendMail($userEmail, $subject, $content);
+            if(!$sent)
+            {
+            	$message = 'Server could not send email for unknown reason, click <a class="basic-link" href="' . $activationUrl . '">here to activate.</a>';
             }
         }
-
-
         //send response
         $this->postResponse(200, ['message' => $message]);
     }
@@ -223,6 +221,7 @@ class RegisterController extends BaseController
             $valid = false; //User data does not meet model requirements
         } else {
             if (!$user->insert()) {
+            	$this->error['login']['reasons'][] = $user->exception->__toString();
                 $this->error['login']['reasons'][] = 'Login already in use';
                 $valid = false; //User with this login already exists
             }

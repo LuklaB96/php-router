@@ -66,6 +66,7 @@ class Migrations implements MigrationsInterface
                 $message = 'ok';
             } catch (\Exception $e) {
                 $message = $e->getCode();
+                echo $e->getMessage();
             }
             if ($message == 'ok') {
                 echo "Table $tableName created in: $dbname </br>" . PHP_EOL;

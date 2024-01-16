@@ -82,6 +82,46 @@ class AccountSettingsController extends BaseController
         return;
 
     }
+    /**
+     * [POST] /account/settings
+     * 
+     * @return void
+     */
+    public function changeUsernamePOST()
+    {
+
+        if (!$this->authUser()) {
+            $this->redirectToRoute('/');
+            return;
+        }
+        $data = $this->request->getData();
+        $errors = [];
+        if (empty($data)) {
+            $errors[] = 'Fields are empty';
+        } else {
+            $user = new User();
+            $userId = $_SESSION['user'];
+            if (!$user->find($userId)) {
+                $errors[] = 'User data corrupted, contant administrator!';
+                $_SESSION['errors'] = $errors;
+                $this->redirectToRoute('/account/settings');
+                return;
+            }
+            $username = $data['username'];
+            if (strlen($username) < 3) {
+                $errors[] = 'Username is too short';
+                $_SESSION['errors'] = $errors;
+                $this->redirectToRoute('/account/settings');
+                return;
+            }
+            $user->setLogin($username);
+            $user->update();
+            $_SESSION['successMessage'] = 'Username has been changed.';
+        }
+        $_SESSION['errors'] = $errors;
+        $this->redirectToRoute('/account/settings');
+        return;
+    }
     private function validatePassword(string $password): array
     {
         $rules = [

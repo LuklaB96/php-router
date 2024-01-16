@@ -26,8 +26,8 @@ class ActivationCode extends Entity
     protected int $id;
     #[Column(type: ColumnType::TEXT, nullable: true)]
     protected string $activation_code;
-    #[Column(type: ColumnType::BOOLEAN, nullable: true)]
-    protected bool $used;
+    #[Column(type: ColumnType::TINYINT, length: 1, nullable: true)]
+    protected int $used;
     #[Relation(targetEntity: User::class, relationType: RelationType::MANY_TO_ONE)]
     protected User $user;
     protected int $user_id;
@@ -35,7 +35,7 @@ class ActivationCode extends Entity
     {
         return $this->id;
     }
-    public function getUsed(): bool
+    public function getUsed(): int
     {
         return $this->used;
     }

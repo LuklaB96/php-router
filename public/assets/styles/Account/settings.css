@@ -1,6 +1,34 @@
 @import '../constants.css';
 
+.info-container {
+    display: block;
+    position: relative;
+    max-width: 840px;
+    min-width: 400px;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.main-settings-container {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    max-width: 800px;
+    min-width: 400px;
+    left: 50%;
+    transform: translate(-50%);
+}
+
 #passChangeForm {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.2);
+    background-color: var(--bg-color-light-1);
+}
+
+#usernameChangeForm {
     max-width: 400px;
     margin: 0 auto;
     padding: 15px;
@@ -14,13 +42,25 @@
     margin-bottom: 5px;
 }
 
+#usernameChangeForm label {
+    display: block;
+    margin-bottom: 5px;
+}
+
 .pass-change-container {
     display: block;
-    position: absolute;
+    position: relative;
     max-width: 800px;
     min-width: 400px;
-    left: 50%;
-    transform: translate(-50%);
+    margin-right: 20px;
+}
+
+.username-change-container {
+    display: block;
+    position: relative;
+    max-width: 800px;
+    min-width: 400px;
+    margin-left: 20px;
 }
 
 h1 {
@@ -28,6 +68,12 @@ h1 {
 }
 
 body.dark-mode #passChangeForm {
+    background-color: var(--bg-color-dark-1);
+    color: var(--color-dark-1);
+    box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.2);
+}
+
+body.dark-mode #usernameChangeForm {
     background-color: var(--bg-color-dark-1);
     color: var(--color-dark-1);
     box-shadow: 0 0 10px rgba(var(--color-box-shadow-dark), 0.2);

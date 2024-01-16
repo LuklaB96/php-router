@@ -126,11 +126,15 @@ function checkDatabase()
     $db = Database::getInstance();
     if ($db->isConnected()) {
         $dbname = Config::get('DB_NAME', 'app_db');
-        $result = $db->execute("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$dbname'");
-        if (empty($result)) {
-            return false;
-        } else {
+        try {
+            $db->execute("SELECT 1 FROM `$dbname`.`user`");
             return true;
+        } catch (\Exception $e) {
+            if ($e->getCode() == "42S02") {
+                return false;
+            }
+            echo 'DATABASE ERROR';
+            exit();
         }
     }
 }
@@ -146,6 +150,8 @@ if ($dbok) {
         echo '<a href="/">Refresh Page</a>';
     } else {
         echo 'Application not connected to database!';
+        return;
     }
+    session_destroy();
 }
 ?>

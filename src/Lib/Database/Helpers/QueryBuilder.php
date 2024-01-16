@@ -12,7 +12,7 @@ class QueryBuilder implements QueryBuilderInterface
 {
     public static function createTable(array $columns, string $tableName, #[\SensitiveParameter] string $dbname, array $relations = [], bool $checkTableExists = false): string
     {
-
+	$tableName = strtolower($tableName);
         $query = "CREATE TABLE `$dbname`.`$tableName` (";
         if ($checkTableExists) {
             $query = "CREATE TABLE IF NOT EXISTS `$dbname`.`$tableName` (";
@@ -68,6 +68,7 @@ class QueryBuilder implements QueryBuilderInterface
     }
     public static function count(string $tableName, #[\SensitiveParameter] string $dbName, array $criteria = null): string
     {
+    	$tableName = strtolower($tableName);
         $query = "SELECT COUNT(*) FROM `$dbName`.`$tableName`";
 
         if ($criteria !== null && !empty($criteria)) {
@@ -81,6 +82,7 @@ class QueryBuilder implements QueryBuilderInterface
     }
     public static function insert(array $data, string $tableName, #[\SensitiveParameter] string $dbname): string
     {
+    	$tableName = strtolower($tableName);
         $columns = implode(', ', array_keys($data));
         $placeholders = ':' . implode(', :', array_keys($data));
         $query = "INSERT INTO `$dbname`.`$tableName` ($columns) VALUES ($placeholders);";
@@ -88,6 +90,7 @@ class QueryBuilder implements QueryBuilderInterface
     }
     public static function update(array $data, string $tableName, #[\SensitiveParameter] string $dbName): string
     {
+    	$tableName = strtolower($tableName);
         $setClause = [];
         foreach ($data as $key => $value) {
             $setClause[] = "$key = :$key";
@@ -101,6 +104,7 @@ class QueryBuilder implements QueryBuilderInterface
     }
     public static function select(string $tableName, #[\SensitiveParameter] string $dbName, string $orderBy = null, array $columns = null, array $criteria = null, int $limit = null, int $offset = null): string
     {
+    	$tableName = strtolower($tableName);
         $columnsStr = '*';
         if ($columns !== null) {
             $columnsStr = implode(', ', $columns);
@@ -129,6 +133,7 @@ class QueryBuilder implements QueryBuilderInterface
     }
     public static function delete(string $tableName, #[\SensitiveParameter] string $dbName, array $criteria): string
     {
+    	$tableName = strtolower($tableName);
         $criteriaStr = self::selectFilter($criteria);
 
         $query = "DELETE FROM `$dbName`.`$tableName` WHERE $criteriaStr;";

@@ -1,5 +1,5 @@
 // Import the Modal class
-import Modal from '../Modal/Modal.js';
+import Modal from '../Modal/modal.js';
 import ErrorHandler from '../ErrorHandler/errorHandler.js';
 
 class RegisterUser {

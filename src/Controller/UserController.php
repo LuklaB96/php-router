@@ -29,12 +29,12 @@ class UserController extends BaseController
         $activation = new ActivationCode();
         if ($activation->findOneBy(['activation_code', '=', $code])) {
             $user = $activation->getUser();
-            if (!$user->getActivated() && $activation->getUsed() === false) {
-                $user->setActivated(true);
+            if ($user->getActivated() === 0 && $activation->getUsed() === 0) {
+                $user->setActivated(1);
                 $activated = $user->update();
                 if ($activated) {
                     $message = 'Your account is now activacted, <a class="basic-link" href="/login">sign in here</a>';
-                    $activation->setUsed(true);
+                    $activation->setUsed(1);
                     $activation->update();
                 }
             } else {
@@ -116,7 +116,7 @@ class UserController extends BaseController
 
         $recoveryCode->setActivationCode($recoveryToken);
         $recoveryCode->setUser($user);
-        $recoveryCode->setUsed(false);
+        $recoveryCode->setUsed(0);
         $message = 'Password recovery sent to email: ' . $user->getEmail();
         if ($recoveryCode->insert()) {
             $activationUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/account/recovery/' . $recoveryCode->getActivationCode();
@@ -125,12 +125,11 @@ class UserController extends BaseController
             EmailMessage;
             $userEmail = $user->getEmail();
             $subject = 'Password recovery for ' . $user->getLogin();
-            try {
-                $this->mailSender->sendMail($userEmail, $subject, $content);
-            } catch (\Exception $e) {
-                $message = 'Server could not send email for unknown reason, click <a class="basic-link" href="' . $activationUrl . '">here to activate.</a>';
+            $sent = $this->mailSender->sendMail($userEmail, $subject, $content);
+            if(!$sent)
+            {
+            	$message = 'Server could not send email for unknown reason, click <a class="basic-link" href="' . $activationUrl . '">here to activate.</a>';
             }
-
         }
         $view = new View('User/PasswordRecoveryPartialView', 'Password Recovery');
         $view->addStyle('error.css');
@@ -141,7 +140,7 @@ class UserController extends BaseController
         $message = 'Invalid password recovery link';
         $activation = new ActivationCode();
         if ($activation->findOneBy(['activation_code', '=', $code])) {
-            if ($activation->getUsed() === false) {
+            if ($activation->getUsed() === 0) {
                 $data['user'] = $activation->getUser();
                 $data['code'] = $code;
                 $view = new View('User/PasswordRecoveryFormPartialView', 'Account - Activation info');
@@ -191,13 +190,13 @@ class UserController extends BaseController
             if (!empty($passwordRuleErrors)) {
                 $errors = array_merge($errors, $passwordRuleErrors);
             }
-            $valid = (empty($errors) && !$activation->getUsed());
+            $valid = (empty($errors) && $activation->getUsed() === 0);
             if ($valid) {
                 $user = $activation->getUser();
                 $passwordHash = $this->hashPassword($password);
                 $user->setPassword($passwordHash);
                 $user->update();
-                $activation->setUsed(true);
+                $activation->setUsed(1);
                 $activation->update();
                 $message = 'Password changed successfully, you can <a class="basic-link" href="/login">sign in</a> now!';
                 $view = new View('User/PasswordRecoveryPartialView', 'Password Recovery - Success');

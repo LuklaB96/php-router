@@ -26,10 +26,10 @@ class User extends Entity
     protected string $login;
     #[Column(type: ColumnType::VARCHAR, length: 255, nullable: false)]
     protected string $password;
-    #[Column(type: ColumnType::TEXT, nullable: false, unique: true)]
+    #[Column(type: ColumnType::VARCHAR, length: 100, nullable: false, unique: true)]
     protected string $email;
-    #[Column(type: ColumnType::BOOLEAN, nullable: true)]
-    protected bool $activated;
+    #[Column(type: ColumnType::TINYINT, length: 1, nullable: true)]
+    protected int $activated;
     public function getId()
     {
         return $this->id;
@@ -61,11 +61,11 @@ class User extends Entity
     {
         return $this->email;
     }
-    public function getActivated(): bool
+    public function getActivated(): int
     {
         return $this->activated;
     }
-    public function setActivated(bool $state): self
+    public function setActivated(int $state): self
     {
         $this->activated = $state;
         return $this;

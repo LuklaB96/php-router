@@ -23,7 +23,4 @@ $migrations->create($user);
 $migrations->create($post);
 $migrations->create($comment);
 $migrations->create($emailActivation);
-
-
-
 ?>

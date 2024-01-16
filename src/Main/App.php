@@ -106,6 +106,9 @@ class App
         $router->post('/account/password/change', function () {
             (new AccountSettingsController())->changePasswordPOST();
         });
+        $router->post('/account/username/change', function () {
+            (new AccountSettingsController())->changeUsernamePOST();
+        });
         $router->get('/phpinfo', function () {
             phpinfo();
         });
